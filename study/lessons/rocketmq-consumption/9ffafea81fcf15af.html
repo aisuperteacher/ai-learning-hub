@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08192b">
+<title>RocketMQ 消费机制实验室 | Learn + Deep</title>
+<style>
+:root{color-scheme:dark;--bg:#081322;--panel:#102036;--panel2:#142943;--line:#2a4158;--text:#e8f0fa;--sub:#b3c5d8;--muted:#91a9bd;--mint:#4de0bd;--aqua:#5ca9ff;--amber:#ffc47e;--red:#ff8e97;--r:17px;--shadow:0 14px 45px #030d1c35}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 70% -10%,#173d59 0,#081322 50%) fixed;font:15px/1.75 system-ui,-apple-system,"Segoe UI","Noto Sans SC","Microsoft YaHei",sans-serif;color:var(--text);overflow-wrap:anywhere}
+a{color:#83bfff}.docref{color:#8cbef5;text-decoration:underline;text-decoration-style:dotted}a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--mint);outline-offset:2px}button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button,select{touch-action:manipulation}.wrap{width:min(1160px,100%);margin-inline:auto;padding-inline:16px;min-width:0}.mast{padding-block:32px 18px;position:relative;overflow:visible}.mast::after{content:"";position:absolute;top:-100px;right:3%;width:260px;height:230px;border-radius:50%;background:#0fcdb433;filter:blur(75px);pointer-events:none}.eyebrow{font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:800;color:var(--mint)}.hero-top{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.logo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#62efd1,#6aa9ff);color:#09243b;font-weight:900;font-size:21px;box-shadow:0 8px 24px #32c8ce4a}.hero-title{font-size:clamp(30px,5vw,56px);line-height:1.12;letter-spacing:-.04em;margin:20px 0 12px;font-weight:850;max-width:860px}.hero-title em{font-style:normal;color:var(--mint)}.hero-intro{max-width:800px;color:var(--sub);font-size:clamp(15px,2.1vw,18px);margin:0 0 20px}.chipbar{display:flex;flex-wrap:wrap;gap:9px}.chip{border:1px solid #48637a;border-radius:999px;background:#0f2740;padding:6px 12px;color:#d6e7f4;font-size:12px;font-weight:700}
+.nav{display:flex;gap:8px;overflow-x:auto;padding-block:12px;margin-block:10px 12px;scrollbar-width:thin;white-space:nowrap}.nav a{display:inline-block;padding:7px 12px;border-radius:11px;text-decoration:none;background:#14283f;border:1px solid #263e57;color:#deebf7;font-size:13px}.nav a:hover{border-color:var(--mint)}.block{margin-block:20px 27px;scroll-margin-top:16px}.section-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}.section-head h2{margin:0;font-size:clamp(21px,3vw,29px);letter-spacing:-.025em}.section-head .num{color:var(--mint);font-size:13px;font-weight:800;margin-right:9px}.section-head p{margin:0;color:var(--muted);font-size:13px}.panel{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(150deg,#12243b,#0e1e32);padding:clamp(14px,2.2vw,23px);box-shadow:var(--shadow);min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.concept{padding:18px}.concept .symbol{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#1b3852;color:var(--mint);font-size:20px}.concept h3{margin:12px 0 6px;font-size:17px}.concept p{margin:0;color:var(--sub);font-size:13px}.concept small{display:block;margin-top:10px;color:var(--aqua);font-size:12px}.callout{background:#182d43;border-left:4px solid var(--mint);padding:12px 14px;border-radius:0 12px 12px 0;color:#dbe8f7}.callout.warn{border-color:var(--amber)}.case{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1.4fr);gap:12px;align-items:center}.biglabel{font-size:13px;font-weight:700;color:var(--muted)}.node{text-align:center;border:1px solid #35536b;border-radius:13px;padding:13px 9px;background:#0e233a;min-width:0}.node strong{display:block;line-height:1.5}.node span{color:var(--muted);font-size:12px}.arr{color:var(--mint);font-size:24px;text-align:center}.branch-nodes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.branch-nodes .node{border-color:#315b68}
+.lab-shell{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);gap:14px;align-items:start}.scenario-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.scenario-tabs button,.tabs button{background:#162a43;color:var(--sub);border:1px solid #36506a;border-radius:11px;padding:9px 14px;font-weight:700;min-height:44px}.scenario-tabs button[aria-pressed="true"],.tabs button[aria-selected="true"]{color:#061927;background:var(--mint);border-color:var(--mint)}.control-rows{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-bottom:14px}.control-rows label{display:flex;flex-direction:column;gap:4px;color:var(--sub);font-size:12px;font-weight:700;flex:1 1 145px;min-width:0}.control-rows select{width:100%;min-width:0;background:#122c45;color:var(--text);border:1px solid #3b5871;border-radius:11px;min-height:44px;padding:8px 9px}.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0}.toolbar button{min-height:44px;border:1px solid #4b6277;border-radius:11px;background:#1b334b;color:#e8f6ff;font-size:13px;font-weight:700;padding:8px 5px}.toolbar button.primary{background:var(--mint);color:#092334;border-color:var(--mint)}.statrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:14px}.stat{background:#0a1b2e;border:1px solid #284258;border-radius:12px;padding:10px;min-width:0}.stat .stat-k{display:block;color:#a4bed0;font-size:11px}.stat .stat-v{display:block;font-size:clamp(18px,3vw,25px);font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums}.stat .stat-note{display:block;margin-top:2px;font-size:10px;color:var(--muted)}.stage{border:1px solid #35516a;background:linear-gradient(145deg,#10273f,#0c2034);border-radius:13px;padding:14px;min-height:90px}.stage-top{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap}.stage-tag{color:var(--mint);font-size:12px;font-weight:900}.stage h3{margin:6px 0 7px;font-size:clamp(16px,3vw,20px)}.stage p{margin:0;color:#c1d3e4;font-size:13px}.timeline{height:5px;border-radius:999px;background:#2c4155;overflow:hidden;margin-top:14px}.timeline >div{background:linear-gradient(90deg,var(--aqua),var(--mint));height:100%;width:0;transition:width .2s}.flow-diagram{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.flow-diagram .node{padding:10px 8px;text-align:left}.flow-diagram .node:nth-child(1){grid-column:span 2}.flow-diagram .node .status{display:inline-block;padding:2px 8px;border:1px solid #3d6073;border-radius:100px;margin-top:8px;font-size:11px;color:#bbd9ec}.flow-diagram .node.on{border-color:var(--mint);box-shadow:inset 0 0 0 1px #3fb99d88;background:#11353d}.flow-diagram .node.error{border-color:var(--red);background:#3c2330}.flow-diagram .node.done{border-color:#548c85;background:#123530}.lagchart{margin-top:14px;display:grid;gap:11px}.meter-label{display:flex;justify-content:space-between;gap:7px;font-size:12px;color:#bfd2e3}.track{background:#253a50;border-radius:999px;min-height:14px;overflow:hidden}.bar{height:14px;border-radius:999px;background:var(--mint);width:0%;transition:width .2s}.bar.b{background:var(--amber)}.tiny{font-size:12px;color:var(--muted);line-height:1.6}.keyvals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.keyval{padding:11px 10px;border-radius:10px;background:#10273d;border:1px solid #2d465f}.keyval small{color:var(--muted);display:block}.keyval strong{font-size:16px;display:block;overflow-wrap:anywhere}.keyval code{color:var(--mint)}.log{background:#091726;border:1px solid #2a4359;border-radius:10px;padding:12px;min-height:128px;white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.65;color:#afdef5;overflow:auto;margin:10px 0 0}.techdetails{margin-top:13px;border-top:1px solid #2f445c;padding-top:10px}.techdetails summary{cursor:pointer;color:var(--mint);font-weight:700}.techdetails p{color:var(--sub);font-size:13px}.hint{color:#b5d9ee;background:#11273c;border:1px solid #30526a;padding:12px;border-radius:12px;font-size:12px}
+.mini-formula{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.formula-cell{padding:14px;background:#0e2438;border-radius:12px;text-align:center;border:1px solid #32516a}.formula-cell strong{display:block;font-size:20px;color:var(--mint)}.formula-cell span{font-size:12px;color:var(--sub)}.rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.rule-grid h3{margin:0 0 7px}.rule-grid p{margin:0;color:var(--sub);font-size:13px}.codebox{min-width:0}.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.codebox pre{width:100%;max-width:100%;overflow-x:auto;background:#071320;border:1px solid #344c61;border-radius:12px;padding:15px;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;color:#cfecff;white-space:pre;tab-size:2;min-width:0}.codebox pre[hidden]{display:none}.filedesc{color:var(--sub);font-size:13px;min-height:26px;margin:8px 0}.table-scroll{max-width:100%;overflow-x:auto}.basictable{width:100%;border-collapse:collapse;font-size:13px;min-width:500px}.basictable th,.basictable td{border-bottom:1px solid #344b60;text-align:left;padding:10px;vertical-align:top}.basictable th{color:var(--mint);font-size:12px}.basictable td{color:#cfdeeb}.quizgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quizcard{border:1px solid #344d63;border-radius:14px;padding:14px;background:#0e2336;min-width:0}.quizcard h3{font-size:15px;line-height:1.6;margin:0 0 12px}.quizcard .qnum{font-size:12px;color:var(--mint);font-weight:800}.choices{display:grid;gap:8px}.choices button{min-height:44px;padding:10px;text-align:left;background:#1a3047;border:1px solid #3d566c;color:var(--text);font-size:13px;border-radius:10px}.choices button:hover:not(:disabled){border-color:var(--aqua)}.choices button.correct{border-color:var(--mint);background:#16463f}.choices button.wrong{border-color:var(--red);background:#412931}.feedback{margin-top:10px;font-size:12px;min-height:60px;color:#d4e4ef}.practice{background:linear-gradient(135deg,#153149,#152b3b);border:1px solid #45607a;border-radius:15px;padding:18px}.practice ol{margin:7px 0 0;padding-left:22px;color:var(--sub)}.practice li{padding-bottom:6px}.foot{padding-block:16px 40px;border-top:1px solid #243c54;margin-top:25px;font-size:12px;color:var(--muted)}.foot ul{padding-left:20px}.foot li{margin-bottom:4px}code:not(pre code){background:#22374c;border-radius:4px;color:#c9eeff;padding:2px 5px;overflow-wrap:anywhere}.hidden{display:none!important}
+@media(max-width:830px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.lab-shell{grid-template-columns:minmax(0,1fr)}.quizgrid{grid-template-columns:minmax(0,1fr)}.quizcard .feedback{min-height:0}.mini-formula{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:550px){.mast{padding-block:25px 14px}.hero-title{margin-top:16px}.grid3{grid-template-columns:minmax(0,1fr)}.case{grid-template-columns:minmax(0,1fr);gap:8px}.arr{transform:rotate(90deg);font-size:22px}.branch-nodes{grid-template-columns:repeat(2,minmax(0,1fr))}.rule-grid{grid-template-columns:minmax(0,1fr)}.mini-formula{grid-template-columns:minmax(0,1fr)}.statrow{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{padding:9px 7px}.stat .stat-v{font-size:19px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.scenario-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.scenario-tabs button{padding:8px;font-size:12px}.keyvals{grid-template-columns:repeat(2,minmax(0,1fr))}.keyval strong{font-size:12px}.section-head p{width:100%}.wrap{padding-inline:16px}.mast.wrap{padding-inline:16px}.node{padding-inline:9px}}
+@media(max-width:345px){.wrap{padding-inline:13px}.mast.wrap{padding-inline:13px}.scenario-tabs button{font-size:11px}.chip{font-size:11px}.stat .stat-v{font-size:17px}.node strong{font-size:13px}.branch-nodes{gap:7px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="mast wrap">
+ <div class="hero-top"><div class="logo" aria-hidden="true">MQ</div><span class="eyebrow">ELI5 Pro · Learn + Deep · Offline Learning Lab</span></div>
+ <h1 class="hero-title">一条消息的<br><em>四种命运。</em></h1>
+ <p class="hero-intro">把 RocketMQ 消费组、失败重试、消息堆积与死信队列，变成<strong>可以暂停、回退和改变结果</strong>的 Java 系统实验。先理解，再深入，最后动手。</p>
+ <div class="chipbar"><span class="chip">RocketMQ 5.x</span><span class="chip">支付事件 OrderPaid</span><span class="chip">Java / Spring</span><span class="chip">零网络依赖</span><span class="chip">手机优先布局</span></div>
+</header>
+<div class="wrap"><nav class="nav" aria-label="课程章节"><a href="#model">01 心智模型</a><a href="#sim">02 运行模拟</a><a href="#mechanism">03 机制深挖</a><a href="#java">04 Java 实战</a><a href="#quiz">05 自测</a><a href="#practice">06 工程练习</a></nav></div>
+<main class="wrap">
+<section class="block" id="model"><div class="section-head"><h2><span class="num">01 /</span>先弄明白：为什么需要 MQ？</h2><p>一个支付服务 · 两种独立的后续工作</p></div>
+ <div class="panel"><div class="case"><div class="node"><strong>支付服务</strong><span>Producer<br>支付成功 M101</span></div><div class="arr">→</div><div class="node"><strong>Broker / PAYMENT_EVENT</strong><span>保存一份事件，按订阅规则分发</span></div></div><div class="arr" style="transform:rotate(90deg);margin:3px 0">→</div><div class="branch-nodes"><div class="node"><strong>G_POINT</strong><span>积分消费组：增加积分</span></div><div class="node"><strong>G_NOTICE</strong><span>通知消费组：发送短信</span></div></div><p class="tiny" style="margin-bottom:0">不是把原始消息复制成两份独立的 Topic 队列；而是不同消费组维护各自订阅和消费进度。发送成功也不等于每个业务端都已处理成功。</p></div>
+ <div class="grid3" style="margin-top:13px"><article class="panel concept"><span class="symbol">①</span><h3>消费组 Consumer Group</h3><p>同一业务任务的消费者组成团队。组间可以独立订阅同一消息；组内实例共同分担工作。</p><small>关键：分组独立进度 / 订阅一致性</small></article><article class="panel concept"><span class="symbol">②</span><h3>重试 Retry</h3><p>消费者失败或超时，Broker 按策略再次投递。成功确认后，当前消息的重试生命周期结束。</p><small>关键：重试上限 / 间隔 / 幂等</small></article><article class="panel concept"><span class="symbol">③</span><h3>堆积 Lag</h3><p>组内消费赶不上生产，待处理量和等待时间逐渐增大；与单条消息失败不是一回事。</p><small>关键：Topic + Group 视角</small></article><article class="panel concept"><span class="symbol">④</span><h3>死信 DLQ</h3><p>反复处理仍失败的异常消息进入死信处理流程，等待排查、修复和受控重新投递。</p><small>关键：死信不等于业务成功</small></article><article class="panel concept"><span class="symbol">⑤</span><h3>Tag 标签</h3><p>同一 Topic 可用 Tag 筛选不同消息子集，不同组可以分别订阅不同 Tag。</p><small>关键：同组所有实例过滤规则一致</small></article><article class="panel concept"><span class="symbol">⑥</span><h3>幂等 Idempotency</h3><p>网络故障会导致重复投递。业务应允许“同一事件被重复执行请求”，但副作用只生效一次。</p><small>关键：数据库唯一约束 + 本地事务</small></article></div>
+</section>
+<section class="block" id="sim"><div class="section-head"><h2><span class="num">02 /</span>交互实验：控制消息的命运</h2><p>更换场景，逐步观察各组状态变化</p></div>
+ <div class="panel">
+  <div class="scenario-tabs" role="group" aria-label="选择实验场景"><button type="button" data-scenario="dual" aria-pressed="true">组 A 成功 / 组 B 重试</button><button type="button" data-scenario="retry" aria-pressed="false">失败直到 DLQ</button><button type="button" data-scenario="lag" aria-pressed="false">消息持续堆积</button><button type="button" data-scenario="tags" aria-pressed="false">Tag 分组隔离</button></div>
+  <div class="control-rows" id="retryOptions"><label>组 B 的结果<select id="outcome"><option value="recover">第一次失败，重试成功</option><option value="fail">持续失败，进入死信</option></select></label><label>最大重试次数<select id="maxRetry"><option value="1">1 次（总共 2 次投递）</option><option value="2" selected>2 次（总共 3 次投递）</option><option value="3">3 次（总共 4 次投递）</option></select></label></div>
+  <div class="control-rows hidden" id="lagOptions"><label>Producer 每秒发送<select id="prodRate"><option value="6">6 条/s</option><option value="10" selected>10 条/s</option><option value="20">20 条/s</option></select></label><label>积分组处理能力<select id="pointRate"><option value="6">6 条/s</option><option value="10" selected>10 条/s</option><option value="20">20 条/s</option></select></label><label>通知组处理能力<select id="noticeRate"><option value="2">2 条/s</option><option value="4" selected>4 条/s</option><option value="10">10 条/s</option></select></label></div>
+  <div class="lab-shell"><div>
+   <div class="statrow"><div class="stat"><span class="stat-k">进度</span><span class="stat-v" id="stepNum">1 / 7</span><span class="stat-note">可上一步</span></div><div class="stat"><span class="stat-k" id="stat2title">重投次数</span><span class="stat-v" id="retryCount">0</span><span class="stat-note" id="stat2note">不含首次投递</span></div><div class="stat"><span class="stat-k" id="stat3title">DLQ 条数</span><span class="stat-v" id="dlqCount">0</span><span class="stat-note" id="stat3note">当前组 B</span></div></div>
+   <div class="stage" aria-live="polite"><div class="stage-top"><span class="stage-tag" id="phase">INIT</span><span class="tiny" id="phaseIndex">阶段 1</span></div><h3 id="stageTitle">支付成功</h3><p id="stageDetail">支付业务产生事件。</p><div class="timeline" aria-hidden="true"><div id="progress"></div></div></div>
+   <div class="flow-diagram" aria-label="消息路由及两个消费组当前状态"><div class="node" id="brokerNode"><strong>◈ Broker · PAYMENT_EVENT</strong><span id="brokerText">事件存储中</span><br><span class="status" id="brokerStatus">待接收</span></div><div class="node" id="pointNode"><strong>◉ G_POINT</strong><span>积分服务 · <span id="pointFilter">PAID</span></span><br><span class="status" id="pointStatus">未收到</span></div><div class="node" id="noticeNode"><strong>◉ G_NOTICE</strong><span>营销/通知服务 · <span id="noticeFilter">PAID</span></span><br><span class="status" id="noticeStatus">未收到</span></div></div>
+   <div id="lagBars" class="lagchart hidden"><div><div class="meter-label"><span>积分组待处理</span><strong id="lagPointN">0</strong></div><div class="track"><div class="bar" id="lagPointBar"></div></div></div><div><div class="meter-label"><span>通知组待处理</span><strong id="lagNoticeN">0</strong></div><div class="track"><div class="bar b" id="lagNoticeBar"></div></div></div></div>
+   <div class="toolbar"><button type="button" id="prev">← 上一步</button><button type="button" class="primary" id="next">下一步 →</button><button type="button" id="play">▶ 自动播放</button><button type="button" id="reset">↺ 重置</button></div>
+   <p class="tiny" id="simCaveat">教学模型：展示每个消费组相互独立的结果，不复刻全部 Broker 并发、队列和网络细节。</p>
+  </div><aside><div class="keyvals"><div class="keyval"><small>Topic</small><strong><code>PAYMENT_EVENT</code></strong></div><div class="keyval"><small>Message Key</small><strong><code>M101</code></strong></div><div class="keyval"><small>Group A</small><strong><code>G_POINT</code></strong></div><div class="keyval"><small>Group B</small><strong><code>G_NOTICE</code></strong></div></div><div class="hint" id="insight" style="margin-top:11px">从这里开始，逐步操作观察消息。</div><details class="techdetails" open><summary>打开技术视角：状态与事件追踪</summary><pre class="log" id="trace" aria-label="当前阶段技术日志"></pre><p class="tiny" id="techNote">观察 Group、消息状态和业务影响。</p></details></aside></div>
+ </div>
+</section>
+<section class="block" id="mechanism"><div class="section-head"><h2><span class="num">03 /</span>Deep：还原真实机制</h2><p>进度、重试和积压彼此相关但不相同</p></div>
+ <div class="rule-grid"><article class="panel"><h3>组间独立，组内分摊</h3><p><code>G_POINT</code> 订阅支付成功，<code>G_NOTICE</code> 可以同时订阅。两个组拥有各自消费进度。同组启动多个实例，提高吞吐并容灾，但不是每个实例都收到每一条。5.x gRPC PushConsumer 默认按消息粒度分配；传统 4.x Remoting 客户端一般按队列粒度分配。</p></article><article class="panel"><h3>重试到底何时发生？</h3><p>PushConsumer 监听器返回 <code>ConsumeResult.FAILURE</code> 或处理超时，Broker 依重试策略重新投递。若最大重试次数设为 2，代表首次 + 2 次重试，共 3 次机会。普通消息通常按递增间隔；顺序消息的策略不同。</p></article><article class="panel"><h3>堆积到底在哪里？</h3><p>消息实际保存在 Broker 的 Topic 队列里；不同 Group 维护自己的消费位置。堆积是 <strong>某 Topic 下某消费组的未完成工作量</strong>，不是生产者线上单独的一条“未发出队列”。PushConsumer 本地缓冲也可能排队。</p></article><article class="panel"><h3>DLQ 会自动恢复吗？</h3><p>不会。重试耗尽进入死信后，原消费流程停止。需要查询失败原因、核验业务状态、修复、幂等校验并在授权下重新投递。不能把“转入死信”误当成业务成功。</p></article></div>
+ <div class="panel" style="margin-top:12px"><h3 style="margin-top:0">用 offset 理解“堆积”：简化数量模型</h3><div class="mini-formula"><div class="formula-cell"><strong>1,000</strong><span>Broker 队列最大位点</span></div><div class="formula-cell"><strong>650</strong><span>消费组已提交位置</span></div><div class="formula-cell"><strong>350</strong><span>近似未完成条数</span></div></div><p class="tiny">单队列简化：<code>MaxOffset − ConsumerOffset = 350</code>。生产监控应使用 Topic + Group + 队列范围，并区分 Ready、Inflight、重试等待与消费延迟；5.x 中只看这一个差值不等于所有状态的真实库存。对有过滤条件的订阅尤其不要直接把原始 Topic 位点差当作“可消费匹配消息数”。</p><div class="callout warn">消费重试解决<strong>偶发处理失败</strong>；消息堆积需要通过容量、下游限流、扩容或隔离处理。不要用无限失败重试来代替流量控制。</div></div>
+ <div class="panel" style="margin-top:12px"><h3 style="margin:0 0 8px">同一 Topic、不同 Tag，三个常见布局</h3><div class="table-scroll"><table class="basictable"><thead><tr><th>布局</th><th>实际效果</th><th>是否推荐</th></tr></thead><tbody><tr><td>G_A 订阅 POINT，G_B 订阅 NOTICE</td><td>各自获取匹配子集、独立失败和进度</td><td>适合独立业务流程</td></tr><tr><td>G_A 的 C1 订阅 POINT，C2 订阅 NOTICE</td><td>同组实例订阅关系不一致，可能漏消费或混乱</td><td>不推荐</td></tr><tr><td>G_A 两实例都订阅 POINT||NOTICE</td><td>组内共同消费两类消息，不能保证同实例各拿一份</td><td>仅在确属同一业务职责时可用</td></tr></tbody></table></div></div>
+ <div class="panel" style="margin-top:12px"><h3 style="margin:0 0 8px">生产故障观察指标</h3><div class="table-scroll"><table class="basictable"><thead><tr><th>症状</th><th>优先观察</th><th>常见处理</th></tr></thead><tbody><tr><td>消费一直慢</td><td><code>rocketmq_consumer_ready_messages</code>、<code>rocketmq_consumer_lag_latency</code>、消费耗时</td><td>确认生产/消费速率，查数据库、线程池瓶颈，合理扩容</td></tr><tr><td>消费者长时间卡顿</td><td><code>rocketmq_consumer_inflight_messages</code>、本地缓存、请求超时</td><td>排查慢业务、锁等待、线程饥饿和网络连接</td></tr><tr><td>大量消息进入死信</td><td><code>rocketmq_send_to_dlq_messages_total</code>、异常类型、业务事件 Key</td><td>先修复根因，受控回放与幂等核验</td></tr></tbody></table></div><p class="tiny">这些官方观测指标从 RocketMQ 5.1.0 开始引入；具体可用性随版本、部署组件及导出配置变化。</p></div>
+</section>
+<section class="block" id="java"><div class="section-head"><h2><span class="num">04 /</span>Java：把演示变成业务代码</h2><p>官方 5.x gRPC Java SDK API 风格</p></div>
+ <div class="panel codebox"><p style="margin-top:0;color:var(--sub)">示例约定：<code>PAYMENT_EVENT</code> 主题、<code>PAID</code> 标签、<code>G_POINT</code> 消费组。集群需 RocketMQ 5.x、启用 gRPC Proxy。将端点改为你的环境，预先创建 Topic / Group。片段为教学模板，省略工程依赖管理、完整 Spring 启动配置和生产化监控。</p><div class="tabs" role="tablist" aria-label="Java 示例代码"><button type="button" data-code="producer" role="tab" aria-selected="true">发送支付事件</button><button type="button" data-code="consumer" role="tab" aria-selected="false">积分组消费</button><button type="button" data-code="dedup" role="tab" aria-selected="false">SQL 幂等与事务</button><button type="button" data-code="simple" role="tab" aria-selected="false">SimpleConsumer 区别</button></div><p class="filedesc" id="codeDesc">Producer：事件写入 Broker，仅代表消息发送成功，不代表所有消费业务完成。</p>
+<pre id="code-producer"><code>ClientServiceProvider provider = ClientServiceProvider.loadService();
+String topic = "PAYMENT_EVENT";
+ClientConfiguration cfg = ClientConfiguration.newBuilder()
+    .setEndpoints("127.0.0.1:8081") // 5.x gRPC Proxy
+    .build();
+Producer producer = provider.newProducerBuilder()
+    .setClientConfiguration(cfg)
+    .setTopics(topic)
+    .build();
+
+String eventId = "evt-20261010-001";
+String json = "{\"eventId\":\"" + eventId
+    + "\",\"orderId\":\"O1001\",\"amountFen\":10000}";
+Message message = provider.newMessageBuilder()
+    .setTopic(topic)
+    .setTag("PAID")
+    .setKeys(eventId)
+    .setBody(json.getBytes(StandardCharsets.UTF_8))
+    .build();
+try {
+    SendReceipt receipt = producer.send(message);
+    System.out.println(receipt.getMessageId());
+} finally {
+    producer.close();
+}
+// 真正业务中建议事务性 Outbox，避免数据库提交与发 MQ 双写不一致。</code></pre>
+<pre id="code-consumer" hidden><code>ClientServiceProvider provider = ClientServiceProvider.loadService();
+ClientConfiguration cfg = ClientConfiguration.newBuilder()
+    .setEndpoints("127.0.0.1:8081").build();
+FilterExpression filter =
+    new FilterExpression("PAID", FilterExpressionType.TAG);
+ObjectMapper mapper = new ObjectMapper();
+
+PushConsumer consumer = provider.newPushConsumerBuilder()
+    .setClientConfiguration(cfg)
+    .setConsumerGroup("G_POINT")
+    .setSubscriptionExpressions(
+        Map.of("PAYMENT_EVENT", filter))
+    .setMessageListener(view -> {
+        try {
+            ByteBuffer buf = view.getBody();
+            byte[] bytes = new byte[buf.remaining()];
+            buf.get(bytes);
+            PaidEvent event = mapper.readValue(bytes, PaidEvent.class);
+            pointService.addPointsOnce(event); // 本地数据库事务
+            return ConsumeResult.SUCCESS;
+        } catch (Exception ex) {
+            log.error("消费失败，等待重试，messageId={}",
+                view.getMessageId(), ex);
+            return ConsumeResult.FAILURE;
+        }
+    }).build();
+
+// 维护 consumer 单例，应用关闭时调用 consumer.close()。
+record PaidEvent(String eventId, String orderId, long amountFen) {}
+// 同组所有实例必须使用相同的 Topic/Tag 订阅规则。</code></pre>
+<pre id="code-dedup" hidden><code>-- PostgreSQL 示例：组 + 事件唯一约束
+CREATE TABLE consumed_event (
+  consumer_group varchar(80) NOT NULL,
+  event_id varchar(100) NOT NULL,
+  PRIMARY KEY (consumer_group, event_id)
+);
+
+-- 在同一个数据库事务中：
+BEGIN;
+INSERT INTO consumed_event (consumer_group,event_id)
+VALUES ('G_POINT','evt-20261010-001')
+ON CONFLICT DO NOTHING;
+
+-- 仅插入 1 行时才执行业务副作用：
+UPDATE customer_points
+SET balance = balance + 100
+WHERE customer_id = 'U1001';
+COMMIT;
+
+-- Spring Java 服务中的关键结构：
+@Transactional
+public void addPointsOnce(PaidEvent e) {
+    int n = jdbc.update(
+      "INSERT INTO consumed_event(consumer_group,event_id) " +
+      "VALUES (?,?) ON CONFLICT DO NOTHING",
+      "G_POINT", e.eventId());
+    if (n == 0) return; // 重复事件，已处理
+    jdbc.update(
+      "UPDATE customer_points SET balance=balance+? " +
+      "WHERE customer_id=?",
+      calculatePoints(e), resolveCustomerId(e.orderId()));
+}
+// 事务回滚后，去重记录和加积分都不会被提交。
+// 用户与积分规则须来自可信业务数据源并校验。</code></pre>
+<pre id="code-simple" hidden><code>// PushConsumer：listener 返回 SUCCESS / FAILURE。
+// SimpleConsumer：应用显式 receive 并在处理成功后 ack。
+// 以下为核心调用示意，省略初始化参数与循环生命周期。
+List&lt;MessageView&gt; views =
+    simpleConsumer.receive(10, Duration.ofSeconds(30));
+for (MessageView view : views) {
+    try {
+        businessService.process(view);
+        simpleConsumer.ack(view); // 确认成功
+    } catch (Exception ex) {
+        // 不 ack。InvisibleDuration 过后可再次被投递。
+        log.error("等待可见性超时后重试", ex);
+    }
+}
+// SimpleConsumer 的 InvisibleDuration 要覆盖业务处理时间，
+// 否则未处理完就可能重新变为可见，形成重复投递。
+// 重试上限由消费组策略管理。</code></pre>
+ <p class="callout" style="margin-bottom:0">先把“重复消费不重复加积分”做好，再扩大消费者实例数。<strong>至少一次投递不等于业务恰好执行一次</strong>。</p></div>
+</section>
+<section class="block" id="quiz"><div class="section-head"><h2><span class="num">05 /</span>理解检验：你能预测系统吗？</h2><p>点击答案查看因果解释，可重新作答</p></div><div class="quizgrid"><article class="quizcard" data-question="0"><span class="qnum">Q1 · 识别</span><h3>同一个 Topic 被 G_POINT 和 G_NOTICE 订阅。G_POINT 成功，G_NOTICE 失败，哪项成立？</h3><div class="choices"><button type="button" data-choice="0">A. 两个组都必须重新消费</button><button type="button" data-choice="1">B. 只有 G_NOTICE 按自身策略重试</button><button type="button" data-choice="2">C. Broker 删除 Topic 中所有消息</button></div><p class="feedback" aria-live="polite">请选择答案。</p></article><article class="quizcard" data-question="1"><span class="qnum">Q2 · 推理</span><h3>生产 10 条/s，某组稳定消费 4 条/s，运行 10 秒（初始为 0）大概有多少条待处理？</h3><div class="choices"><button type="button" data-choice="0">A. 0 条</button><button type="button" data-choice="1">B. 40 条</button><button type="button" data-choice="2">C. 60 条</button></div><p class="feedback" aria-live="polite">请选择答案。</p></article><article class="quizcard" data-question="2"><span class="qnum">Q3 · 迁移</span><h3>积分服务数据库已经成功加分，但返回 ACK 前进程崩溃。消息再次到来，最重要的保护是什么？</h3><div class="choices"><button type="button" data-choice="0">A. 通过事件 ID 实现事务性幂等</button><button type="button" data-choice="1">B. 直接把最大重试设为 0</button><button type="button" data-choice="2">C. 删除整个消费组</button></div><p class="feedback" aria-live="polite">请选择答案。</p></article></div></section>
+<section class="block" id="practice"><div class="section-head"><h2><span class="num">06 /</span>实践任务：亲手制造一次积压与死信</h2><p>循序完成，适合本地 Docker + Spring Boot</p></div><div class="practice"><ol><li>建立 <code>PAYMENT_EVENT</code> 主题，以及 <code>G_POINT</code> 和 <code>G_NOTICE</code> 两个组，发送 10 条 <code>PAID</code> 消息。</li><li>让积分消费组返回 SUCCESS，通知消费组前两次失败、第三次成功，观察重投日志。明确重试次数与总投递次数的区别。</li><li>让通知组持续返回 FAILURE，设置有限重试，观察死信出现；积分组仍应保持正常。</li><li>限制通知组每秒只能处理 4 条，同时发送 10 条/秒，观测 lag 随时间增长，并排查吞吐瓶颈。</li><li>引入数据库唯一约束（消费组 ID + 事件 ID），故意在业务提交后、ACK 前模拟宕机，验证重新投递不会重复增加积分。</li><li>设计死信处置 SOP：记录原事件、异常原因、业务状态校验、审批回放、回放后校验与审计。</li></ol></div><p class="tiny">任务需自备实际环境才能执行。此 HTML 仅是可离线交互的教学模拟，不会连接 RocketMQ、不读取本地数据，也不会发送消息。</p></section>
+</main>
+<footer class="foot wrap"><strong>资料与版本边界</strong><ul><li><span class="docref" title="https://rocketmq.apache.org/docs/domainModel/08consumergroup/">官方：Consumer Group (5.0)</span> · <span class="docref" title="https://rocketmq.apache.org/docs/featureBehavior/10consumerretrypolicy/">Consumption Retry (5.0)</span></li><li><span class="docref" title="https://rocketmq.apache.org/docs/featureBehavior/09consumerprogress/">Consumer Progress</span> · <span class="docref" title="https://rocketmq.apache.org/docs/featureBehavior/08consumerloadbalance/">Load Balancing</span> · <span class="docref" title="https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/">Message Filtering</span></li><li><span class="docref" title="https://rocketmq.apache.org/docs/observability/01metrics/">Official Metrics (5.1+)</span> · <span class="docref" title="https://github.com/apache/rocketmq-clients/blob/master/java/client/src/main/java/org/apache/rocketmq/client/java/example/PushConsumerExample.java">Java PushConsumer Example</span></li></ul><p>本页完全离线可运行。代码为示教片段；5.x gRPC SDK 与 4.x Remoting SDK、部分托管版本在负载均衡、重试配置、死信管理等方面存在差异，请以实际部署版本的文档为准。</p></footer>
+<script>
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);const qa=[...document.querySelectorAll('.quizcard')];
+ let scenario='dual',steps=[],index=0,playing=false,timer=null;
+ const pretty=x=>JSON.stringify(x,null,2);
+ const snap=(phase,title,detail,changes={})=>Object.assign({phase,title,detail,a:'未收到',b:'未收到',broker:'消息未入队',brokerMode:'',aMode:'',bMode:'',retries:0,dlq:0,trace:{},insight:'',tech:'',lagA:0,lagB:0,tagA:0,tagB:0,total:0},changes);
+ function buildGroupFlow(){
+  const endFail=scenario==='retry'||$('outcome').value==='fail';const limit=Number($('maxRetry').value);
+  const base={broker:'已保存 M101',brokerMode:'on',a:'已处理 ✓',aMode:'done',b:'等待投递',retries:0,dlq:0};
+  const s=[
+   snap('PRODUCE','支付服务产生 M101','支付成功后构造 OrderPaid 业务事件；尚未表示消息已被所有下游处理。',{broker:'生产端准备发送',trace:{eventId:'evt-001',topic:'PAYMENT_EVENT',tag:'PAID',producer:'payment-service'},insight:'生产者只负责发出事件。每个消费组的业务结果要独立确认。',tech:'如果业务库提交和 MQ 发送不在同一事务中，需 Outbox 等一致性方案。'}),
+   snap('PERSIST','Broker 接收到事件','Broker 将事件写入 Topic 队列，按匹配订阅关系面向两组提供投递。',{broker:'存储 M101 成功',brokerMode:'on',a:'待处理',b:'待处理',trace:{message:'M101',topic:'PAYMENT_EVENT',status:'Ready',groups:['G_POINT','G_NOTICE']},insight:'Broker 保存的 Topic 消息不会因为积分组消费成功就立即删掉。',tech:'不同组维护自己的进度；物理消息在保留期/清理策略下删除。'}),
+   snap('DELIVER','两个组分别收到 M101','组 A 和组 B 都在处理同一业务事件。它们互不代替对方确认。',{...base,a:'处理中…',aMode:'on',b:'处理中…',bMode:'on',trace:{'G_POINT':'Inflight','G_NOTICE':'Inflight',attempt:1},insight:'组间是一对多订阅；组内多个消费者实例则分担处理。',tech:'每组的进度/状态独立，5.x PushConsumer 消息粒度均衡。'}),
+   snap('ACK / FAIL','积分组成功，通知组失败','积分服务成功增加积分并返回 SUCCESS；通知服务调用超时返回 FAILURE。',{...base,b:'首次失败',bMode:'error',trace:{'G_POINT':'Commit','G_NOTICE':'FAILURE',attempt:1},insight:'关键：A 的成功不会使 B 自动成功；B 的失败也不会重置 A 的成功。',tech:'失败或超时触发 B 自己的重试策略；要注意 ACK 前宕机会导致重复投递。'})
+  ];
+  for(let attempt=1;attempt<=limit;attempt++){
+   s.push(snap('WAITING RETRY',`通知组等待第 ${attempt} 次重试`,`上一次投递未确认成功。Broker 按组策略安排下一次投递。`,{...base,b:`等待重试 ${attempt}/${limit}`,bMode:'error',retries:attempt-1,trace:{group:'G_NOTICE',status:'WaitingRetry',nextRetry:attempt,maxRetries:limit},insight:'等待重试是失败后的暂存/调度状态，不等于生产者重新发了一条新的业务事件。',tech:'5.x PushConsumer 无序消息的重试间隔一般递增，具体取决于服务端策略。'}));
+   s.push(snap('REDELIVER',`通知组第 ${attempt} 次重新投递`,`通知组再次尝试处理，积分组不会因为这次重试而重复收到同一消费任务。`,{...base,b:`重试中（第 ${attempt} 次）`,bMode:'on',retries:attempt,trace:{group:'G_NOTICE',status:'Inflight',deliveryCount:attempt+1,retryNumber:attempt},insight:`此时总投递次数是 ${attempt+1} 次（最初 1 次 + 重投 ${attempt} 次）。`,tech:'业务处理必须幂等；重投次数、消息 ID 和投递次数的语义不可混淆。'}));
+   if(!endFail){s.push(snap('ACK','通知组重试后成功','通知业务恢复，返回 SUCCESS。此消息在两个组中的业务均已完成。',{...base,b:'重试成功 ✓',bMode:'done',retries:attempt,trace:{'G_POINT':'Commit','G_NOTICE':'Commit',finalDeliveryCount:attempt+1},insight:'只要一个组成功，并不意味着其他组必然已经完成；这里两个组各自确认成功。',tech:'该结束路径是示教设定；实际重试何时成功由业务结果决定。'}));return s;}
+   s.push(snap('FAIL',`通知组重试第 ${attempt} 次仍失败`,`${attempt===limit?'已用尽重试次数。':'还可按配置再次重试。'}`,{...base,b:`失败（重投 ${attempt} 次）`,bMode:'error',retries:attempt,trace:{group:'G_NOTICE',result:'FAILURE',retryNumber:attempt,maxRetries:limit},insight:'反复失败会增加下游负担，不能将无界重试作为限流机制。',tech:'顺序消息的失败处理可能阻塞同组后续同序列消息，需单独评估。'}));
+  }
+  if(endFail)s.push(snap('DEAD LETTER','M101 进入 G_NOTICE 的死信处理流程','重试预算耗尽，通知组不再继续对这条消息按普通流程重试；积分组仍保持成功。',{...base,b:'已进入死信 · DLQ',bMode:'error',retries:limit,dlq:1,trace:{group:'G_NOTICE',status:'DLQ',retries:limit,totalDeliveries:limit+1},insight:'死信不代表“消息被成功消费”。需要告警、排查、幂等校验与受控回放。',tech:'不同 RocketMQ 版本/发行版的死信存储和查询接口有差异。'}));
+  return s;
+ }
+ function buildLag(){const p=Number($('prodRate').value),a=Number($('pointRate').value),b=Number($('noticeRate').value);let x=0,y=0;const arr=[];for(let t=0;t<=10;t++){if(t){x+=p;y+=p;x=Math.max(0,x-a);y=Math.max(0,y-b)}arr.push(snap('LAG MODEL',t===0?'开始模拟消息吞吐':`第 ${t} 秒：累计待处理量`,t===0?'两组尚无待处理消息。':`每秒新增 ${p} 条，积分组处理 ${a} 条，通知组处理 ${b} 条。每组独立计算剩余工作。`,{broker:`累计生产 ${p*t} 条`,brokerMode:'on',a:`待处理 ${x} 条`,aMode:x?'error':'done',b:`待处理 ${y} 条`,bMode:y?'error':'done',lagA:x,lagB:y,total:p*t,trace:{second:t,produced:p*t,groupA:{processedPerSec:a,backlog:x},groupB:{processedPerSec:b,backlog:y}},insight:t<2?'观察哪个消费组先开始产生待处理消息。':x===0&&y>0?'积分组没有积压，但通知组产生了堆积；这不是整条 Topic 的单一属性。':x>0&&y>0?'两个组都出现积压，但增长速度不同。':'积压取决于组自己的处理速度。',tech:'理想化每秒匀速处理模型，忽略消息突发、并发、延迟重试、本地缓存与 Tag 匹配比率。'}))}return arr}
+ function buildTags(){const items=[{id:'M201',tag:'POINT'},{id:'M202',tag:'NOTICE'},{id:'M203',tag:'NOTICE'},{id:'M204',tag:'POINT'}];const s=[snap('FILTER','同一 Topic 内有不同 Tag','PAYMENT_EVENT 中产生四条消息，两条 POINT、两条 NOTICE。',{broker:'4 条消息写入',brokerMode:'on',tagA:0,tagB:0,trace:{messages:items},insight:'Tag 是生产者给每条消息附加的筛选标签。',tech:'一条消息只有一个 Tag，可用表达式 POINT||NOTICE 订阅多个。'})];let na=0,nb=0;items.forEach((it,i)=>{if(it.tag==='POINT')na++;else nb++;s.push(snap('TAG MATCH',`消息 ${it.id}：Tag=${it.tag}`,it.tag==='POINT'?'消息匹配 G_POINT 的订阅规则，通知组不需要处理这条消息。':'消息匹配 G_NOTICE 的订阅规则，积分组不会接收到不匹配的消息。',{broker:'原 Topic 保留全部消息',brokerMode:'on',a:`POINT 已匹配 ${na}`,tagA:na,tagB:nb,aMode:it.tag==='POINT'?'on':'done',b:`NOTICE 已匹配 ${nb}`,bMode:it.tag==='NOTICE'?'on':'done',trace:{message:it.id,tag:it.tag,matches:it.tag==='POINT'?['G_POINT']:['G_NOTICE'],groupSubscription:{G_POINT:'POINT',G_NOTICE:'NOTICE'}},insight:'不同组可订阅不同 Tag。绝对不能为了 Tag 分流，让同一组内的不同实例配置不同过滤条件。',tech:'过滤在 Broker 侧对订阅条件进行匹配。示例只呈现匹配投递，没有展示物理队列 offset 的过滤细节。'}))});s.push(snap('DONE','两组互不抢夺对方的 Tag','G_POINT 匹配 2 条，G_NOTICE 匹配 2 条。两个组各自消费匹配的子集。',{broker:'四条消息仍受 Topic 保留策略管理',brokerMode:'on',a:'2 条 POINT ✓',tagA:2,tagB:2,aMode:'done',b:'2 条 NOTICE ✓',bMode:'done',trace:{G_POINT:'POINT → 2 matches',G_NOTICE:'NOTICE → 2 matches'},insight:'如果希望两组都收到同一条消息，必须让两组订阅规则同时匹配它。',tech:'同组全体实例必须使用一致的 Topic 和 Tag 表达式。'}));return s}
+ function calcSteps(){steps=scenario==='lag'?buildLag():scenario==='tags'?buildTags():buildGroupFlow();index=0;render()}
+ function render(){const s=steps[index],pct=steps.length<=1?100:(index/(steps.length-1))*100;$('stepNum').textContent=`${index+1} / ${steps.length}`;$('phase').textContent=s.phase;$('phaseIndex').textContent=`阶段 ${index+1}`;$('stageTitle').textContent=s.title;$('stageDetail').textContent=s.detail;$('progress').style.width=pct+'%';$('retryCount').textContent=scenario==='lag'?s.lagA:scenario==='tags'?s.tagA:s.retries;$('dlqCount').textContent=scenario==='lag'?s.lagB:scenario==='tags'?s.tagB:s.dlq;$('stat2title').textContent=scenario==='lag'?'积分组待处理':scenario==='tags'?'POINT 匹配':'重投次数';$('stat3title').textContent=scenario==='lag'?'通知组待处理':scenario==='tags'?'NOTICE 匹配':'死信条数';$('stat2note').textContent=scenario==='lag'?'示教模型':scenario==='tags'?'G_POINT':'不含首次投递';$('stat3note').textContent=scenario==='lag'?'示教模型':scenario==='tags'?'G_NOTICE':'仅对 G_NOTICE';$('brokerText').textContent=s.broker;$('brokerStatus').textContent=s.total?`已产生 ${s.total} 条`:scenario==='tags'?'Tag 过滤演示':`事件 M101`;const stages=[['pointNode','pointStatus',s.a,s.aMode],['noticeNode','noticeStatus',s.b,s.bMode]];for(const [nid,sid,txt,mode] of stages){$(sid).textContent=txt;$(nid).className='node '+mode}$('brokerNode').className='node '+s.brokerMode;$('insight').textContent=s.insight;$('trace').textContent=pretty(s.trace);$('techNote').textContent=s.tech;$('prev').disabled=index===0;$('next').disabled=index===steps.length-1;$('lagBars').classList.toggle('hidden',scenario!=='lag');if(scenario==='lag'){const max=Number($('prodRate').value)*10; $('lagPointN').textContent=s.lagA+' 条';$('lagNoticeN').textContent=s.lagB+' 条';$('lagPointBar').style.width=(100*s.lagA/max)+'%';$('lagNoticeBar').style.width=(100*s.lagB/max)+'%'}if(index===steps.length-1)stopPlay()}
+ function stopPlay(){if(timer)clearInterval(timer);timer=null;playing=false;$('play').textContent='▶ 自动播放'}
+ function switchScenario(v){stopPlay();scenario=v;document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scenario===scenario)));$('retryOptions').classList.toggle('hidden',scenario==='lag'||scenario==='tags');$('lagOptions').classList.toggle('hidden',scenario!=='lag');$('outcome').value=scenario==='retry'?'fail':'recover';$('outcome').disabled=scenario==='retry';$('pointFilter').textContent=scenario==='tags'?'POINT':'PAID';$('noticeFilter').textContent=scenario==='tags'?'NOTICE':'PAID';$('simCaveat').textContent=scenario==='lag'?'吞吐/堆积实验是匀速离散模型，不包含实际 RocketMQ 的网络、重试队列及分配细节。':scenario==='tags'?'本实验只强调 Tag 订阅匹配；同组多实例的订阅表达式必须一致。':'双消费组结果互相独立；事件的网络传输与 Broker 内部细节已简化。';calcSteps()}
+ document.querySelectorAll('[data-scenario]').forEach(b=>b.addEventListener('click',()=>switchScenario(b.dataset.scenario)));
+ for(const id of ['outcome','maxRetry','prodRate','pointRate','noticeRate'])$(id).addEventListener('change',()=>{stopPlay();calcSteps()});
+ $('next').addEventListener('click',()=>{if(index<steps.length-1){index++;render()}});$('prev').addEventListener('click',()=>{stopPlay();if(index>0){index--;render()}});$('reset').addEventListener('click',()=>{stopPlay();index=0;render()});$('play').addEventListener('click',()=>{if(playing){stopPlay();return}if(index===steps.length-1)index=0;playing=true;$('play').textContent='Ⅱ 暂停';timer=setInterval(()=>{if(index>=steps.length-1){stopPlay();return}index++;render()},1100)});
+ const desc={producer:'Producer：写入 Broker 成功，不等于所有消费端业务都已成功。',consumer:'PushConsumer：业务事务完成后 SUCCESS；异常 FAILURE 导致重试。',dedup:'PostgreSQL + Spring JDBC：在同一个本地事务里写去重标记和业务副作用。',simple:'SimpleConsumer：通过 receive / ack + InvisibleDuration 管控消费确认。'};
+ document.querySelectorAll('[data-code]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.code;document.querySelectorAll('[data-code]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.code===v)));['producer','consumer','dedup','simple'].forEach(x=>$('code-'+x).hidden=x!==v);$('codeDesc').textContent=desc[v]}));
+ const answers=[{correct:1,right:'正确。消费进度和重试状态以消费组为单位独立维护。',wrong:'要区分组与实例：组间独立订阅，只有失败组按自己的策略重试。'},{correct:2,right:'正确。每秒新增待处理 10 − 4 = 6 条，10 秒积压约 60 条。',wrong:'计算 10 秒的净差：生产总量 100，已处理 40，差为 60。'},{correct:0,right:'正确。事件 ID + 唯一约束 + 本地事务可阻止同一个事件重复改变业务状态。',wrong:'ACK 丢失会再次投递，重试次数无法替代幂等；删除组更可能丢失管理状态。'}];
+ qa.forEach((card,i)=>{const feedback=card.querySelector('.feedback');card.querySelectorAll('[data-choice]').forEach(button=>button.addEventListener('click',()=>{const selected=Number(button.dataset.choice),ok=selected===answers[i].correct;card.querySelectorAll('[data-choice]').forEach(b=>{b.classList.remove('correct','wrong');b.setAttribute('aria-pressed','false')});button.classList.add(ok?'correct':'wrong');button.setAttribute('aria-pressed','true');feedback.textContent=(ok?'✓ ':'✗ ')+(ok?answers[i].right:answers[i].wrong)+' 可以修改答案再试。'}))});
+ switchScenario('dual');
+})();
+</script>
+</body>
+</html>

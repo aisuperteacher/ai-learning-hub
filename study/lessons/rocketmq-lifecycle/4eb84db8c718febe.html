@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RocketMQ 从 Producer 到 Consumer：交互式学习地图</title>
+<style>
+:root{
+  --bg:#f4f7fb; --panel:#ffffff; --ink:#172033; --muted:#667085;
+  --blue:#2563eb; --blue2:#dbeafe; --cyan:#0891b2; --cyan2:#cffafe;
+  --orange:#ea580c; --orange2:#ffedd5; --green:#16a34a; --green2:#dcfce7;
+  --red:#dc2626; --red2:#fee2e2; --purple:#7c3aed; --purple2:#ede9fe;
+  --line:#d9e2ef; --shadow:0 12px 35px rgba(26,39,71,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;color:var(--ink);background:
+radial-gradient(circle at 5% 0%,#e8f1ff 0,transparent 28%),
+radial-gradient(circle at 95% 8%,#fff1e8 0,transparent 24%),var(--bg);line-height:1.65}
+a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1180px;margin:auto;padding:10px 18px;display:flex;align-items:center;gap:14px}
+.logo{font-weight:850;letter-spacing:-.3px;white-space:nowrap}
+.progress{height:5px;background:#e8edf5;flex:1;border-radius:999px;overflow:hidden}
+.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.15s}
+.nav{display:flex;gap:6px;overflow:auto;padding-bottom:2px}
+.nav a{font-size:12px;white-space:nowrap;padding:5px 9px;border-radius:999px;background:#f2f5fa;color:#475467}
+.wrap{max-width:1180px;margin:auto;padding:26px 18px 70px}
+.hero{background:linear-gradient(135deg,#0f2a58,#173f84 55%,#5d2daa);color:white;border-radius:26px;padding:34px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:340px;height:340px;border:1px solid rgba(255,255,255,.15);border-radius:50%;right:-120px;top:-140px;box-shadow:0 0 0 55px rgba(255,255,255,.035),0 0 0 110px rgba(255,255,255,.025)}
+.eyebrow{font-size:13px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;opacity:.78}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.08;margin:10px 0 12px;letter-spacing:-1.8px}
+.hero p{max-width:830px;font-size:17px;opacity:.92;margin:0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{font-size:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);border-radius:999px}
+.section{margin-top:28px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.section-title{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.num{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:var(--blue);color:#fff;font-weight:850;flex:0 0 auto}
+.section-title h2{margin:0;font-size:26px;line-height:1.2}
+.section-title p{margin:5px 0 0;color:var(--muted);font-size:14px}
+.callout{padding:15px 17px;border-radius:14px;border:1px solid #bcd0f7;background:#eef5ff}
+.callout strong{color:#173f84}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpi{padding:18px}.kpi b{display:block;font-size:18px}.kpi span{color:var(--muted);font-size:13px}
+.flow{display:flex;align-items:stretch;gap:9px;padding:18px;overflow:auto}
+.node{min-width:142px;flex:1;border-radius:15px;padding:14px;border:1px solid var(--line);background:#fff;position:relative}
+.node .icon{font-size:25px}.node b{display:block;margin:4px 0 2px}.node small{color:var(--muted);display:block}
+.arrow{min-width:28px;display:grid;place-items:center;color:#8ba3c3;font-size:24px;font-weight:800}
+.node.blue{background:var(--blue2);border-color:#a9c7ff}.node.green{background:var(--green2);border-color:#9ee6b5}.node.orange{background:var(--orange2);border-color:#ffc495}.node.purple{background:var(--purple2);border-color:#c9b8ff}
+.route-note{font-size:12px;color:#536783;margin-top:7px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tab-btn{border:1px solid var(--line);background:white;padding:9px 13px;border-radius:11px;cursor:pointer;font-weight:700;color:#475467}
+.tab-btn.active{background:#172b55;color:white;border-color:#172b55}
+.step-layout{display:grid;grid-template-columns:310px 1fr;gap:16px}
+.step-list{padding:10px;max-height:640px;overflow:auto}
+.step{width:100%;text-align:left;border:0;background:transparent;border-radius:12px;padding:12px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;color:var(--ink)}
+.step:hover{background:#f4f7fb}.step.active{background:#eaf2ff;box-shadow:inset 3px 0 0 var(--blue)}
+.step .snum{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#e9eef7;color:#49617e;font-size:12px;font-weight:800;flex:0 0 auto}
+.step.active .snum{background:var(--blue);color:#fff}
+.step b{font-size:14px}.step span{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+.step-detail{padding:22px;min-height:370px}
+.step-detail h3{font-size:24px;margin:0 0 6px}.step-detail .why{color:var(--muted);margin-bottom:18px}
+.explain-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{padding:14px;border:1px solid var(--line);border-radius:13px;background:#fafcff}
+.mini b{display:block;margin-bottom:5px}.mini code{font-size:12px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#111827;color:#dbeafe;border-radius:14px;padding:14px;overflow:auto;font-size:13px}
+.term-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.term{padding:15px}.term .t{font-weight:850;font-size:16px}.term .plain{color:var(--muted);font-size:13px}.term .real{margin-top:8px;font-size:12px;padding:6px 8px;background:#f3f6fb;border-radius:8px}
+.storage{padding:20px;display:grid;grid-template-columns:1.05fr .12fr 1fr;align-items:center;gap:10px}
+.log{border:2px solid #9bbcfb;background:#eef5ff;border-radius:15px;padding:14px}
+.log-row{display:grid;grid-template-columns:74px 1fr;gap:8px;padding:8px;border-bottom:1px dashed #b9c9e5;font-size:12px}.log-row:last-child{border:0}
+.cq{border:2px solid #d0bdfc;background:#f5f1ff;border-radius:15px;padding:14px}
+.map-row{display:grid;grid-template-columns:78px 1fr;gap:8px;padding:9px;background:white;border:1px solid #dfd7f6;border-radius:10px;margin-top:7px;font-size:12px}
+.storage-arrow{text-align:center;font-size:24px;color:#7c3aed}
+.group-map{padding:20px}
+.topic-box{padding:14px;border:2px solid #b8cffb;border-radius:16px;background:#f3f7ff}
+.queues{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+.queue{padding:12px;text-align:center;border-radius:12px;background:#fff4e9;border:1px solid #ffc997;font-weight:800}
+.group-zone{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+.group-main{padding:15px;border:2px dashed #8db3fb;border-radius:16px}.consumers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.consumer{padding:12px;border-radius:12px;background:#eaf2ff;border:1px solid #bed1fb}
+.other-groups{display:grid;gap:10px}.gbox{padding:14px;border-radius:13px;border:1px solid var(--line)}.gbox.pink{background:#fff0f5;border-color:#f5bfd0}.gbox.mint{background:#edfff5;border-color:#afe0c5}
+.sim{padding:20px}
+.lagbar{height:38px;border-radius:12px;overflow:hidden;background:#fee5d2;display:flex;margin:14px 0;border:1px solid #ffcda8}
+.consumed{background:#cfe2ff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:.3s}
+.pending{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:.3s}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:12px;color:var(--muted);font-weight:700}
+input[type=range]{width:100%}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.metric{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafcff}.metric b{font-size:23px;display:block}
+.formula{text-align:center;font-size:18px;font-weight:850;padding:12px;background:#fff8e8;border:1px solid #f6d38a;border-radius:12px;margin-top:12px}
+.retry-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}
+.state-line{display:flex;align-items:center;gap:8px;overflow:auto;padding:14px 0}
+.state{min-width:110px;padding:12px;border:1px solid var(--line);border-radius:12px;text-align:center;background:white}
+.state.ok{background:var(--green2);border-color:#9fdbaf}.state.bad{background:var(--red2);border-color:#f4b2b2}.state.wait{background:#fff6dd;border-color:#f5d37c}.state.active{outline:3px solid rgba(37,99,235,.18);border-color:#6d9bf7}
+.btn{border:0;border-radius:11px;padding:10px 14px;cursor:pointer;font-weight:800;background:#172b55;color:white}
+.btn.red{background:var(--red)}.btn.green{background:var(--green)}.btn.ghost{background:#eef2f8;color:#334155}
+.retry-log{height:220px;overflow:auto;background:#101827;color:#d7e2f1;border-radius:14px;padding:12px;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+.version{padding:20px}.compare{width:100%;border-collapse:collapse;font-size:13px}.compare th,.compare td{padding:11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f6f8fc}
+.warn{padding:14px 16px;border-left:4px solid var(--orange);background:#fff7ed;border-radius:10px}
+.okbox{padding:14px 16px;border-left:4px solid var(--green);background:#f0fdf4;border-radius:10px}
+.failmap{padding:20px}.fail-row{display:grid;grid-template-columns:150px 1fr 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}.fail-row:last-child{border:0}
+.quiz{padding:20px}.q{border-top:1px solid var(--line);padding:16px 0}.q:first-child{border-top:0}.answers{display:grid;gap:8px;margin-top:9px}.answer{border:1px solid var(--line);background:white;border-radius:10px;padding:10px;text-align:left;cursor:pointer}.answer:hover{background:#f7f9fc}.answer.correct{border-color:#78c790;background:#eafff0}.answer.wrong{border-color:#ee9c9c;background:#fff0f0}
+.feedback{font-size:13px;margin-top:8px;min-height:20px;color:#475467}
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.check{padding:13px;border:1px solid var(--line);border-radius:12px;background:white}
+.footer{margin-top:32px;padding:22px;color:#667085;font-size:12px}.sources li{margin:6px 0}
+.small{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.p-blue{background:var(--blue2);color:#174697}.p-red{background:var(--red2);color:#a80e0e}.p-green{background:var(--green2);color:#176d31}.p-purple{background:var(--purple2);color:#5d28b4}
+@media(max-width:900px){
+  .grid2,.grid3,.retry-grid,.group-zone{grid-template-columns:1fr}
+  .term-grid{grid-template-columns:1fr 1fr}
+  .step-layout{grid-template-columns:1fr}.step-list{display:flex;overflow:auto;max-height:none}.step{min-width:210px}
+  .storage{grid-template-columns:1fr}.storage-arrow{transform:rotate(90deg)}
+  .controls,.metric-row{grid-template-columns:1fr}.fail-row{grid-template-columns:1fr}
+  .nav{display:none}.hero{padding:26px 22px}
+}
+@media(max-width:560px){
+  .wrap{padding:18px 11px 50px}.term-grid,.checklist{grid-template-columns:1fr}
+  .queues{grid-template-columns:1fr 1fr}.consumers{grid-template-columns:1fr}
+  .flow{padding:12px}.section-title h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">🚀 RocketMQ 学习地图</div>
+    <div class="progress"><i id="readProgress"></i></div>
+    <div class="nav">
+      <a href="#overview">全局</a><a href="#journey">完整链路</a><a href="#storage">存储</a>
+      <a href="#group">Group/Queue</a><a href="#lag">堆积</a><a href="#retry">Retry/DLQ</a><a href="#quiz">自测</a>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+<section class="hero">
+  <div class="eyebrow">ELI5 PRO · LEARN MODE · VISUAL FIRST</div>
+  <h1>RocketMQ：一条消息<br>从 Producer 到 Consumer</h1>
+  <p>用一个订单事件 <b>ORDER_CREATED / orderId=10086</b> 贯穿全程。目标不是背 API，而是在脑中建立一张能用于开发和排障的“消息生命周期地图”。</p>
+  <div class="badges">
+    <span class="badge">NameServer 路由</span><span class="badge">Topic / Queue</span><span class="badge">CommitLog / ConsumeQueue</span>
+    <span class="badge">Consumer Group / Offset</span><span class="badge">Lag / 堆积</span><span class="badge">Retry / DLQ</span><span class="badge">幂等</span>
+  </div>
+</section>
+
+<section class="section" id="overview">
+  <div class="section-title"><div class="num">0</div><div><h2>先抓住一条主线</h2><p>所有细节都挂在这 8 个盒子上。</p></div></div>
+  <div class="card flow">
+    <div class="node blue"><div class="icon">🧾</div><b>OrderService</b><small>业务产生事件</small><div class="route-note">orderId=10086</div></div>
+    <div class="arrow">→</div>
+    <div class="node orange"><div class="icon">📨</div><b>Producer</b><small>构造并发送 Message</small></div>
+    <div class="arrow">→</div>
+    <div class="node green"><div class="icon">🧭</div><b>NameServer</b><small>只告诉客户端“去哪儿”</small></div>
+    <div class="arrow">→</div>
+    <div class="node purple"><div class="icon">🏬</div><b>Broker</b><small>真正接收和存消息</small></div>
+    <div class="arrow">→</div>
+    <div class="node blue"><div class="icon">👥</div><b>Consumer Group</b><small>一组相同消费语义</small></div>
+    <div class="arrow">→</div>
+    <div class="node orange"><div class="icon">⚙️</div><b>Consumer</b><small>执行你的业务代码</small></div>
+  </div>
+  <div class="callout" style="margin-top:12px">
+    <strong>一句话：</strong>NameServer 负责“告诉你去哪儿”，Broker 负责“真正存消息”，Producer 负责“选择 Queue 并发送”，Consumer Group 负责“共享消费语义并维护消费进度”。
+  </div>
+  <div class="grid3" style="margin-top:14px">
+    <div class="card kpi"><b>生产</b><span>业务数据 → Message → Topic/Queue → Broker</span></div>
+    <div class="card kpi"><b>存储</b><span>CommitLog 存正文；ConsumeQueue 存逻辑队列索引</span></div>
+    <div class="card kpi"><b>消费</b><span>Group/Consumer 获取消息 → 业务处理 → Offset / Retry / DLQ</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div class="num">1</div><div><h2>角色卡：先知道“谁负责什么”</h2><p>先有位置，再记术语。</p></div></div>
+  <div class="term-grid">
+    <div class="card term"><div class="t">Producer</div><div class="plain">发消息的人</div><div class="real">构造 Message、查路由、选 Queue、发给 Broker</div></div>
+    <div class="card term"><div class="t">NameServer</div><div class="plain">导航 / 通讯录</div><div class="real">维护 Topic ↔ Broker/Queue 路由；不承载业务消息正文</div></div>
+    <div class="card term"><div class="t">Broker</div><div class="plain">真正的仓库</div><div class="real">接收、持久化、查询、向消费者提供消息</div></div>
+    <div class="card term"><div class="t">Topic</div><div class="plain">业务大类</div><div class="real">如 ORDER_EVENT；一个 Topic 通常由多个 Queue 组成</div></div>
+    <div class="card term"><div class="t">MessageQueue</div><div class="plain">Topic 内的车道</div><div class="real">水平分片与有序存储单元；Offset 在 Queue 内递增</div></div>
+    <div class="card term"><div class="t">Consumer Group</div><div class="plain">同一职责的处理团队</div><div class="real">同组 Consumer 共同承担消费；Group 关联消费进度与重试策略</div></div>
+    <div class="card term"><div class="t">Consumer Offset</div><div class="plain">这个团队读到哪儿了</div><div class="real">可把核心标识理解为 Group + Topic + Queue → progress</div></div>
+    <div class="card term"><div class="t">DLQ</div><div class="plain">最终失败隔离区</div><div class="real">消息多次消费失败后进入；本质与 Consumer Group 强相关</div></div>
+  </div>
+</section>
+
+<section class="section" id="journey">
+  <div class="section-title"><div class="num">2</div><div><h2>完整链路：点左边步骤逐个走</h2><p>用订单创建消息把生产、路由、存储、消费、失败恢复串成一条因果链。</p></div></div>
+  <div class="step-layout">
+    <div class="card step-list" id="stepList"></div>
+    <div class="card step-detail" id="stepDetail"></div>
+  </div>
+</section>
+
+<section class="section" id="storage">
+  <div class="section-title"><div class="num">3</div><div><h2>Broker 为什么同时有 CommitLog 和 ConsumeQueue？</h2><p>一句话：正文只顺序写一份，逻辑 Queue 用轻量索引去定位正文。</p></div></div>
+  <div class="card storage">
+    <div class="log">
+      <b>CommitLog · 物理消息文件</b>
+      <div class="small">来自不同 Topic / Queue 的消息按物理写入位置排列（示意）</div>
+      <div class="log-row"><b>1000</b><span>ORDER_EVENT / Q1 / order=10080</span></div>
+      <div class="log-row"><b>1260</b><span>USER_EVENT / Q0 / user=9527</span></div>
+      <div class="log-row"><b>1450</b><span>ORDER_EVENT / Q1 / order=10086</span></div>
+      <div class="log-row"><b>1730</b><span>PAY_EVENT / Q2 / pay=P9001</span></div>
+    </div>
+    <div class="storage-arrow">←</div>
+    <div class="cq">
+      <b>ConsumeQueue · 逻辑队列索引</b>
+      <div class="small">ORDER_EVENT / Q1</div>
+      <div class="map-row"><b>QOffset 100</b><span>→ CommitLog 1000</span></div>
+      <div class="map-row"><b>QOffset 101</b><span>→ CommitLog 1450</span></div>
+      <div class="map-row"><b>QOffset 102</b><span>→ CommitLog 2100</span></div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div class="callout"><strong>为什么这样设计？</strong><br>CommitLog 追求高吞吐的顺序写；ConsumeQueue 让“按 Topic + Queue + Offset 找消息”不需要扫描整份物理日志。</div>
+    <div class="warn"><b>消费成功 ≠ 物理删除。</b><br>RocketMQ 的消息保留按存储策略管理，与“某个 Group 是否已经消费”是两回事。</div>
+  </div>
+</section>
+
+<section class="section" id="group">
+  <div class="section-title"><div class="num">4</div><div><h2>Topic、Queue、Consumer Group 到底是什么关系？</h2><p>先看经典 4.x 队列级负载均衡，最容易建立正确心智模型。</p></div></div>
+  <div class="card group-map">
+    <div class="topic-box">
+      <b>Topic: ORDER_EVENT</b>
+      <div class="queues"><div class="queue">Q0</div><div class="queue">Q1</div><div class="queue">Q2</div><div class="queue">Q3</div></div>
+    </div>
+    <div class="group-zone">
+      <div class="group-main">
+        <b>Consumer Group: stock-consumer-group</b>
+        <div class="small">经典 4.x Queue-based：同一时刻每个 Queue 分给组内某个 Consumer。</div>
+        <div class="consumers">
+          <div class="consumer"><b>Consumer-1</b><br><span class="small">负责 Q0 + Q1</span></div>
+          <div class="consumer"><b>Consumer-2</b><br><span class="small">负责 Q2 + Q3</span></div>
+        </div>
+      </div>
+      <div class="other-groups">
+        <div class="gbox pink"><b>point-consumer-group</b><br><span class="small">独立消费 ORDER_EVENT，拥有自己的进度</span></div>
+        <div class="gbox mint"><b>risk-consumer-group</b><br><span class="small">同样独立，不受 StockGroup 成功/失败直接影响</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="okbox" style="margin-top:12px">
+    <b>真正要记住：</b>物理消息不需要因为 3 个 Group 就复制 3 份；不同 Group 主要通过各自的消费状态/进度形成“各读各的”效果。
+  </div>
+</section>
+
+<section class="section" id="lag">
+  <div class="section-title"><div class="num">5</div><div><h2>动手理解 Offset 和消息堆积（Lag）</h2><p>拖动两个滑块，看“Broker 已经写到哪里”和“某 Group 已经追到哪里”的距离。</p></div></div>
+  <div class="card sim">
+    <div class="controls">
+      <div><label>Broker MaxOffset：<b id="maxVal">1000</b></label><input id="maxOffset" type="range" min="100" max="2000" value="1000" step="10"></div>
+      <div><label>stock-consumer-group ConsumerOffset：<b id="consumerVal">800</b></label><input id="consumerOffset" type="range" min="0" max="1000" value="800" step="10"></div>
+    </div>
+    <div class="lagbar"><div class="consumed" id="consumedBar">已追上</div><div class="pending" id="pendingBar">待消费</div></div>
+    <div class="metric-row">
+      <div class="metric"><span class="small">MaxOffset</span><b id="m1">1000</b><span class="small">Broker 队列最新进度</span></div>
+      <div class="metric"><span class="small">ConsumerOffset</span><b id="m2">800</b><span class="small">该 Group 的消费进度</span></div>
+      <div class="metric"><span class="small">Lag</span><b id="m3">200</b><span class="small">还没追上的距离</span></div>
+    </div>
+    <div class="formula">Lag ≈ MaxOffset − ConsumerOffset = <span id="formulaLag">200</span></div>
+    <div class="small" style="margin-top:10px">更精确地看：通常要按 <b>Consumer Group + Topic + Queue</b> 观察，再把多个 Queue 的 Lag 汇总。过滤、重试、版本实现与监控口径会影响业务上对“待处理量”的解释。</div>
+  </div>
+</section>
+
+<section class="section" id="retry">
+  <div class="section-title"><div class="num">6</div><div><h2>失败之后：Retry → DLQ</h2><p>消费失败并不是马上进死信。点击“消费失败”亲自把消息推到 DLQ。</p></div></div>
+  <div class="retry-grid">
+    <div class="card sim">
+      <div class="tabs">
+        <button class="tab-btn active" data-retry-mode="v4">4.x 并发消费示意</button>
+        <button class="tab-btn" data-retry-mode="v5">5.x 状态机示意</button>
+      </div>
+      <div class="state-line" id="stateLine">
+        <div class="state active" id="stNormal"><b>Ready</b><br><span class="small">可消费</span></div><div>→</div>
+        <div class="state" id="stInflight"><b>Inflight</b><br><span class="small">处理中</span></div><div>→</div>
+        <div class="state" id="stRetry"><b>Retry</b><br><span class="small">等待再投递</span></div><div>→</div>
+        <div class="state bad" id="stDlq"><b>DLQ</b><br><span class="small">最终失败</span></div>
+      </div>
+      <div class="grid2">
+        <div class="mini"><b>当前消息</b><code>ORDER_CREATED:10086</code><div class="small">Group: stock-consumer-group</div></div>
+        <div class="mini"><b>当前计数</b><span id="retryCount">首次投递，重试 0 次</span><div class="small" id="retryLimitText">4.x 并发消费默认最大重试常见为 16 次</div></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn green" id="successBtn">✓ 消费成功</button>
+        <button class="btn red" id="failBtn">✕ 消费失败</button>
+        <button class="btn ghost" id="resetBtn">↺ 重置</button>
+      </div>
+      <div class="callout" style="margin-top:12px">
+        <strong>Group 维度：</strong>同一条 orderId=10086 可以对 StockGroup 最终成为死信，同时 PointGroup 和 RiskGroup 已经成功。
+      </div>
+    </div>
+    <div class="card sim">
+      <b>模拟日志</b>
+      <div class="retry-log" id="retryLog">[ready] 等待消费 ORDER_CREATED:10086
+</div>
+      <div class="small" style="margin-top:8px">4.x 中常见特殊 Topic：<code>%RETRY%group</code> 与 <code>%DLQ%group</code>。5.x 的最大重试次数由 Consumer Group 元数据等配置控制，不能机械套用“16 次”。</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div class="num">7</div><div><h2>为什么一定要做幂等？</h2><p>MQ 的“至少一次”语义意味着：重复投递并不是异常设计之外的事情。</p></div></div>
+  <div class="grid2">
+    <div class="card sim">
+      <b>典型重复场景</b>
+      <div class="flow" style="box-shadow:none;padding:12px 0">
+        <div class="node green"><b>① DB 扣库存成功</b><small>业务已经生效</small></div>
+        <div class="arrow">→</div>
+        <div class="node orange"><b>② Consumer 宕机</b><small>成功结果还没可靠提交</small></div>
+        <div class="arrow">→</div>
+        <div class="node blue"><b>③ 再投递</b><small>同一业务消息再次出现</small></div>
+      </div>
+    </div>
+    <div class="card sim">
+      <b>业务防线</b>
+      <div class="code">messageKey = "ORDER_CREATED:10086"
+
+if (consume_log.exists(messageKey)) {
+    return SUCCESS;   // 已处理，直接幂等成功
+}
+
+doBusiness();
+consume_log.insert(messageKey, "SUCCESS");</div>
+      <div class="small" style="margin-top:8px">真实项目要让“业务状态变更 + 幂等记录”满足你需要的一致性边界，例如通过唯一约束、本地事务、状态机或专门的幂等表。</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div class="num">8</div><div><h2>4.x 和 5.x：哪些地方最容易混？</h2><p>学习时先掌握共同主干，再记版本边界。</p></div></div>
+  <div class="card version">
+    <table class="compare">
+      <thead><tr><th>主题</th><th>经典 4.x 心智模型</th><th>5.x 需要补充的认识</th></tr></thead>
+      <tbody>
+        <tr><td><b>负载均衡</b></td><td>Queue-based：Group 内 Consumer 分 Queue；Queue 少于 Consumer 时会有实例拿不到 Queue。</td><td>PushConsumer / SimpleConsumer 可使用 Message-based；PullConsumer 仍可表现为 Queue-based。具体取决于 Broker、客户端与 Consumer 类型。</td></tr>
+        <tr><td><b>消费 API</b></td><td>DefaultMQPushConsumer / PullConsumer 等经典客户端模型。</td><td>PushConsumer、SimpleConsumer 等模型更明确区分拉取与可见性/状态机语义。</td></tr>
+        <tr><td><b>Retry</b></td><td>并发消费常见默认最大重试 16；集群模式有自动 Retry；广播模式不要套用此机制。</td><td>最大重试次数由 Consumer Group 元数据等配置；PushConsumer 有 Ready → Inflight → WaitingRetry → ... → DLQ 状态。</td></tr>
+        <tr><td><b>DLQ</b></td><td>常见名称 <code>%DLQ%ConsumerGroupName</code>。</td><td>仍是消费失败最终兜底，但以当前版本官方消费重试与 Group 配置为准。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div class="num">9</div><div><h2>开发 / 排障时，从哪里切入？</h2><p>把症状映射回消息生命周期。</p></div></div>
+  <div class="card failmap">
+    <div class="fail-row"><b>Producer 发不出去</b><span>看路由获取、Broker 可写、网络、超时、发送重试</span><span><span class="pill p-blue">Producer → NameServer/Broker</span></span></div>
+    <div class="fail-row"><b>Broker 有消息但没人消费</b><span>看订阅、Consumer Group、路由、客户端存活、负载均衡</span><span><span class="pill p-purple">Group / Consumer</span></span></div>
+    <div class="fail-row"><b>消息持续堆积</b><span>看每个 Queue 的 MaxOffset 与 Group ConsumerOffset、消费 TPS、业务耗时、下游 DB/RPC</span><span><span class="pill p-red">Lag</span></span></div>
+    <div class="fail-row"><b>加机器没提速</b><span>4.x 先确认 Queue 数量是否已经限制 Queue-based 并行度，再查线程池和下游瓶颈</span><span><span class="pill p-blue">Queue / Rebalance</span></span></div>
+    <div class="fail-row"><b>重复扣库存</b><span>不要只怪 MQ；先检查消费业务是否幂等、事务边界是否合理</span><span><span class="pill p-green">Idempotency</span></span></div>
+    <div class="fail-row"><b>DLQ 有消息</b><span>查看原业务 Key、异常原因与重试历史；修复代码/数据后走补偿或重放流程</span><span><span class="pill p-red">Retry / DLQ</span></span></div>
+  </div>
+</section>
+
+<section class="section" id="quiz">
+  <div class="section-title"><div class="num">10</div><div><h2>自测：你是否真的串起来了？</h2><p>不是考术语，而是考因果关系。点选答案立即反馈。</p></div></div>
+  <div class="card quiz" id="quizBox"></div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div class="num">11</div><div><h2>最后只背这 8 句话</h2><p>把它们当作你以后学习 RocketMQ 的骨架。</p></div></div>
+  <div class="checklist">
+    <div class="check">① <b>NameServer 只管路由</b>，业务消息由客户端直接和 Broker 交互。</div>
+    <div class="check">② <b>Topic 是业务分类，Queue 是 Topic 内的水平分片/有序单元。</b></div>
+    <div class="check">③ Producer 查路由、选 Queue，然后把消息发到 Queue 所在 Broker。</div>
+    <div class="check">④ Broker 以 <b>CommitLog 存物理消息</b>，以 <b>ConsumeQueue 建逻辑队列索引</b>。</div>
+    <div class="check">⑤ Consumer Group 表示相同消费职责；同组实例共同承担消费。</div>
+    <div class="check">⑥ 消费进度要从 <b>Group + Topic + Queue</b> 看，Lag 就是“Group 落后 Broker 多远”。</div>
+    <div class="check">⑦ 失败先 Retry，多次失败才 DLQ；<b>DLQ 是 Group 视角的最终失败区</b>。</div>
+    <div class="check">⑧ 重试、网络超时、Rebalance 都可能带来重复，所以消费业务必须考虑 <b>幂等</b>。</div>
+  </div>
+</section>
+
+<section class="card footer">
+  <b>版本与资料说明</b>
+  <p>本页主线用于建立通用心智模型；Queue 级负载均衡、默认重试次数等实现细节明确区分了经典 4.x 与 5.x。生产环境以你的 Broker / Client / Consumer 类型和实际配置为准。</p>
+  <b>Apache RocketMQ 官方资料</b>
+  <ul class="sources">
+    <li><a href="https://rocketmq.apache.org/docs/4.x/introduction/02whatis/" target="_blank">4.x：What is RocketMQ / Architecture & Workflow</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/domainModel/04messagequeue/" target="_blank">5.0：Message Queue</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/featureBehavior/11messagestorepolicy/" target="_blank">5.0：Message Storage and Cleanup</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/featureBehavior/08consumerloadbalance/" target="_blank">5.0：Consumer Load Balancing</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/featureBehavior/09consumerprogress/" target="_blank">5.0：Consumer Progress Management</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/featureBehavior/10consumerretrypolicy/" target="_blank">5.0：Consumption Retry / DLQ</a></li>
+    <li><a href="https://rocketmq.apache.org/docs/4.x/consumer/02push/" target="_blank">4.x：Push Consumer / Retry & Dead-Letter Queue</a></li>
+  </ul>
+</section>
+</main>
+
+<script>
+const steps = [
+  {
+    title:"0. 启动与路由准备",
+    sub:"Broker 注册，客户端之后才能找路",
+    why:"在业务消息出现之前，RocketMQ 先解决“谁在哪里”的问题。",
+    what:"Broker 向 NameServer 注册自身以及 Topic/Queue 路由信息。Producer/Consumer 启动后查询路由，并直接与 Broker 建立通信。",
+    state:"NameServer 持有路由视图；Broker 才是消息数据面。",
+    caveat:"NameServer 不是消息中转站。消息正文不需要 Producer → NameServer → Broker 绕一圈。",
+    code:"Broker → NameServer : register route\nProducer → NameServer : query ORDER_EVENT\nProducer → Broker : send message"
+  },
+  {
+    title:"1. 业务构造 Message",
+    sub:"把业务事件包装成消息",
+    why:"MQ 需要一个稳定的事件载体，把业务调用从同步 RPC 中拆出来。",
+    what:"OrderService 创建订单 10086 后构造消息：Topic=ORDER_EVENT，Tag=ORDER_CREATED，Key=10086，Body=订单事件数据。",
+    state:"此时消息仍在 Producer 侧，还没有进入 Broker。",
+    caveat:"Topic 是业务分类；Tag 常用于同 Topic 下再分类；Key 常用于业务检索和排障。不要把 Key 当作天然的全局幂等保证。",
+    code:'Topic = "ORDER_EVENT"\nTag   = "ORDER_CREATED"\nKey   = "10086"\nBody  = {"orderId":10086,"amount":299}'
+  },
+  {
+    title:"2. Producer 查 Topic 路由",
+    sub:"先问“ORDER_EVENT 在哪些 Broker/Queue 上？”",
+    why:"Producer 不应该把 Broker 地址和 Topic 分片关系硬编码在业务里。",
+    what:"Producer 从 NameServer 获取 ORDER_EVENT 的路由，得到可以发送的 Broker 与 MessageQueue 列表，并在客户端缓存/更新。",
+    state:"Producer 现在知道可选 Queue；NameServer 仍然没有收到业务消息正文。",
+    caveat:"路由异常通常表现为“找不到 Topic 路由”或无法选出可用 Queue；它和 Broker 真正写盘失败是不同故障层。",
+    code:"ORDER_EVENT →\n  Broker-A/Q0\n  Broker-A/Q1\n  Broker-B/Q0\n  Broker-B/Q1"
+  },
+  {
+    title:"3. Producer 选择 MessageQueue",
+    sub:"选择一条车道，也就确定了目标 Broker",
+    why:"一个 Topic 用多个 Queue 做水平分片，才能把生产/消费压力分散开。",
+    what:"Producer 根据路由与负载均衡选择一个 Queue，例如 Broker-B/Q1，然后直接向 Broker-B 发送消息。",
+    state:"选 Queue ≈ 选定消息的逻辑分片 + Queue 所在 Broker。",
+    caveat:"如果需要局部有序，不能让同一业务组的消息随意散到不同 Queue；通常要用稳定的 MessageGroup/Queue 选择策略并遵循对应版本的 FIFO 语义。",
+    code:"ORDER_EVENT\n  Q0  Q1  Q2  Q3\n          ↑\n     choose Q2"
+  },
+  {
+    title:"4. Broker 接收并持久化",
+    sub:"真正的消息仓库开始工作",
+    why:"消息中间件必须把“生产者已经结束调用”和“消费者稍后处理”解耦，所以消息需要可靠存储。",
+    what:"Broker 校验请求并将消息写入存储。经典本地存储模型中，CommitLog 保存物理消息，ConsumeQueue 保存按 Topic/Queue 组织的逻辑索引。",
+    state:"消息已经进入 Broker；消费者是否在线不影响消息先被保存。",
+    caveat:"同步/异步刷盘会改变 ACK 与磁盘持久化之间的可靠性/延迟权衡；具体以 Broker 配置和版本为准。",
+    code:"CommitLog @1450 = full message\nConsumeQueue(ORDER_EVENT,Q1,101) → @1450"
+  },
+  {
+    title:"5. Broker 返回发送结果",
+    sub:"Producer 知道“Broker 是否接受了消息”",
+    why:"发送端需要知道自己是否应该返回成功、重试或告警。",
+    what:"同步发送场景下，Producer 等待 Broker 返回结果；如果网络/Broker 异常，客户端可能触发发送重试。",
+    state:"发送成功只说明生产侧链路达到相应成功条件，不等于消费者已经处理成功。",
+    caveat:"“Broker 实际收到但 ACK 丢了”可能让 Producer 重试，从而带来重复消息，因此消费端仍要幂等。",
+    code:"Producer → Broker : send\nBroker   → Producer : ACK / result"
+  },
+  {
+    title:"6. Consumer Group 获取并分配消息",
+    sub:"同组消费者共同承担一份消费职责",
+    why:"单个进程吞吐有限，需要水平扩展；同时又要让一组实例共享同一个业务语义。",
+    what:"Consumer 订阅 Topic。经典 4.x 中常见 Queue-based Rebalance：Queue 被分给组内不同实例。5.x Push/SimpleConsumer 可采用 Message-based load balancing。",
+    state:"Group 是逻辑职责；Consumer 是实际运行实例；负载均衡决定谁处理哪部分消息。",
+    caveat:"4.x 如果 Consumer 实例数明显多于 Queue 数，继续加实例不一定增加 Queue 级并行度。",
+    code:"stock-consumer-group\n  Consumer-1 ← Q0,Q1\n  Consumer-2 ← Q2,Q3"
+  },
+  {
+    title:"7. Consumer 获取并执行业务",
+    sub:"消息真正进入你的代码",
+    why:"前面的所有组件都在为这一刻服务：让订单事件在合适的消费者上可靠执行。",
+    what:"PushConsumer 对应用表现为回调式消费；SDK/协议负责获取、缓存、分发等细节。业务代码执行扣库存、通知、积分等逻辑。",
+    state:"消息处于处理中（5.x 常称 Inflight）。此时业务成功与 MQ 消费确认仍是两个需要协调的状态。",
+    caveat:"Push 不应简单理解成“Broker 像 HTTP 回调一样直接调用你的业务方法”；应用看到的是回调式 API，底层由客户端/服务端协议完成消息获取与投递。",
+    code:"onMessage(msg) {\n  stockService.lock(msg.orderId);\n  return SUCCESS;\n}"
+  },
+  {
+    title:"8. 成功：推进消费进度",
+    sub:"这个 Group 记住“我读到这里了”",
+    why:"下次启动、Rebalance 或故障恢复时，消费者必须知道从哪里继续。",
+    what:"消费成功后，客户端/服务端按相应消费模型提交进度。排障时通常从 Consumer Group + Topic + Queue 的 Offset 观察。",
+    state:"例如 MaxOffset=1000，StockGroup ConsumerOffset=800，则该 Group 在该 Queue 上大约落后 200。",
+    caveat:"推进 Offset 不等于删除物理消息。消息清理由 Broker 的存储保留策略控制。",
+    code:"Lag ≈ MaxOffset - ConsumerOffset\n    = 1000 - 800\n    = 200"
+  },
+  {
+    title:"9. 失败：Retry → DLQ",
+    sub:"先重试，超过上限才进入最终失败区",
+    why:"临时 DB/RPC 故障值得自动恢复；永久错误又不能无限占用消费资源。",
+    what:"消费失败后 Broker/消费模型按照 Retry 策略重新投递。超过最大重试次数仍失败，进入该 Consumer Group 对应的 DLQ，可用于后续人工/自动补偿。",
+    state:"DLQ 是消费侧最终兜底，不是“整个 Topic 的全局垃圾桶”。",
+    caveat:"4.x 并发消费常见默认最大重试 16；5.x 的最大重试次数由 Consumer Group 元数据等配置。版本/消费类型不同，不能混用默认值。",
+    code:"Normal → Fail → Retry → Fail → ... → DLQ\n4.x: %DLQ%stock-consumer-group"
+  },
+  {
+    title:"10. 重放与幂等",
+    sub:"恢复业务，而不是制造第二次副作用",
+    why:"发送重试、消费重试、网络超时、Rebalance 都可能让同一业务事件再次出现。",
+    what:"消费者应通过业务唯一键、唯一约束、状态机或幂等记录保证“同一事件处理多次，业务最终效果仍正确”。",
+    state:"例如 ORDER_CREATED:10086 已 SUCCESS，再收到同 Key 时直接幂等返回。",
+    caveat:"不要把“MQ 至少一次投递”误读成“业务自动 Exactly Once”。最终是否只产生一次业务副作用，需要你的业务一致性设计。",
+    code:'idempotentKey = "ORDER_CREATED:10086"\nif alreadySuccess(key): return SUCCESS'
+  }
+];
+
+const stepList = document.getElementById("stepList");
+const detail = document.getElementById("stepDetail");
+steps.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.className="step"+(i===0?" active":"");
+  b.innerHTML=`<div class="snum">${i}</div><div><b>${s.title}</b><span>${s.sub}</span></div>`;
+  b.onclick=()=>showStep(i);
+  stepList.appendChild(b);
+});
+function showStep(i){
+  [...document.querySelectorAll(".step")].forEach((x,j)=>x.classList.toggle("active",j===i));
+  const s=steps[i];
+  detail.innerHTML=`
+    <span class="pill p-blue">步骤 ${i}/${steps.length-1}</span>
+    <h3>${s.title}</h3>
+    <div class="why">${s.sub}</div>
+    <div class="explain-grid">
+      <div class="mini"><b>为什么需要它？</b>${s.why}</div>
+      <div class="mini"><b>真正发生什么？</b>${s.what}</div>
+      <div class="mini"><b>状态改变</b>${s.state}</div>
+      <div class="mini"><b>边界 / 易错点</b>${s.caveat}</div>
+    </div>
+    <div class="code" style="margin-top:14px">${s.code.replaceAll("<","&lt;").replaceAll(">","&gt;")}</div>`;
+}
+showStep(0);
+
+// Lag simulator
+const maxO=document.getElementById("maxOffset"), conO=document.getElementById("consumerOffset");
+function syncLag(changed){
+  let max=+maxO.value, con=+conO.value;
+  if(changed==="max"){conO.max=max;if(con>max){con=max;conO.value=max}}
+  if(changed==="con" && con>max){max=con;maxO.value=con;conO.max=con}
+  const lag=Math.max(0,max-con), pct=max?Math.round(con/max*100):0;
+  document.getElementById("maxVal").textContent=max;
+  document.getElementById("consumerVal").textContent=con;
+  document.getElementById("m1").textContent=max; document.getElementById("m2").textContent=con;
+  document.getElementById("m3").textContent=lag; document.getElementById("formulaLag").textContent=lag;
+  document.getElementById("consumedBar").style.width=pct+"%";
+  document.getElementById("pendingBar").style.width=(100-pct)+"%";
+  document.getElementById("consumedBar").textContent=pct>=16?`已追上 ${pct}%`:"";
+  document.getElementById("pendingBar").textContent=(100-pct)>=16?`待追 ${100-pct}%`:"";
+}
+maxO.oninput=()=>syncLag("max"); conO.oninput=()=>syncLag("con"); syncLag("max");
+
+// Retry simulator
+let retryMode="v4", retries=0, finished=false;
+const retryLog=document.getElementById("retryLog");
+function log(msg){retryLog.textContent += msg+"\n"; retryLog.scrollTop=retryLog.scrollHeight}
+function maxRetry(){return retryMode==="v4"?16:3}
+function renderRetry(state="ready"){
+  document.querySelectorAll(".state").forEach(x=>x.classList.remove("active"));
+  const map={ready:"stNormal",inflight:"stInflight",retry:"stRetry",dlq:"stDlq",commit:"stInflight"};
+  document.getElementById(map[state]||"stNormal").classList.add("active");
+  document.getElementById("retryCount").textContent = retries===0?"首次投递，重试 0 次":`已重试 ${retries} 次`;
+  document.getElementById("retryLimitText").textContent = retryMode==="v4"
+    ?"4.x 并发消费：这里按经典默认最大重试 16 次演示"
+    :"5.x：这里用“最大重试 3 次”示例（首次 + 3 次重试 = 最多投递 4 次）";
+}
+document.querySelectorAll("[data-retry-mode]").forEach(btn=>{
+  btn.onclick=()=>{
+    retryMode=btn.dataset.retryMode;
+    document.querySelectorAll("[data-retry-mode]").forEach(x=>x.classList.toggle("active",x===btn));
+    retries=0;finished=false;retryLog.textContent=`[mode] ${retryMode==="v4"?"4.x 并发消费":"5.x 状态机"}\n[ready] 等待消费 ORDER_CREATED:10086\n`;
+    renderRetry("ready");
+  }
+});
+document.getElementById("failBtn").onclick=()=>{
+  if(finished){log("[info] 已结束，请先重置");return}
+  renderRetry("inflight"); log(`[inflight] 第 ${retries+1} 次投递开始处理`);
+  if(retries>=maxRetry()){
+    renderRetry("dlq"); log(`[dlq] 已超过最大重试次数 → 进入 ${retryMode==="v4"?"%DLQ%stock-consumer-group":"DLQ"}`);
+    finished=true; return;
+  }
+  retries++;
+  renderRetry("retry"); log(`[fail] 消费失败 → 安排第 ${retries} 次重试`);
+  if(retries===maxRetry()) log("[warn] 下一次仍失败将进入 DLQ");
+};
+document.getElementById("successBtn").onclick=()=>{
+  if(finished){log("[info] 已结束，请先重置");return}
+  renderRetry("inflight"); log(`[inflight] 投递并处理消息`);
+  log("[commit] 消费成功 → 提交消费状态/推进进度"); finished=true;
+};
+document.getElementById("resetBtn").onclick=()=>{
+  retries=0;finished=false;retryLog.textContent="[ready] 等待消费 ORDER_CREATED:10086\n";renderRetry("ready");
+};
+renderRetry("ready");
+
+// Quiz
+const quiz=[
+ {q:"1. Producer 已经从 NameServer 得到 Topic 路由。真正的业务消息下一跳应该发给谁？",a:["NameServer","Broker","Consumer Group"],c:1,e:"对。NameServer 提供路由；Producer 根据 Queue 路由直接把消息发送到 Broker。"},
+ {q:"2. 同一条 ORDER_EVENT，StockGroup 已失败进 DLQ，PointGroup 已消费成功。这是否矛盾？",a:["矛盾，一条消息只能有一个状态","不矛盾，消费结果是 Group 视角","只有广播模式才不矛盾"],c:1,e:"对。DLQ/Retry 与 Consumer Group 强相关；不同 Group 可以有完全不同的消费结果。"},
+ {q:"3. Broker MaxOffset=50,000，某 Group ConsumerOffset=47,500。最直观的 Lag 是多少？",a:["2,500","47,500","50,000"],c:0,e:"对。按最简心智模型：Lag ≈ MaxOffset − ConsumerOffset = 2,500。"},
+ {q:"4. 消费成功后，这条物理消息会立刻从 Broker 删除吗？",a:["一定删除","通常不会，物理存储由保留/清理策略管理","只有 Producer 在线才删除"],c:1,e:"对。消费进度与物理消息保留是两个不同机制。"},
+ {q:"5. 为什么消费端还要做幂等？",a:["因为 Topic 不能去重","因为重试、超时、Rebalance 等场景可能产生重复投递/处理机会","因为 Consumer Group 不保存 Offset"],c:1,e:"对。MQ 的可靠投递并不自动等价于业务 Exactly Once；幂等是消费业务的关键安全边界。"},
+ {q:"6. 经典 4.x 中 Topic 有 4 个 Queue、同 Group 已有 4 个 Consumer。再加到 20 个一定会把消费能力提升 5 倍吗？",a:["一定","不一定，Queue-based 并行度首先受 Queue 数约束，还要看线程池和下游瓶颈","只要 Broker 足够多就一定"],c:1,e:"对。经典 Queue-based 模型下，多出来的 Consumer 可能没有 Queue；实际吞吐还受业务与下游资源限制。"}
+];
+const qb=document.getElementById("quizBox");
+quiz.forEach((x,qi)=>{
+  const d=document.createElement("div");d.className="q";
+  d.innerHTML=`<b>${x.q}</b><div class="answers">${x.a.map((v,i)=>`<button class="answer" data-q="${qi}" data-a="${i}">${v}</button>`).join("")}</div><div class="feedback" id="fb${qi}"></div>`;
+  qb.appendChild(d);
+});
+qb.onclick=(ev)=>{
+  const b=ev.target.closest(".answer"); if(!b)return;
+  const qi=+b.dataset.q, ai=+b.dataset.a, item=quiz[qi];
+  const group=[...qb.querySelectorAll(`[data-q="${qi}"]`)];
+  group.forEach((x,i)=>{x.classList.remove("wrong","correct"); if(i===item.c)x.classList.add("correct")});
+  if(ai!==item.c)b.classList.add("wrong");
+  document.getElementById("fb"+qi).textContent=(ai===item.c?"✓ ":"✕ ")+item.e;
+};
+
+// reading progress
+function progress(){
+ const h=document.documentElement;
+ const p=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;
+ document.getElementById("readProgress").style.width=Math.max(0,Math.min(100,p))+"%";
+}
+addEventListener("scroll",progress,{passive:true});progress();
+</script>
+</body>
+</html>

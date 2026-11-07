@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>AI Agent · 从下一步开始｜学以致用 01</title>
+<style>
+:root{--ink:#182e32;--muted:#52686c;--paper:#f7f7f1;--white:#fff;--line:#d9e2dc;--teal:#116854;--mint:#e6f1e8;--gold:#b85b24;--soft:#fbefdd;--blue:#315b90;--radius:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:92px}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.8}a{color:var(--teal);text-underline-offset:4px}button,input,select,textarea{font:inherit}button,select{cursor:pointer}button:disabled{opacity:.48;cursor:default}button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:4px}button{border:1px solid var(--line);border-radius:12px;padding:10px 16px;background:white;color:var(--ink);font-weight:650;line-height:1.5}.primary{background:var(--teal);border-color:var(--teal);color:white}.small{font-size:13px}.muted{color:var(--muted)}.eyebrow{font-size:12px;letter-spacing:.13em;font-weight:750;color:var(--teal)}.wrap{width:min(1120px,calc(100% - 48px));margin:auto}.hero{padding:66px 0 34px;position:relative}.hero:before{content:"";position:absolute;width:240px;height:240px;right:0;top:20px;border-radius:50%;background:radial-gradient(circle,rgba(17,104,84,.1),transparent 70%);z-index:-1}h1{font-size:clamp(34px,5.6vw,66px);line-height:1.16;letter-spacing:-.04em;max-width:850px;margin:14px 0 24px;font-weight:780}h1 span{color:var(--teal)}h2{font-size:27px;line-height:1.4;letter-spacing:-.025em;margin:0 0 16px}h3{font-size:19px;line-height:1.5;margin:0 0 10px}p{margin:10px 0 16px}.lead{max-width:780px;font-size:19px}.meta{display:flex;gap:9px;flex-wrap:wrap}.pill{font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:30px;background:#fff}.pill.pending{color:var(--gold);border-color:#e8cfb2}.nav-shell{position:sticky;top:0;z-index:5;background:rgba(247,247,241,.97);border-block:1px solid var(--line)}nav{display:flex;gap:8px;overflow:auto;white-space:nowrap;padding:10px 0}nav a{font-size:13px;text-decoration:none;color:var(--muted);padding:6px 11px;border-radius:8px}nav a:hover{background:var(--mint);color:var(--teal)}main{padding-bottom:50px}section{padding:42px 0 5px}.section-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px}.section-num{font-size:12px;color:var(--teal);font-weight:750;padding:6px 10px;border:1px solid var(--line);border-radius:100%;margin-top:3px;flex:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{border:1px solid var(--line);border-radius:var(--radius);background:white;padding:26px;min-width:0}.tint{background:var(--mint)}.note{padding:15px 18px;background:var(--soft);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;font-size:14px}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:white;max-width:100%}table{border-collapse:collapse;width:100%;min-width:540px;text-align:left;font-size:14px}th,td{padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--mint);font-size:13px}tr:last-child td{border:0}ul,ol{padding-left:22px;margin:8px 0 14px}li{margin:6px 0}strong{font-weight:750}.diagram{width:100%;display:block;height:auto}svg text{font-family:inherit}svg .node rect{fill:#f6f9f4;stroke:#cbd8cc;stroke-width:1.4}svg .node{cursor:pointer}svg .node:hover rect,svg .node.selected rect{fill:#e2f0e7;stroke:var(--teal);stroke-width:2.2}svg .node.active rect{fill:#d3eadd;stroke:var(--teal);stroke-width:2.8}svg .edge{fill:none;stroke:#789089;stroke-width:1.8;marker-end:url(#arrow)}.node-title{font-size:17px;font-weight:700;fill:var(--ink)}.node-sub{font-size:12px;fill:var(--muted)}.edge-label{font-size:11px;fill:var(--muted)}.detail-box{min-height:106px;padding:16px 18px;border-radius:14px;background:var(--mint);font-size:14px}.concepts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}.concept{border-top:3px solid var(--line);padding:13px 8px 0;font-size:13px}.concept strong{display:block;font-size:14px;margin-bottom:5px}.lab{padding:0;overflow:hidden}.lab-head{padding:26px;background:#edf3ed;border-bottom:1px solid var(--line)}.lab-controls{display:flex;align-items:end;gap:15px;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:650}.field select{border:1px solid #bacdc2;border-radius:9px;background:white;padding:10px 12px;color:var(--ink);max-width:100%}.lab-body{display:grid;grid-template-columns:310px 1fr;min-height:460px}.lab-status{border-right:1px solid var(--line);padding:25px}.lab-log{padding:25px;min-width:0}.counter{font-size:34px;line-height:1.3;font-weight:750;letter-spacing:-.03em}.counter span{font-size:14px;font-weight:400;color:var(--muted)}.state-name{color:var(--teal);font-weight:750;font-size:17px}.tool-list{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 8px}.timeline{list-style:none;padding:0;margin:0;max-height:490px;overflow:auto;overscroll-behavior:contain}.timeline li{border-left:2px solid var(--line);padding:0 0 18px 17px;margin:0;position:relative}.timeline li:before{content:"";position:absolute;left:-5px;top:6px;width:8px;height:8px;background:#a6bcb0;border-radius:50%}.timeline li:last-child{border-color:transparent;padding-bottom:0}.timeline .tag{font-size:11px;color:var(--teal);font-weight:750;letter-spacing:.04em}.timeline p{margin:3px 0;font-size:14px}.timeline code{font-size:12px;color:var(--blue);overflow-wrap:anywhere}.empty{font-size:14px;color:var(--muted);padding:30px 0}.result{padding:24px;background:#f0f6eb;border-top:1px solid var(--line)}.result.warning{background:var(--soft)}.result h3{font-size:18px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.material{padding:18px;border:1px solid var(--line);border-radius:15px;background:white;font-size:14px}.material b{display:block;font-size:12px;letter-spacing:.07em;color:var(--teal);margin-bottom:5px}.material p{margin:4px 0 8px}.material .muted{font-size:12px}pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#173837;color:#eaf4ec;border-radius:14px;padding:22px;font-size:13px;line-height:1.8;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:16px 0}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}details{border:1px solid var(--line);border-radius:13px;padding:13px 16px;margin:13px 0;background:white}summary{cursor:pointer;font-weight:650;font-size:14px}details p{font-size:14px;margin:12px 0 4px}textarea{width:100%;min-height:130px;padding:14px;border:1px solid #bbc9bf;border-radius:12px;background:#fcfdfb;color:var(--ink);resize:vertical;line-height:1.7;margin-top:9px}label{display:block}#save-status{min-height:24px}.practice-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.practice-tabs button[aria-selected="true"]{background:var(--teal);color:#fff;border-color:var(--teal)}.action-note{background:var(--mint);padding:15px 18px;border-radius:12px;font-size:14px}.sources{font-size:13px;color:var(--muted)}.sources li{margin:8px 0;overflow-wrap:anywhere}.footer{padding:25px 0 36px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:15px;justify-content:space-between;flex-wrap:wrap}[hidden]{display:none!important}.nojs{padding:18px;background:var(--soft)}.step-line{font-size:14px;margin-bottom:15px}.key{color:var(--teal)}
+.diagram-mobile{display:none}
+@media(max-width:800px){.wrap{width:calc(100% - 32px)}.hero{padding-top:38px}h2{font-size:24px}.grid{grid-template-columns:1fr}.concepts{grid-template-columns:repeat(2,1fr)}.lab-body{grid-template-columns:1fr}.lab-status{border-right:0;border-bottom:1px solid var(--line)}.cards{grid-template-columns:1fr}.timeline{max-height:420px}.panel,.lab-head,.lab-status,.lab-log,.result{padding:20px}.lab{padding:0}}
+@media(max-width:600px){.diagram-desktop{display:none}.diagram-mobile{display:block}}
+@media(max-width:420px){.wrap{width:calc(100% - 24px)}.lead{font-size:17px}.hero{padding-top:30px}section{padding-top:32px}.section-top{gap:10px}.concepts{gap:8px}button{padding:10px 12px}.field{width:100%}.field select{width:100%}.diagram-panel{padding:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.nav-shell,.toolbar,.practice-tabs{display:none}.hero{padding-top:10px}.lab-body{display:block}.timeline{max-height:none}section{break-inside:avoid}.wrap{width:100%}body{background:white}.panel{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <div class="eyebrow">学以致用 / AI AGENT / UNIT 01</div>
+  <h1>下一步，<br>让 AI 根据结果来决定<span>。</span></h1>
+  <p class="lead">从一个选题助手，看懂 Agent 的行动循环。先追踪一个完整例子，再改变一个条件，解释为什么要换一种做法。</p>
+  <div class="meta"><span class="pill">约 30 分钟，可调整</span><span class="pill">零安装 · 可离线</span><span class="pill">材料均为虚构练习</span><span class="pill pending">掌握状态：待验证</span></div>
+</header>
+<div class="nav-shell"><nav class="wrap" aria-label="学习导航"><a href="#goal">01 先有需求</a><a href="#baseline">02 旧办法</a><a href="#mechanism">03 看懂循环</a><a href="#lab">04 动手观察</a><a href="#practice">05 自己解释</a><a href="#next">06 带到新场景</a></nav></div>
+<main class="wrap">
+<noscript><p class="nojs">正文可以直接阅读。交互演示、保存和导出需要浏览器允许本地 JavaScript。</p></noscript>
+
+<section id="goal">
+  <div class="section-top"><span class="section-num">01</span><div><h2>先让它做一件具体的事</h2><p class="muted">需求与验收 · 约 4 分钟，含下一节</p></div></div>
+  <div class="grid">
+    <div class="panel tint"><h3>你的任务</h3><p>给 AI 工具新手，从三条材料中选 <strong>1 条适合做成 30 秒短视频的选题</strong>，写一句开场，并说明依据。</p><p>必须核对来源；查不到就说明未知。只交选题草稿，工具调用最多 5 次。</p></div>
+    <div class="panel"><h3>本单元怎样算有结果</h3><ul><li>能追踪“动作 → 返回结果 → 下一动作”。</li><li>能解释模型提出调用，和应用实际执行调用的区别。</li><li>改变资料可用性后，能解释行动为什么改变。</li></ul><p class="small muted">本轮范围：理解与操作演示。连接真实模型、接入真实网页工具放到下一单元。</p></div>
+  </div>
+</section>
+
+<section id="baseline">
+  <div class="section-top"><span class="section-num">02</span><div><h2>已有办法，什么时候就够用了？</h2></div></div>
+  <div class="table-wrap"><table><thead><tr><th>做法</th><th>在这个需求中怎么做</th><th>适用情况</th></tr></thead><tbody>
+    <tr><td>一次模型回答</td><td>把已经核实的三条材料交给模型，让它选题。</td><td>输入完整、无需继续查证时，通常已经足够。</td></tr>
+    <tr><td>Workflow · 固定工作流</td><td>程序规定：逐条读来源 → 按标准筛选 → 生成开场。</td><td>路径和异常能预先写清，强调稳定和可控。</td></tr>
+    <tr><td>LLM Agent · 大模型智能体</td><td>模型根据已查到的内容，选择补查、换来源、换选题或结束。</td><td>后续行动依赖新信息，难以预先穷举时可考虑。</td></tr>
+  </tbody></table></div>
+  <p>这三条练习材料完全可以用 <code>if/else</code> 写完。我们选择它来观察机制；真实项目是否采用 Agent，还要看任务变化、延迟、费用和出错后的影响。</p>
+  <div class="note">行业对 Agent 的称呼并不完全统一。本课用一个清晰的区分：<strong>关键行动是否由模型在运行时根据反馈选择</strong>。固定工作流也可以有分支、循环和工具调用；出现这些结构，本身不能证明它就是大模型 Agent。</div>
+</section>
+
+<section id="mechanism">
+  <div class="section-top"><span class="section-num">03</span><div><h2>先看图：反馈为什么会改变下一步</h2><p class="muted">核心机制 · 约 6 分钟</p></div></div>
+  <div class="grid">
+    <div class="panel diagram-panel">
+      <svg class="diagram diagram-desktop" viewBox="0 0 620 460" role="img" aria-labelledby="svg-title svg-desc">
+        <title id="svg-title">模型、应用、工具和观察组成的 Agent 循环</title><desc id="svg-desc">模型选择动作；应用校验并调用；工具返回结果；观察加入任务记录再交给模型。模型也可以结束并交付结果。点击节点可阅读说明。</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#789089"/></marker></defs>
+        <path class="edge" d="M255 100 V147"/><text class="edge-label" x="267" y="129">工具调用请求</text>
+        <path class="edge" d="M255 205 V252"/><text class="edge-label" x="267" y="235">校验后执行</text>
+        <path class="edge" d="M255 310 V357"/><text class="edge-label" x="267" y="340">真实返回或错误</text>
+        <path class="edge" d="M145 387 H42 V70 H145"/><text class="edge-label" x="56" y="227">再次判断</text>
+        <path class="edge" d="M365 70 H443"/><text class="edge-label" x="382" y="58">可交付</text>
+        <g class="node selected" data-node="model" tabindex="0" role="button" aria-label="解释模型选动作"><rect x="145" y="40" width="220" height="60" rx="15"/><text class="node-title" x="255" y="66" text-anchor="middle">模型选动作</text><text class="node-sub" x="255" y="86" text-anchor="middle">目标 + 当前记录</text></g>
+        <g class="node" data-node="runtime" tabindex="0" role="button" aria-label="解释应用校验并调用"><rect x="145" y="147" width="220" height="58" rx="15"/><text class="node-title" x="255" y="172" text-anchor="middle">应用校验并调用</text><text class="node-sub" x="255" y="192" text-anchor="middle">参数 / 权限 / 预算</text></g>
+        <g class="node" data-node="tool" tabindex="0" role="button" aria-label="解释工具执行"><rect x="145" y="252" width="220" height="58" rx="15"/><text class="node-title" x="255" y="277" text-anchor="middle">工具执行</text><text class="node-sub" x="255" y="297" text-anchor="middle">读网页、查询、计算等</text></g>
+        <g class="node" data-node="feedback" tabindex="0" role="button" aria-label="解释观察并更新记录"><rect x="145" y="357" width="220" height="60" rx="15"/><text class="node-title" x="255" y="383" text-anchor="middle">观察并更新记录</text><text class="node-sub" x="255" y="403" text-anchor="middle">成功 / 未知 / 错误</text></g>
+        <g class="node" data-node="finish" tabindex="0" role="button" aria-label="解释结束并交付"><rect x="443" y="40" width="158" height="60" rx="15"/><text class="node-title" x="522" y="66" text-anchor="middle">结束并交付</text><text class="node-sub" x="522" y="86" text-anchor="middle">结果 + 依据 + 缺口</text></g>
+        <text class="node-sub" x="310" y="448" text-anchor="middle">预算耗尽或触及边界时，应用也可以终止循环。</text>
+      </svg>
+      <svg class="diagram diagram-mobile" viewBox="0 0 340 450" role="img" aria-labelledby="mobile-title mobile-desc">
+        <title id="mobile-title">Agent 行动循环，窄屏图</title><desc id="mobile-desc">模型选动作，应用校验并调用，工具执行，观察结果返回模型。模型也可以结束并交付。</desc>
+        <defs><marker id="arrow-mobile" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#789089"/></marker></defs>
+        <g fill="none" stroke="#789089" stroke-width="1.7" marker-end="url(#arrow-mobile)"><path d="M155 90 V139"/><path d="M155 195 V244"/><path d="M155 300 V349"/><path d="M65 377 H19 V62 H65"/><path d="M245 62 H266"/></g>
+        <text class="edge-label" x="167" y="121">请求</text><text class="edge-label" x="167" y="226">执行</text><text class="edge-label" x="167" y="331">返回</text>
+        <g class="node selected" data-node="model" tabindex="0" role="button" aria-label="解释模型选动作"><rect x="65" y="34" width="180" height="56" rx="13"/><text class="node-title" x="155" y="68" text-anchor="middle">模型选动作</text></g>
+        <g class="node" data-node="runtime" tabindex="0" role="button" aria-label="解释应用校验并调用"><rect x="65" y="139" width="180" height="56" rx="13"/><text class="node-title" x="155" y="173" text-anchor="middle">应用校验并调用</text></g>
+        <g class="node" data-node="tool" tabindex="0" role="button" aria-label="解释工具执行"><rect x="65" y="244" width="180" height="56" rx="13"/><text class="node-title" x="155" y="278" text-anchor="middle">工具执行</text></g>
+        <g class="node" data-node="feedback" tabindex="0" role="button" aria-label="解释观察并更新记录"><rect x="65" y="349" width="180" height="56" rx="13"/><text class="node-title" x="155" y="383" text-anchor="middle">观察并更新记录</text></g>
+        <g class="node" data-node="finish" tabindex="0" role="button" aria-label="解释结束并交付"><rect x="266" y="34" width="66" height="56" rx="12"/><text class="node-title" x="299" y="58" text-anchor="middle" style="font-size:14px">结束</text><text class="node-title" x="299" y="78" text-anchor="middle" style="font-size:14px">交付</text></g>
+        <text class="node-sub" x="170" y="434" text-anchor="middle">左侧回路：把观察交给模型，继续判断。</text>
+      </svg>
+      <div id="node-detail" class="detail-box" aria-live="polite"></div>
+    </div>
+    <div class="panel"><h3>一句话理解 AI Agent</h3><p>在本课的大模型应用语境中，它是<strong>围绕目标，根据观察结果选择行动，并由应用执行这些行动的系统</strong>。可以经历多轮，也可以很快结束。</p>
+      <p>把它想成一位接到任务的选题助理：目标是交办事项，模型负责判断，工具是查资料的办法，工具返回是查到的证据，任务记录是工作笔记。</p>
+      <p class="note">类比的边界：模型可能误读来源、选错工具，也可能编造看似合理的文字。输出“已查证”不能代替工具返回与原文依据。</p>
+      <h3>和你熟悉的 Java 对上号</h3><p><code>Tool Calling</code>（工具调用）可类比模型生成一个结构化调用请求；应用检查后分发给函数或服务，再把结果传回模型。</p><p>写出 <code>read_source("A")</code> 只是请求或文本；执行器真正调用了工具，才产生外部操作。</p>
+      <details><summary>稍后再研究：记忆、MCP、Skills</summary><p>本轮只用当前任务的记录，不要求长期记忆。MCP 涉及工具连接方式；Skills 涉及可复用的做法和任务指导。它们可以帮助构建 Agent，但不负责替你决定每一步，也不是本轮的先修条件。</p></details>
+    </div>
+  </div>
+  <div class="concepts"><div class="concept"><strong>目标与约束</strong>产出是什么？做哪些事？何时停止？</div><div class="concept"><strong>模型</strong>基于已有信息，选择下一动作或回答。</div><div class="concept"><strong>工具与执行器</strong>应用校验请求，再运行函数或服务。</div><div class="concept"><strong>观察</strong>接收正文、状态或错误，更新任务记录。</div><div class="concept"><strong>循环与停止</strong>继续补信息，或在完成、受阻时收尾。</div></div>
+</section>
+
+<section id="lab">
+  <div class="section-top"><span class="section-num">04</span><div><h2>走一遍，再让来源出一点状况</h2><p class="muted">最小案例 · 约 12 分钟</p></div></div>
+  <p>准备：只需当前学习页。先保持“资料齐全”，连续点击“下一步”直到出现选题草稿；再切换为“来源打不开”，观察新增加了哪次调用。</p>
+  <div class="cards"><article class="material"><b>练习材料 A</b><p>“字幕工具已支持批量导出字幕文件。”</p><div class="muted">适合演示效率提升；摘要声称对应原始说明 A。</div></article><article class="material"><b>练习材料 B</b><p>“字幕工具可以保存并复用字幕样式。”</p><div class="muted">适合新手操作；摘要声称对应原始说明 B。</div></article><article class="material"><b>练习材料 C</b><p>“企业模型训练速度得到提升。”</p><div class="muted">需要专业背景，离本次受众与演示时长较远。</div></article></div>
+  <p class="note"><strong>这是预设规则演示。</strong>材料、来源和返回结果均为虚构；不会联网，不调用真实模型。这里的“模型选动作”由教学规则代替，用来展示一条合理路径。真实 Agent 的动作由模型选择，结果可能不同；本页自身是固定规则程序。</p>
+  <div class="panel lab">
+    <div class="lab-head"><div class="lab-controls"><label class="field">来源情境<select id="scenario"><option value="complete">资料齐全</option><option value="unreachable">A 的来源打不开</option><option value="conflict">A 的摘要与原文冲突</option></select></label><label class="field">最多工具调用<select id="budget"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></label></div><p class="small muted">切换情境或预算会重置演示。默认 5 次；可将预算改为 2 次，观察“来源打不开”时怎样收尾。</p></div>
+    <div class="lab-body"><aside class="lab-status"><div class="eyebrow">当前任务记录</div><p class="state-name" id="phase-label">等待选择动作</p><p class="counter" id="call-counter">0 <span>/ 5 次工具调用</span></p><p class="small" id="evidence">已核实来源：无</p><h3 class="small">允许的工具（模拟）</h3><div class="tool-list">read_materials()<br>read_source(id)<br>find_official(id)</div><p class="small muted">只读材料。发布、付款等操作不在本案例工具范围内。预算由程序强制检查。</p><div class="toolbar"><button class="primary" id="step-btn">下一步</button><button id="all-btn">走完本次演示</button><button id="reset-btn">重置</button></div><p class="small muted" id="step-help">一次点击展开一个阶段。</p></aside><div class="lab-log"><h3>可观察的动作与返回</h3><p class="small muted">动作说明由教学编写，不是读取真实模型的内部思考。</p><ol id="timeline" class="timeline" aria-label="演示记录" aria-live="polite"></ol></div></div>
+    <div id="result" class="result" hidden aria-live="polite"></div>
+  </div>
+  <details><summary>先看过一轮，再对照正常路径</summary><p>读取 A/B/C 摘要 → 读取 A 原文 → 得到“支持批量导出字幕文件”的返回 → 交付 A 的选题草稿。共 2 次工具调用。只有读取到的内容足够支持这个有限结论，才把它写成已核实。</p><p>示范产物：选题“把几段视频的字幕一次导出来”；开场“你还在一段段导出字幕吗？先看看这个批量入口。”依据为虚构说明 A；不声称免费、不声称能准确识别所有音频。</p></details>
+  <div class="grid" style="margin-top:20px"><div class="panel"><h3>操作顺序与验收</h3><ol><li>资料齐全：走到结果，确认 2 次调用。</li><li>A 来源打不开：重走，找到新增的补查动作。</li><li>在同一情境把预算改为 2，确认会带着证据缺口停止。</li></ol><p class="small">验收对象是本页机制：调用顺序与返回对应，错误会改变路径，预算会终止循环。完成这些操作还不能证明你能独立设计 Agent。</p></div><div class="panel"><h3>复用到真实工具环境的任务说明</h3><p class="small">先确认那个环境确有读材料、读网页和检索能力。提示词本身不会安装工具，也不能授予应用没有的权限。</p><button id="copy-prompt">复制任务说明</button><p id="copy-status" class="small muted" aria-live="polite"></p><details><summary>查看完整任务说明</summary><pre id="prompt-text">任务：为 AI 工具新手，从我提供的 3 条材料中选 1 条适合 30 秒短视频的选题，写一句开场，并给出支持关键说法的原始来源。
+输入：我会提供每条摘要及其来源链接。
+判断：优先能演示、对新手有用的主题；逐步核对准备推荐的关键事实。
+行动：仅使用当前环境实际提供并授权的只读工具。某来源打不开，可找同一产品的原始说明；说法冲突时以能核对的原文为依据，或保留未知。
+约束：最多 5 次工具调用；不发布内容。不把“打算调用”写成“已经执行”。环境没有工具时，说明能力缺口，不编造查证结果。
+停止：有足够证据支持 1 条合适选题后交付；预算耗尽或没有可用来源时，输出缺口及待核实事项。
+输出：选题、目标受众、开场一句、事实依据及对应链接、仍待核实之处。简要列出实际用过的工具及结果状态。</pre></details><p class="small muted">本次只运行了离线规则演示。上述说明用于下一轮真实环境实践，尚未在真实模型上执行或评估。</p></div></div>
+  <details><summary>卡住时看这里</summary><p>“点击了却没出现结果”：一次点击只展开一个阶段，继续到“结束”即可。“为什么三条没有全部查？”：本例只要求找到一条证据足够且适合的选题，未要求证明它是全网最佳。如果改为全面比较三条，查证范围也要随之改变。</p><p>“为什么不能直接信工具？”：工具成功只表示拿到了返回；摘要和原文是否一致、来源是否真正支持结论，仍需要检查。这里的来源被简化为内置文字，真实网页还会有日期、适用地区和版本等条件。</p></details>
+</section>
+
+<section id="practice">
+  <div class="section-top"><span class="section-num">05</span><div><h2>轮到你：先解释，再换一个条件</h2><p class="muted">复述与迁移 · 约 5 分钟；先做第一张即可</p></div></div>
+  <div class="panel"><div class="practice-tabs" role="tablist" aria-label="练习阶段"><button role="tab" id="tab-recall" aria-controls="recall-panel" aria-selected="true">先做：一句复述</button><button role="tab" id="tab-transfer" aria-controls="transfer-panel" aria-selected="false">然后：换个条件</button></div>
+    <div id="recall-panel" role="tabpanel" aria-labelledby="tab-recall"><label for="recall"><strong>不用看参考答案：为什么 AI 写出“我已经核查来源”，还不足以证明它真的核查了？</strong><br><span class="small muted">用 1–2 句话，说明模型与工具各做了什么。</span></label><textarea id="recall" placeholder="我认为……；需要看到……才有执行与核实的证据。"></textarea><details class="hint"><summary>卡住时只看一条提示</summary><p>把“提出一个调用请求”和“收到一次调用结果”分开。</p></details><details class="answer"><summary>写完再展开参考</summary><p>模型生成的文字或调用请求不等于工具已经执行。需要应用实际调用的记录、工具返回，以及返回的原文是否支持结论。即使工具成功，也不能推出模型的解读一定正确。</p></details></div>
+    <div id="transfer-panel" role="tabpanel" aria-labelledby="tab-transfer" hidden><label for="transfer"><strong>换个条件：A 来源打不开，但用户已上传它的完整原始说明，里面明确支持批量导出。下一步怎样做？</strong><br><span class="small muted">用 2–3 句话写明：动作、需要的依据、何时结束。无需猜工具名，假设有读取上传文件的工具。</span></label><textarea id="transfer" placeholder="下一步我会……；如果读到……，就……。"></textarea><details class="hint"><summary>卡住时只看一条提示</summary><p>任务要求有可核对依据，是否一定要求从网页获得？</p></details><details class="answer"><summary>写完再展开参考</summary><p>读取上传的原始说明，确认内容是否直接支持这个说法，并记录文件名、位置及适用条件。如果证据足够，就引用上传材料交付草稿；无需为了复现示范而强行继续搜索网页。这考查你能否围绕目标，依据当前可用信息选择行动。</p></details></div>
+    <div class="toolbar"><button id="save-btn">记录我的回答</button><button id="export-btn">导出续学卡</button></div><p id="save-status" class="small muted" aria-live="polite"></p><p class="action-note"><strong>当前能力：待验证。</strong>请把你的第一张回答发回对话，我会依据回答定位缺口，再给一个变式。输入文字、点击按钮或看完演示，都不会自动变成“已掌握”。</p><p class="small muted">回答仅尝试保存在当前浏览器，不会发送出去；离线文件的记录不保证跨设备、不同打开方式或清理缓存后保留。导出续学卡可手动带回下一次对话。记录是否成功以按钮反馈为准。</p>
+  </div>
+</section>
+
+<section id="next">
+  <div class="section-top"><span class="section-num">06</span><div><h2>有了结果，再补这三处细节</h2><p class="muted">回到需求 · 约 3 分钟</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>什么时候出现</th><th>怎样改进</th><th>怎样验证</th></tr></thead><tbody><tr><td>把摘要或口号写成事实</td><td>保存支持结论的原文位置，把不确定内容标为未知。</td><td>逐句对照关键说法与依据。</td></tr><tr><td>反复补查却不结束</td><td>明确交付标准，由应用限制次数、时间或费用。</td><td>让工具连续失败，检查是否按预算收尾。</td></tr><tr><td>从“给草稿”扩展成“公开发布”</td><td>明确可用工具与授权范围，发布等动作另行设计执行边界。</td><td>只给只读工具时，程序不能执行发布。</td></tr></tbody></table></div>
+  <p><strong>下一轮顺序：</strong>先把你给的一小组真实材料做成可核对的选题草稿；再处理工具失败、来源冲突和停止条件；最后才考虑批量运行及效率优化。</p>
+  <details><summary>用 Java 看机制：概念伪代码</summary><pre>// 概念伪代码：不是可直接编译的 Java 项目。
+while (!context.finished()) {
+    Action action = model.choose(goal, context, toolDefinitions);
+    if (action.isFinalAnswer()) {
+        return action.answer();
+    }
+    if (budget.toolCallsExhausted()) {
+        return reportUncertainty(context);
+    }
+    validateParametersAndPermissions(action);
+    ToolResult result = executor.execute(action);
+    context.add(action, result);  // 下一轮能观察到成功或错误
+    budget.recordCall();
+}</pre><p>关键变化在 <code>model.choose(...)</code>：运行时由模型选动作。真实应用还需校验工具结果与最终输出；不能只依靠模型遵守提示词。</p></details>
+  <div class="sources"><p><strong>本单元来源与范围</strong></p><ul><li><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener noreferrer">Anthropic · Building effective agents</a>，2024-12-19。用于工作流/Agent 的架构区分、环境反馈与停止条件；本课不据此断言当前产品功能。</li><li><a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">Yao 等 · ReAct: Synergizing Reasoning and Acting in Language Models</a>，2022 年提交，2023 年修订。用于理解行动与外部反馈交替的思路；不是所有 Agent 的必选实现。</li><li>两项来源于 2026-11-05 阅读。选题材料、示范路径、操作练习与教学节奏均为本课编写；示范结果不代表真实产品事实或学习者已掌握。</li></ul></div>
+</section>
+</main>
+<footer class="footer wrap"><span>学以致用 · AI Agent 01</span><span>当前待验证 · 先把第一张练习发回对话</span><span>交付前已检查脚本语法、演示路径、调用上限及导出逻辑；未做真实浏览器视觉检查。</span></footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nodeDetails={model:["模型：根据目标和当前记录选动作","例如原始来源打不开后，选择补查、换选题或报告缺口。模型可以提出工具调用，也可以直接生成最终回答。"],runtime:["应用：把调用请求变成受约束的执行","核对工具是否允许、参数是否合法、调用预算是否用尽，再把请求交给对应函数。模型的文字不能绕过这里的程序限制。"],tool:["工具：实际读、查或计算","可能返回正文，也可能超时、无权限或空结果。本页使用内置虚构返回；真实工具需要应用接入。"],feedback:["观察：给下一轮增加可用信息","调用与返回加入当前任务记录。模型据此继续选择；本轮的记录不等于跨会话长期记忆，也不意味着模型参数被更新。"],finish:["结束：交付结果，也交代未知","已得到足够支持时收尾。来源不足、预算耗尽时可输出证据缺口；完成任务不等于必须用光预算。"]};
+function showNode(id){document.querySelectorAll('.node').forEach(n=>n.classList.toggle('selected',n.dataset.node===id));const d=nodeDetails[id];$('node-detail').innerHTML='<strong>'+escapeHtml(d[0])+'</strong><br>'+escapeHtml(d[1]);}
+document.querySelectorAll('.node').forEach(n=>{n.addEventListener('click',()=>showNode(n.dataset.node));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(n.dataset.node);}});});
+showNode('model');
+const scenarioNames={complete:'资料齐全',unreachable:'A 的来源打不开',conflict:'A 的摘要与原文冲突'};
+let state;
+function log(tag,title,body,code=''){state.log.push({tag,title,body,code});}
+function reset(){state={phase:'decide',calls:0,budget:Number($('budget').value),scenario:$('scenario').value,hasMaterials:false,aStatus:null,verified:null,pending:null,returned:null,finished:false,log:[],result:null};render();}
+// 这里用预设规则替代真实模型，供观察机制；本页没有模型 API 调用。
+function chooseDemoAction(){
+ if(!state.hasMaterials)return {name:'read_materials',args:'',why:'先读取三条候选材料，了解任务输入。'};
+ if(!state.aStatus)return {name:'read_source',args:'A',why:'先核对适合新手演示的候选 A。'};
+ if(state.verified)return {name:'finish',why:'已有一条符合目标并得到来源支持的选题，可以交付。'};
+ if(state.aStatus==='unreachable')return {name:'find_official',args:'A',why:'A 的原始链接失败，改查同一功能的其他原始说明。'};
+ if(state.aStatus==='conflict')return {name:'read_source',args:'B',why:'原文不支持 A 的摘要说法，转而核对候选 B。'};
+ return {name:'stop',why:'没有足够的可用证据。'};
+}
+function fakeTool(action){
+ if(action.name==='read_materials')return {type:'materials',text:'返回摘要 A：批量导出；B：保存字幕样式；C：企业模型训练提速。摘要本身未核实。'};
+ if(action.name==='read_source'&&action.args==='A'){
+  if(state.scenario==='unreachable')return {type:'unreachable',text:'读取失败：来源 A 超时。没有获得正文，不能写成已核实。'};
+  if(state.scenario==='conflict')return {type:'conflict',text:'虚构原始说明 A：“当前仅支持单文件导出；批量导出仍在计划中。”与摘要冲突。'};
+  return {type:'verifiedA',text:'虚构原始说明 A：“支持多选视频，并批量导出对应的字幕文件。”可支持批量导出这一说法。'};
+ }
+ if(action.name==='find_official')return {type:'verifiedA',text:'虚构补充说明 A2：“在字幕列表多选视频，点击批量导出。”同一功能的另一原始说明支持该说法。'};
+ if(action.name==='read_source'&&action.args==='B')return {type:'verifiedB',text:'虚构原始说明 B：“可以保存字幕样式，并应用到其他项目。”与 B 的摘要一致。'};
+ return {type:'error',text:'没有可用返回。'};
+}
+function finish(reason){state.finished=true;state.phase='done';if(reason==='verified'){
+ const a=state.verified==='A';state.result={ok:true,title:'选题草稿：'+(a?'把几段视频的字幕一次导出来':'把常用字幕样式存成模板'),opening:a?'你还在一段段导出字幕吗？先看看这个批量入口。':'每条视频都重新调字幕样式？试着把常用样式存下来。',basis:a?(state.scenario==='unreachable'?'虚构补充说明 A2，支持多选视频批量导出字幕文件。':'虚构原始说明 A，支持多选视频批量导出字幕文件。'):'虚构原始说明 B，支持保存样式并用于其他项目。',unknown:'演示未核实价格、地区、平台兼容性与实际质量；不把这些写入开场。'};
+ log('交付','结束并输出草稿','关键说法有本例中的原始说明支持，未执行公开发布。');
+ }else{state.result={ok:false,title:'停止：证据仍不足',opening:'暂不输出带确定事实的选题开场。',basis:'只获得候选摘要，或来源读取失败；尚没有成功核对的原始说明。',unknown:reason==='budget'?'工具调用预算已耗尽。保留核实缺口，可由用户补充原文或在新任务中调整预算。':'当前条件下没有足够依据。'};log('应用停止',reason==='budget'?'达到工具调用上限':'没有足够可用信息','按实际获得的信息说明缺口，不能补写一次没有发生的查证。');}}
+function step(){
+ if(state.finished)return;
+ if(state.phase==='decide'){
+  if(!state.verified&&state.calls>=state.budget){finish('budget');render();return;}
+  const a=chooseDemoAction();
+  if(a.name==='finish'){log('模型选动作 · 预设','交付结果',a.why);finish('verified');render();return;}
+  if(a.name==='stop'){finish('blocked');render();return;}
+  state.pending=a;state.phase='execute';log('模型选动作 · 预设','提出工具调用请求',a.why,a.name+'('+(a.args?'"'+a.args+'"':'')+')');
+ }else if(state.phase==='execute'){
+  const a=state.pending;
+  if(!['read_materials','read_source','find_official'].includes(a.name)||state.calls>=state.budget){finish('budget');render();return;}
+  state.calls++;state.returned=fakeTool(a);state.phase='observe';log('应用执行 · 本地模拟','校验通过，执行第 '+state.calls+' 次工具调用',state.returned.text,a.name+'('+(a.args?'"'+a.args+'"':'')+')');
+ }else if(state.phase==='observe'){
+  const r=state.returned;
+  if(r.type==='materials')state.hasMaterials=true;
+  if(r.type==='unreachable')state.aStatus='unreachable';
+  if(r.type==='conflict')state.aStatus='conflict';
+  if(r.type==='verifiedA'){state.aStatus='verified';state.verified='A';}
+  if(r.type==='verifiedB')state.verified='B';
+  state.phase='decide';log('观察 → 更新任务记录','把返回交给下一轮',r.type==='unreachable'?'记下“没有取得 A 正文”，而不是“已核实 A”。':r.type==='conflict'?'记下“A 的摘要与原文冲突”，后续不能沿用摘要结论。':state.verified?'记下“已核实 '+state.verified+' 的特定说法”，不外推其他能力。':'记录三个候选摘要，准备选择需要核实的来源。');
+ }
+ render();
+}
+function render(){
+ const phaseName={decide:'等待选择下一动作',execute:'等待应用校验并执行',observe:'等待观察并更新记录',done:'本次演示结束'};
+ $('phase-label').textContent=phaseName[state.phase];$('call-counter').innerHTML=state.calls+' <span>/ '+state.budget+' 次工具调用</span>';$('evidence').textContent='已核实来源：'+(state.verified||'无');
+ $('timeline').innerHTML=state.log.length?state.log.map((l,i)=>'<li><div class="tag">'+String(i+1).padStart(2,'0')+' · '+escapeHtml(l.tag)+'</div><strong>'+escapeHtml(l.title)+'</strong><p>'+escapeHtml(l.body)+'</p>'+(l.code?'<code>'+escapeHtml(l.code)+'</code>':'')+'</li>').join(''):'<li class="empty">点击“下一步”，从读取练习材料开始。</li>';
+ $('step-btn').disabled=state.finished;$('all-btn').disabled=state.finished;
+ $('step-help').textContent=state.finished?'可切换情境或调用预算，重新观察。':({decide:'下一步：根据现有记录选动作。',execute:'下一步：应用检查并实际运行模拟工具。',observe:'下一步：接收返回，更新下一轮可用信息。'}[state.phase]);
+ const active={decide:'model',execute:'runtime',observe:'feedback',done:'finish'}[state.phase];document.querySelectorAll('.node').forEach(n=>n.classList.toggle('active',n.dataset.node===active));
+ $('result').hidden=!state.result;
+ if(state.result){const r=state.result;$('result').classList.toggle('warning',!r.ok);$('result').innerHTML='<h3>'+escapeHtml(r.title)+'</h3><p><strong>开场：</strong>'+escapeHtml(r.opening)+'</p><p><strong>依据：</strong>'+escapeHtml(r.basis)+'</p><p class="small muted">'+escapeHtml(r.unknown)+'</p><p class="small">实际完成 '+state.calls+' 次本地模拟工具调用；未调用真实模型，未核查真实网页。</p>';}
+ const list=$('timeline');list.scrollTop=list.scrollHeight;
+}
+function runAll(){for(let i=0;i<40&&!state.finished;i++)step();}
+function tab(name){const recall=name==='recall';$('recall-panel').hidden=!recall;$('transfer-panel').hidden=recall;$('tab-recall').setAttribute('aria-selected',String(recall));$('tab-transfer').setAttribute('aria-selected',String(!recall));}
+function save(){const data={recall:$('recall').value,transfer:$('transfer').value,capability:'待验证',updated:new Date().toISOString()};try{localStorage.setItem('learn-ai-agent-unit-01-v1',JSON.stringify(data));$('save-status').textContent='已记录在当前浏览器。掌握状态仍为待验证，请把回答发回对话。';}catch(e){$('save-status').textContent='当前打开方式未允许浏览器保存；回答仍在页面中，请导出续学卡或手动复制。';}return data;}
+function exportCard(){const data=save();const content=['学以致用｜AI Agent 第 1 单元','需求：从三条材料中选一条适合新手的 30 秒短视频选题，并给依据。','已展示：模型提出调用、应用执行、观察反馈、停止条件。','真实模型运行：未进行。网页工具运行：未进行。','本地规则演示情境：'+scenarioNames[state.scenario]+'；本次调用：'+state.calls+'/'+state.budget+'；演示结束：'+(state.finished?'是':'否'),'已验证的学习能力：无，等待对话核对。','参考答案是否展开：'+([...document.querySelectorAll('details.answer')].some(d=>d.open)?'当前至少一项展开；不能据此推定独立完成':'当前均收起；不代表未看过'),'复述回答：\n'+(data.recall||'未作答'),'迁移回答：\n'+(data.transfer||'未作答'),'下一动作：先把复述回答发回对话，依据反馈继续练习。','记录时间：'+data.updated].join('\n\n');const blob=new Blob([content],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ai_agent_unit_01_resume.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);$('save-status').textContent='已请求下载续学卡。能力仍待验证；请保存文件并手动带回对话。';}
+async function copyPrompt(){try{if(!navigator.clipboard)throw new Error('clipboard unavailable');await navigator.clipboard.writeText($('prompt-text').textContent);$('copy-status').textContent='已复制任务说明。记得附上你的三条真实材料。';}catch(e){$('prompt-text').closest('details').open=true;$('copy-status').textContent='当前打开方式不允许自动复制，请在展开区手动选中复制。';}}
+function restore(){try{const s=JSON.parse(localStorage.getItem('learn-ai-agent-unit-01-v1')||'null');if(s&&typeof s.recall==='string'){$('recall').value=s.recall;$('transfer').value=typeof s.transfer==='string'?s.transfer:'';$('save-status').textContent='已恢复本浏览器中的回答。尚未据此验证掌握程度。';}}catch(e){$('save-status').textContent='当前浏览器没有可恢复的记录；可直接练习并导出续学卡。';}}
+document.querySelectorAll('details.answer').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)d.dataset.seen='true';}));
+$('step-btn').addEventListener('click',step);$('all-btn').addEventListener('click',runAll);$('reset-btn').addEventListener('click',reset);$('scenario').addEventListener('change',reset);$('budget').addEventListener('change',reset);$('tab-recall').addEventListener('click',()=>tab('recall'));$('tab-transfer').addEventListener('click',()=>tab('transfer'));$('save-btn').addEventListener('click',save);$('export-btn').addEventListener('click',exportCard);$('copy-prompt').addEventListener('click',copyPrompt);reset();restore();
+</script>
+</body>
+</html>

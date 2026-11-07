@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>去做 × 去成为｜ELI5 Pro 互动学习课</title>
+<style>
+:root{--ink:#1e2a2b;--ink2:#4f6061;--muted:#647273;--paper:#fbfaf6;--off:#f2f4ee;--white:#fff;--line:#dde6de;--mint:#d5f5e5;--jade:#0c766a;--jade2:#075a55;--orange:#ea6c42;--yellow:#ffdf82;--navy:#183a46;--shadow:0 18px 55px rgba(30,45,43,.07);font-family:ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--paper);line-height:1.65;overflow-wrap:anywhere}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+::selection{background:#c0f5e3}
+:focus-visible{outline:3px solid #de7c47;outline-offset:3px}
+.wrap{width:min(1160px,100%);margin-inline:auto;padding-inline:16px;min-width:0}
+header{border-bottom:1px solid var(--line);background:rgba(251,250,246,.94)}
+.header-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:13px;font-weight:850;letter-spacing:.055em;text-decoration:none}
+.logo-mark{background:var(--ink);color:white;width:34px;height:34px;border-radius:12px;display:inline-grid;place-items:center;font-weight:950}
+.nav{display:flex;gap:6px;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
+.nav a{text-decoration:none;color:var(--ink2);padding:6px 10px;border-radius:12px;font-size:12px;font-weight:750}
+.nav a:hover,.nav a:focus-visible{background:#e9f4eb}
+.hero{padding-block:58px 64px;background:radial-gradient(ellipse at 90% 3%,#e5f0dc,transparent 56%),var(--paper)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:38px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;letter-spacing:.1em;color:var(--jade);font-weight:850;text-transform:uppercase}
+.dot{height:7px;width:7px;border-radius:50%;background:var(--orange)}
+h1{font-size:clamp(36px,5.2vw,72px);line-height:1.14;letter-spacing:-.055em;font-weight:920;margin:14px 0 20px}
+h1 strong{color:var(--jade)}
+.lead{font-size:clamp(15px,1.5vw,18px);color:var(--ink2);max-width:590px;line-height:1.85}
+.hero-note{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.pill{padding:7px 12px;display:inline-flex;gap:6px;align-items:center;border:1px solid #cadbce;border-radius:999px;font-size:12px;font-weight:750;background:#fff}
+.pill em{font-style:normal;color:var(--jade);font-weight:900}
+.hero-visual{padding:24px;border-radius:28px;background:var(--navy);color:#fff;position:relative;overflow:hidden;box-shadow:0 25px 58px rgba(24,58,70,.2);min-width:0}
+.hero-visual:before{content:"";position:absolute;inset:-100px -105px auto auto;width:250px;height:250px;border-radius:50%;background:rgba(144,238,210,.12)}
+.visual-kicker{position:relative;color:#afdccf;font-size:11px;letter-spacing:.15em;font-weight:850}
+.visual-card{position:relative;border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px 20px;margin-top:18px;background:rgba(255,255,255,.06)}
+.visual-number{color:#a9decf;font-size:11px;font-weight:900;letter-spacing:.12em}
+.visual-card h2{margin:5px 0 7px;font-size:25px;line-height:1.25}
+.visual-card p{color:#cfdfdf;font-size:13px;margin:0}
+.visual-sep{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:#bedfd5;font-size:12px;font-weight:850}
+.visual-sep svg{width:21px;height:21px}
+.visual-card.lime{border-color:rgba(206,243,166,.46);background:rgba(208,242,174,.1)}
+.hero-tag{margin-top:18px;color:#bed9d6;font-size:12px}
+section{padding-block:60px;scroll-margin-top:20px}
+.section-soft{background:var(--off);border-block:1px solid var(--line)}
+.sec-top{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:24px}
+.sec-top h2{font-size:clamp(26px,3.4vw,39px);letter-spacing:-.04em;line-height:1.3;margin:10px 0 0}
+.sec-top p{max-width:560px;color:var(--ink2);margin:0}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.mode{border:1px solid var(--line);padding:24px;border-radius:22px;background:white;box-shadow:var(--shadow);min-width:0}
+.mode h3{font-size:22px;line-height:1.3;margin:6px 0 8px}
+.mode p{margin:8px 0;color:var(--ink2)}
+.mode .big{font-weight:880;font-size:19px;color:var(--ink)}
+.mode .mode-label{font-size:11px;letter-spacing:.15em;font-weight:900;color:var(--jade)}
+.mode.orange{background:#fff6ef;border-color:#f3ded0}.mode.orange .mode-label{color:#bf4e2a}
+.mode ul{padding-left:19px;margin-bottom:0;color:var(--ink2);font-size:14px}
+.mode li{margin:4px 0}
+.info-strip{border:1px solid #d6e5dd;background:#e8f7ed;padding:16px 18px;border-radius:16px;margin-top:16px;color:#294c43;font-size:14px}
+.layers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}
+.layer{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.layer:nth-child(2){background:#f0f8f5}.layer:nth-child(3){background:#dff3e6;border-color:#b8e0cf}
+.layer-number{font-size:12px;color:var(--jade);font-weight:900;letter-spacing:.08em}
+.layer h3{margin:5px 0;font-size:20px}.layer p{font-size:14px;color:var(--ink2);margin:5px 0}
+.center-note{margin-top:14px;color:var(--muted);font-size:13px}
+.sim-bg{background:var(--navy);color:white;padding-block:60px}
+.sim-bg .sec-top p{color:#c2d5d7}.sim-bg .eyebrow{color:#b3e5d4}
+.sim{background:#f9fbf8;color:var(--ink);border-radius:26px;padding:24px;box-shadow:0 30px 55px rgba(0,0,0,.14)}
+.control-title{font-size:13px;font-weight:860;margin:0 0 10px}
+.selector{display:flex;gap:9px;flex-wrap:wrap}
+.choice{border:1px solid #d2ded8;color:#345753;background:white;border-radius:13px;padding:10px 14px;min-height:44px;font-size:13px;font-weight:780}
+.choice[aria-pressed="true"]{background:var(--jade2);border-color:var(--jade2);color:white;box-shadow:0 5px 15px rgba(12,118,106,.17)}
+.choice:hover:not([aria-pressed="true"]){background:#e8f6ec}
+.sim-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:14px;align-items:end;margin-bottom:20px}
+.branch-choices .choice[aria-pressed="true"]{background:#c65c35;border-color:#c65c35}
+.stage-line{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:22px 0 10px}
+.stage-line span{font-size:12px;font-weight:850;color:var(--ink2)}
+.stage-bar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-bottom:16px}
+.stage-bar span{height:7px;background:#dbe6df;border-radius:999px;transition:background .15s}
+.stage-bar span.active{background:var(--jade)}
+.sim-screen{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:16px;align-items:stretch}
+.sim-main{border:1px solid #d7e5dc;background:white;padding:20px;border-radius:20px;min-width:0}
+.phase{display:inline-flex;align-items:center;gap:8px;background:#ecf7ed;border-radius:30px;padding:6px 11px;font-weight:900;color:var(--jade);font-size:12px}
+.sim-main h3{font-size:clamp(21px,2.4vw,28px);line-height:1.25;margin:15px 0 12px;letter-spacing:-.035em}
+.sim-main p{font-size:14px;line-height:1.8;color:var(--ink2);margin:0}
+.evidence{background:#eaf5ef;border:1px solid #d0e9dd;padding:14px;margin-top:18px;border-radius:14px}
+.evidence b{font-size:12px;color:var(--jade)}.evidence p{color:#30564d;font-size:13px;margin:4px 0 0}
+.metrics{display:flex;flex-direction:column;gap:10px;min-width:0}
+.metric{border:1px solid #d9e5db;background:white;border-radius:16px;padding:15px 16px;min-height:75px}
+.metric small{display:block;color:var(--muted);font-size:12px;font-weight:750}
+.metric strong{display:block;line-height:1.5;font-size:17px;margin-top:6px}
+.sim-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px}
+.sim-actions .buttons{display:flex;flex-wrap:wrap;gap:8px}
+.action{border:1px solid #cddbd2;color:var(--ink);border-radius:12px;background:white;padding:10px 16px;font-weight:850;font-size:13px;min-height:44px}
+.action:hover:not(:disabled){background:#e9f4ec}.action:disabled{cursor:not-allowed;opacity:.42}
+.action.primary{background:var(--orange);border-color:var(--orange);color:white}.action.primary:hover{background:#c9542d}
+.disclaimer{font-size:12px;color:#647977;margin-top:15px}
+.timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.timeline article{padding:20px;background:#fff;border:1px solid var(--line);border-radius:18px;min-width:0}
+.timeline small{font-size:12px;letter-spacing:.08em;color:var(--jade);font-weight:900}
+.timeline h3{font-size:18px;margin:6px 0}.timeline p{font-size:14px;color:var(--ink2);margin:0}
+.practice-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.practice-form,.practice-result{min-width:0;background:#fff;border:1px solid var(--line);border-radius:22px;padding:23px}
+.practice-form label{display:block;font-size:13px;font-weight:850;margin:17px 0 6px}
+.practice-form label:first-of-type{margin-top:0}
+.practice-form input,.practice-form textarea{width:100%;border:1px solid #cfdbd4;background:#fbfcfa;border-radius:11px;min-height:45px;padding:11px 12px;color:var(--ink);font-size:14px}
+.practice-form textarea{resize:vertical;min-height:73px}
+.practice-form button{margin-top:17px}
+.practice-result{background:#e7f5ed;display:flex;flex-direction:column;gap:14px;justify-content:center;border-color:#bce2ce}
+.practice-result strong{color:var(--jade2);font-size:12px;letter-spacing:.09em}
+.practice-result p{font-size:19px;font-weight:730;line-height:1.75;margin:0}
+.practice-result .small{font-size:13px;font-weight:400;color:#426056}
+.quiz-stack{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.quiz{border:1px solid var(--line);background:#fff;border-radius:18px;padding:20px;min-width:0}
+.quiz small{font-weight:880;color:var(--jade)}.quiz h3{font-size:16px;margin:8px 0 14px;line-height:1.55}
+.quiz .answer{display:block;width:100%;border:1px solid #d9e3dc;background:#fbfcfa;color:var(--ink2);text-align:left;padding:11px 12px;border-radius:10px;font-size:13px;min-height:46px;margin-top:8px;line-height:1.5}
+.quiz .answer:hover{border-color:#85baa3;background:#eff9f3}
+.quiz .answer.selected{border-color:var(--jade);background:#def4e6;color:#17493e}
+.quiz .answer.wrong{border-color:#cf775e;background:#fff2ed}
+.feedback{font-size:13px;font-weight:720;color:#255b48;min-height:2em;margin:13px 0 0}
+.feedback.error{color:#a3482d}
+.details{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.details summary{cursor:pointer;font-weight:870;font-size:16px;line-height:1.5}
+.details p{color:var(--ink2);font-size:14px}
+.footer{padding-block:34px 55px;border-top:1px solid var(--line);background:#eef4ed;color:var(--ink2)}
+.footer-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.footer p,.footer li{font-size:13px}.footer ul{padding-left:20px}
+.footer a{color:var(--jade2)}.footer h3{color:var(--ink)}
+.num{font-variant-numeric:tabular-nums}
+@media(max-width:850px){.hero-grid{grid-template-columns:minmax(0,1fr)}.hero-visual{max-width:630px}.quiz-stack{grid-template-columns:minmax(0,1fr)}.sim-controls{grid-template-columns:minmax(0,1fr)}.sec-top{align-items:start;flex-direction:column;gap:9px}}
+@media(max-width:640px){
+ .wrap{padding-inline:16px}.header-inner{padding-block:13px;align-items:flex-start;flex-direction:column;gap:10px}.nav{gap:4px;justify-content:flex-start}.nav a{padding:7px 8px;font-size:11px}
+ .hero{padding-block:36px 45px}.hero-grid{gap:23px}.hero-visual{padding:18px;border-radius:20px}
+ section{padding-block:42px}.split,.layers,.sim-screen,.timeline,.practice-panel,.footer-grid{grid-template-columns:minmax(0,1fr)}
+ .mode,.layer{padding:19px}.sim{padding:15px;border-radius:18px}.sim-main{padding:17px}.metric{min-height:0}
+ .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric:nth-child(3){grid-column:1/-1}
+ .practice-form,.practice-result{padding:19px}.practice-result p{font-size:17px}
+ .sim-actions{align-items:stretch;flex-direction:column}.sim-actions .buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sim-actions .buttons button{min-width:0}
+ h1{font-size:clamp(36px,10vw,50px)}.sec-top h2{font-size:clamp(25px,7vw,32px)}
+}
+@media(max-width:350px){.visual-card h2{font-size:20px}.metric strong{font-size:15px}.mode h3{font-size:20px}.practice-form,.practice-result{padding:16px}.sim{padding:12px}.sim-main{padding:14px}.nav a{font-size:10px;padding:6px}.choice{font-size:12px;padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap header-inner"><a class="logo" href="#top"><span class="logo-mark">E</span><span>ELI5 PRO · 思维实验室</span></a><nav class="nav" aria-label="课程导航"><a href="#concept">核心区别</a><a href="#lab">互动实验</a><a href="#practice">实践工具</a><a href="#quiz">理解测验</a></nav></div></header>
+<main>
+<section id="top" class="hero"><div class="wrap hero-grid"><div><div class="eyebrow"><span class="dot"></span> LEARN · MINDSET 01</div><h1>从<span>「去做」</span><br>到<strong>「去成为」</strong></h1><p class="lead">忙了一整天，不等于在接近你想过的生活。完成事情回答“今天做了什么”；成为某种人回答“为什么选这些事，又如何持续成长”。</p><div class="hero-note"><span class="pill"><em>01</em> 学概念</span><span class="pill"><em>02</em> 看过程</span><span class="pill"><em>03</em> 自己练</span></div></div><div class="hero-visual" aria-label="Doing 和 Becoming 的核心区别"><div class="visual-kicker">TWO QUESTIONS, ONE GROWTH LOOP</div><div class="visual-card"><div class="visual-number">DOING / 任务层</div><h2>我今天要做什么？</h2><p>学习工具、完成脚本、发布一条视频、检查数据。</p></div><div class="visual-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v17m-6-6 6 6 6-6"/></svg><span>行动提供证据，证据修正认识</span></div><div class="visual-card lime"><div class="visual-number">BECOMING / 身份层</div><h2>我正在成为什么样的人？</h2><p>一个能持续发现问题、交付有用内容、根据反馈进步的人。</p></div><div class="hero-tag">行动不是身份的替代品，身份也不是行动的替代品。</div></div></div></section>
+<section id="concept"><div class="wrap"><div class="sec-top"><div><div class="eyebrow">01 / BUILD INTUITION</div><h2>把两种思维放在一起看</h2></div><p>不是“完成任务”和“追求身份”二选一，而是让方向感和执行力互相校正。</p></div><div class="split"><article class="mode orange"><div class="mode-label">DOING · 去做</div><h3>关注任务与结果</h3><p class="big">“我今晚做出 1 条 AI 短视频。”</p><p>给你一个明确的动作、截止时间、交付物。结果能看见、能检查。</p><ul><li>价值：促使想法落地</li><li>风险：可能忙着打勾，却没验证方向</li></ul></article><article class="mode"><div class="mode-label">BECOMING · 去成为</div><h3>关注价值与行为身份</h3><p class="big">“我是一个不断验证受众需求的创作者。”</p><p>帮你决定为什么做、遇到困难怎样选择、长期应积累什么能力。</p><ul><li>价值：强化行动方向与持续性</li><li>风险：口头认同不能代替真实产出</li></ul></article></div><div class="info-strip"><b>一句话记忆：</b>“去做”提供可观察的进步；“去成为”提供选择行动的原则。成熟的做法是：<b>设身份假设 → 做可验证的动作 → 用真实证据更新假设</b>。</div><div class="layers"><div class="layer"><div class="layer-number">01 · OUTCOME</div><h3>结果</h3><p>希望得到什么？例如：让 100 位观众看完自己的作品。</p></div><div class="layer"><div class="layer-number">02 · PROCESS</div><h3>行动</h3><p>具体做什么？例如：选题、制作、发布、复盘。</p></div><div class="layer"><div class="layer-number">03 · IDENTITY</div><h3>身份</h3><p>正在养成什么特质？例如：有观察力、愿验证、能交付。</p></div></div><p class="center-note">注：结果、过程、身份会双向影响；这是一种教学用思维框架，而非决定命运的公式。</p></div></section>
+<section id="lab" class="sim-bg"><div class="wrap"><div class="sec-top"><div><div class="eyebrow">02 / INTERACTIVE EXPERIMENT</div><h2>互动实验：从“想做博主”到第一次反馈</h2></div><p>选择行动策略，切换反馈情境，再一步步观察“实际产出、可用反馈、身份认同的证据”如何变化。</p></div><div class="sim"><div class="sim-controls"><div><p class="control-title">A. 选择你的行动方式</p><div class="selector" id="strategies" role="group" aria-label="行动策略"><button type="button" class="choice" data-strategy="doing" aria-pressed="false">只做任务</button><button type="button" class="choice" data-strategy="claim" aria-pressed="false">只宣告身份</button><button type="button" class="choice" data-strategy="both" aria-pressed="true">身份 × 行动 × 复盘</button></div></div><div class="branch-choices"><p class="control-title">B. 本轮出现什么反馈？</p><div class="selector" id="branches" role="group" aria-label="反馈情境"><button type="button" class="choice" data-branch="low" aria-pressed="true">播放量低</button><button type="button" class="choice" data-branch="comment" aria-pressed="false">收到有效评论</button></div></div></div><div class="stage-line"><span id="stage-count" class="num">第 1 / 6 阶段</span><span id="stage-short">确定方向</span></div><div class="stage-bar" id="stage-bar" aria-hidden="true"></div><div class="sim-screen"><div class="sim-main"><span class="phase" id="phase">阶段 01 · 起点</span><h3 id="step-title">决定要做一个 AI 内容项目</h3><p id="step-desc">你希望通过一个月的内容发布，了解哪些真实问题值得解决。下一步，关键不只是宣布想法。</p><div class="evidence"><b>这一步告诉了你什么？</b><p id="step-insight">“想成为”只是方向假设；真正的证据来自之后的行动。</p></div></div><div class="metrics" aria-label="过程状态"><div class="metric"><small>公开发布的作品</small><strong id="metric-published">0 条</strong></div><div class="metric"><small>可用于下一轮的反馈</small><strong id="metric-feedback">尚无</strong></div><div class="metric"><small>支持新身份的行动证据</small><strong id="metric-evidence">0 次具体行动</strong></div></div></div><div class="sim-actions"><div class="buttons"><button type="button" class="action" id="prev">← 上一步</button><button type="button" class="action primary" id="next">下一步 →</button><button type="button" class="action" id="play">▶ 自动演示</button><button type="button" class="action" id="reset">↺ 重置</button></div><span id="status" role="status" aria-live="polite" class="center-note">可随时切换策略并重新观察。</span></div><p class="disclaimer">教学模拟：不同策略可能产生不同结果，但这里展示的是可能出现的行动链条，并非真实实验数据、成功概率或对人格的评价。</p></div></div></section>
+<section><div class="wrap"><div class="sec-top"><div><div class="eyebrow">03 / UNDERSTAND THE LOOP</div><h2>一条真正有用的成长链条</h2></div><p>“我想成为谁”并不需要一次性想明白。让小行动告诉你：这个身份是否适合、是否值得继续。</p></div><div class="timeline"><article><small>01 · 方向</small><h3>设定可修改的身份假设</h3><p>“我正在成为一个通过有用内容解决真实问题的人。”这里的“正在”很重要，它允许你学习、修正和改变。</p></article><article><small>02 · 证据</small><h3>选择最小可执行动作</h3><p>“本周发布 1 条 60 秒 AI 对辩短视频，并邀请至少 1 位观众提出批评。”真正行动比漂亮的自我介绍更有价值。</p></article><article><small>03 · 反馈</small><h3>分析现象，更新下一步</h3><p>播放量低不等于你不适合创作；好评也不等于已经找到商业模式。下一步要提出并验证更具体的假设。</p></article></div><details class="details"><summary>补充辨析：心理学正念里的 Being Mode 是同一个意思吗？</summary><p><b>不完全是。</b>本课的 Becoming 侧重“想成为什么样的人，以及行动如何支持这一身份”。而正念语境中的 <b>Being Mode（存在／觉察模式）</b> 侧重直接观察此刻的身体感受、情绪和想法，而不是立刻进入“哪里有问题、怎么修好”的解决模式。</p><p>例如作品发布后你很焦虑：此刻可以先进入 Being Mode，觉察“我正在紧张，有急于证明自己的念头”；随后再进入 Doing Mode，检查数据并决定下一步。<b>Being 不是躺平，Doing 也不是错误。</b>两者可以顺序配合。它与“身份导向的 Becoming”属于不同的概念框架，不能直接画等号。</p></details></div></section>
+<section id="practice" class="section-soft"><div class="wrap"><div class="sec-top"><div><div class="eyebrow">04 / PRACTICE TOOL</div><h2>把“去成为”写成一张行动卡</h2></div><p>不要写“我要成功”这样的抽象口号。写出能被别人观察到、能被自己复盘的下一步。</p></div><div class="practice-panel"><form class="practice-form" id="planner"><label for="identity">我希望成为哪类人？</label><input id="identity" maxlength="120" value="持续验证真实需求的 AI 内容创作者"><label for="action-input">一周内最小、能完成的行动是什么？</label><textarea id="action-input" maxlength="220">在周三前发布 1 条 60 秒双人辩论短视频</textarea><label for="signal">什么事实能证明我在进步？</label><textarea id="signal" maxlength="220">记录至少 1 条真实观众反馈，并为下一条确定一处修改</textarea><button type="submit" class="action primary">生成我的成长行动卡 →</button></form><aside class="practice-result" aria-live="polite"><strong>YOUR BECOMING CARD / 行动证据卡</strong><p id="plan-result">我正在成为“持续验证真实需求的 AI 内容创作者”。<br><br>这周我将：在周三前发布 1 条 60 秒双人辩论短视频。<br><br>我会用这项证据复盘：记录至少 1 条真实观众反馈，并为下一条确定一处修改。</p><div class="small">提示：此卡只在当前页面展示，不会自动保存或发送。可手动复制内容到你的笔记软件。</div></aside></div></div></section>
+<section id="quiz"><div class="wrap"><div class="sec-top"><div><div class="eyebrow">05 / KNOWLEDGE CHECK</div><h2>你真的理解了吗？</h2></div><p>每题选择一个答案。这里没有机械打分，反馈会解释为什么，答错也可以重试。</p></div><div class="quiz-stack"><article class="quiz" data-q="0"><small>Q1 · 概念辨认</small><h3>哪个说法更符合“去成为”？</h3><button type="button" class="answer" data-a="0">A. 给自己改一个“CEO”头衔</button><button type="button" class="answer" data-a="1">B. 明确想建立的特质，并用实际行动形成证据</button><button type="button" class="answer" data-a="2">C. 不再设任何可执行目标</button><p class="feedback" aria-live="polite">选择一个答案查看解释。</p></article><article class="quiz" data-q="1"><small>Q2 · 因果推理</small><h3>连发 3 条视频播放量低，哪种做法最合理？</h3><button type="button" class="answer" data-a="0">A. 判定“我天生不适合创作”</button><button type="button" class="answer" data-a="1">B. 查看可用反馈，提出一个小假设，再发布验证</button><button type="button" class="answer" data-a="2">C. 只要每天默念自己是创作者就够了</button><p class="feedback" aria-live="polite">选择一个答案查看解释。</p></article><article class="quiz" data-q="2"><small>Q3 · 举一反三</small><h3>正念所说的 Being Mode，比较接近哪种状态？</h3><button type="button" class="answer" data-a="0">A. 观察当下的感受与念头，不急着修正每一种情绪</button><button type="button" class="answer" data-a="1">B. 想象未来要拥有什么身份</button><button type="button" class="answer" data-a="2">C. 永久放弃解决所有问题</button><p class="feedback" aria-live="polite">选择一个答案查看解释。</p></article></div><div class="info-strip"><b>带走一个可执行问题：</b>“我希望成为什么样的人？”之后，再问：“<b>我能在 48 小时内拿出哪一份行动证据？</b>”</div></div></section>
+</main>
+<footer class="footer"><div class="wrap footer-grid"><div><div class="logo"><span class="logo-mark">E</span><span>ELI5 PRO · THINK / ACT / BECOME</span></div><p>学习结论：身份帮助选择行动，行动提供真实证据，反馈让两者共同更新。别把忙碌误认为成长，也别把自我想象误认为成果。</p><p>这是一份独立运行的离线 HTML 学习页。内容用于教育与自我反思，不构成心理治疗或成功结果保证。</p></div><div><h3>延伸阅读与概念来源</h3><ul><li>James Clear：身份与行动证据（Atomic Habits）</li><li>Oyserman（2009）：Identity-Based Motivation</li><li>Oxford Mindfulness Foundation：正念与当下觉察</li></ul><p>课程与互动完全离线。参考文献可按标题搜索进一步阅读。</p></div></div></footer>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const data={
+  doing:{
+   title:['定下一份任务清单','学习工具，整理热门话题','完成并发布一条视频','打开后台检查播放数据','看见结果后重新选择任务','本轮结束，准备下一份清单'],
+   desc:['你决定本月学习视频工具并完成 5 个作品，把成果主要定义为“交付清单”。','你学习剪辑工具并收集热门题材。活动具体有效，但还没有核验受众的痛点。','你如期发布 1 条 60 秒视频。公开作品就是可观察的成果。','你查看数据：{feedback}。你知道作品有没有被看见，但还要继续探究原因。','你可能倾向于继续学一个新工具，或换一个话题。任务驱动本身不会自动提供长期学习方向。','你做完了事，这是有效的进步。若补充目标与复盘，它也可以自然升级为长期成长体系。'],
+   insight:['清单帮你开始，但清单不说明什么值得长期做。','做了很多准备不一定等于验证了用户需求。','Doing 的优点：不会止步于空想。','看数字不等于解读了为什么。','任务本身没有错；问题是缺少“为什么做”和“学到了什么”。','可以为下一份清单补上一个可验证的假设。'],
+   evidence:[0,1,2,3,3,3]
+  },
+  claim:{
+   title:['宣布我要成为创作者','设计个人定位与口号','继续完善身份设想','等待理想时机与认可','用想象代替市场反馈','依然没有可验证的作品'],
+   desc:['你给自己写下宣言：“我就是一个优秀的 AI 创作者”。这可以激励你，但尚未证明能力。','你考虑头像、人设和未来影响力，却没有观察具体受众问题。','你继续调整个人简介，没有发布能够被真实观众评价的最小作品。','因为没有公开作品，本轮不可能获得关于作品的真实播放数据或观众评论。','你也许觉得自己已经有了清晰的人设，但缺少行动，外界无法验证你的价值主张。','你可以保留想成为的方向，并马上为它增加一个最小可交付动作。'],
+   insight:['认同是起点，不是证据。','身份愿望需要连接可执行行为。','宣言本身不等于交付。','没有作品就缺少本轮的真实内容反馈。','自我描述并不能替代市场检验。','不要否定理想；只需给理想安排下一个行动。'],
+   evidence:[0,0,0,0,0,0]
+  },
+  both:{
+   title:['提出一个可以验证的身份假设','从真实问题选择一个切口','发布第一条最小可行内容','接受不完美的第一轮反馈','用反馈设计下一次小实验','保持身份、行动与学习的循环'],
+   desc:['你选择的不是“我已经成功”，而是“我正在成为持续解决真实问题的 AI 创作者”。为了验证它，你决定交付。','你从讨论区选出一个真实问题：“AI 真的能提高普通人的工作效率吗？”并写出两人辩论的观点。','你发布 1 条 60 秒的 AI 双人辩论短视频，结尾邀请观众指出最想解决的实际问题。','作品上线后：{feedback}。反馈是对本次内容的观察，不是对你这个人的价值判决。','{review} 你记录一个可验证的修改点，而不是凭一次数据判定人生方向。','你把下一轮目标写成“发布 → 观察 → 调整”。反复交付的经历为目标身份积累证据，但不保证流量与收入。'],
+   insight:['先提出方向，再让行动检验方向。','真实问题让行动更有目的，而不是只追热点。','你已经拥有第一个可观察的行动证据。','把数据当成信息，而不是人格评价。','小实验可以减少无意义的盲目坚持。','成为，是长期过程；每一轮都有机会修正身份与方法。'],
+   evidence:[0,1,2,3,4,5]
+  }
+};
+let state={strategy:'both',branch:'low',step:0,timer:null};
+const phaseNames=['起点','观察','交付','反馈','复盘','迭代'];
+const shortNames=['确定方向','开始行动','交付作品','接收反馈','分析复盘','进入下一轮'];
+function feedbackText(){return state.branch==='low'?'播放量较低，暂时没有充分的评论样本':'有一位观众评论：“能不能给出实际执行步骤？”';}
+function reviewText(){return state.branch==='low'?'先检查开头是否清晰、触达是否足够，再测试一个更聚焦的版本。':'观众提出了“想看具体步骤”的需求；下一条测试“三步执行方案”的表达方式。';}
+function stop(){if(state.timer){clearInterval(state.timer);state.timer=null;} $('play').textContent='▶ 自动演示';}
+function render(){
+ const s=state.step, cfg=data[state.strategy];
+ $('stage-count').textContent='第 '+(s+1)+' / 6 阶段';
+ $('stage-short').textContent=shortNames[s];
+ $('phase').textContent='阶段 '+String(s+1).padStart(2,'0')+' · '+phaseNames[s];
+ $('step-title').textContent=cfg.title[s];
+ $('step-desc').textContent=cfg.desc[s].replaceAll('{feedback}',feedbackText()).replaceAll('{review}',reviewText());
+ $('step-insight').textContent=cfg.insight[s];
+ $('metric-published').textContent=(state.strategy==='claim'||s<2?'0':'1')+' 条';
+ let feedback='尚无'; if(s>=3 && state.strategy!=='claim')feedback=state.branch==='low'?'只有播放数据':'收到 1 条评论';
+ $('metric-feedback').textContent=feedback;
+ $('metric-evidence').textContent=cfg.evidence[s]+' 次具体行动';
+ $('prev').disabled=s===0;$('next').disabled=s===5;
+ $('stage-bar').innerHTML=Array.from({length:6},(_,i)=>'<span class="'+(i<=s?'active':'')+'"></span>').join('');
+ document.querySelectorAll('[data-strategy]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.strategy===state.strategy)));
+ document.querySelectorAll('[data-branch]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.branch===state.branch)));
+}
+function goto(s){state.step=Math.min(5,Math.max(0,s));render();if(state.step===5)stop();}
+document.querySelectorAll('[data-strategy]').forEach(btn=>btn.addEventListener('click',()=>{stop();state.strategy=btn.dataset.strategy;state.step=0;render();$('status').textContent='已切换策略，从第 1 阶段重新开始。';}));
+document.querySelectorAll('[data-branch]').forEach(btn=>btn.addEventListener('click',()=>{stop();state.branch=btn.dataset.branch;render();$('status').textContent='反馈情境已切换，可以继续推演。';}));
+$('prev').addEventListener('click',()=>{stop();goto(state.step-1);$('status').textContent='已经回到上一阶段。';});
+$('next').addEventListener('click',()=>{stop();goto(state.step+1);$('status').textContent=state.step===5?'本轮结束。可重置或切换策略。':'已进入下一阶段。';});
+$('reset').addEventListener('click',()=>{stop();goto(0);$('status').textContent='本轮已重置。';});
+$('play').addEventListener('click',()=>{if(state.timer){stop();$('status').textContent='演示已暂停。';return;}if(state.step>=5)goto(0);$('play').textContent='Ⅱ 暂停演示';$('status').textContent='正在逐步演示…';state.timer=setInterval(()=>{if(state.step>=5){stop();$('status').textContent='自动演示完成。';return;}goto(state.step+1);if(state.step===5){$('status').textContent='自动演示完成。';}},1500);});
+const quiz=[
+ {correct:1,yes:'正确。“成为”必须通过行动和证据被逐渐验证，头衔不能代替能力。',no:'再想想：有一个新头衔或放弃目标，都没有说明行为怎样改变。试试把身份与行动联系起来。'},
+ {correct:1,yes:'正确。低播放只是一次有限的观察；下一步是定义小假设、收集反馈并迭代。',no:'一次结果不等于终身身份，更不能用自我暗示代替发布与复盘。再试一次。'},
+ {correct:0,yes:'正确。正念的 Being Mode 是觉察当下，不急于修正每一种念头；它与身份导向的 Becoming 不完全相同。',no:'请区分两个框架：正念里的 Being 是“此刻觉察”，不是“宣布未来的职业身份”。再试一次。'}
+];
+document.querySelectorAll('.quiz').forEach(card=>{const q=Number(card.dataset.q);card.querySelectorAll('.answer').forEach(btn=>btn.addEventListener('click',()=>{const a=Number(btn.dataset.a),ok=a===quiz[q].correct;card.querySelectorAll('.answer').forEach(b=>b.classList.remove('selected','wrong'));btn.classList.add(ok?'selected':'wrong');let f=card.querySelector('.feedback');f.classList.toggle('error',!ok);f.textContent=ok?'✓ '+quiz[q].yes:'再试一次：'+quiz[q].no;}));});
+$('planner').addEventListener('submit',event=>{event.preventDefault();const id=$('identity').value.trim(),ac=$('action-input').value.trim(),sig=$('signal').value.trim();if(!id||!ac||!sig){$('plan-result').textContent='请填写三个问题，确保你既有方向，也有行动和反馈标准。';return;}
+const p=$('plan-result');p.textContent='';const lines=['我正在成为“'+id+'”。','这周我将：'+ac+'。','我会用这项证据复盘：'+sig+'。'];lines.forEach((t,i)=>{if(i)p.appendChild(document.createElement('br'));if(i)p.appendChild(document.createElement('br'));p.appendChild(document.createTextNode(t));});});
+render();
+})();
+</script>
+</body>
+</html>

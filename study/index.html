@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">
+<title>学以致用 · 我的学习中心</title>
+<meta name="description" content="统一收藏 AI、Agent、Redis、RocketMQ、Java、Web 与思维方法的完整交互课程，按主题搜索、在线阅读和回看历史版本。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="catalog">
+<a class="skip" href="#courses">跳到课程列表</a>
+<header class="site-header"><a class="brand" href="./" aria-label="学习中心首页"><span class="brand-mark" aria-hidden="true">学</span><span>学以致用<small>我的学习中心</small></span></a><nav aria-label="站点导航"><a href="../">学习总览 ↗</a><a href="https://github.com/aisuperteacher/ai-learning-hub" target="_blank" rel="noopener">GitHub</a><a href="https://aisuperteacher.github.io/ai-daily-hub/" target="_blank" rel="noopener">日报首页 ↗</a></nav></header>
+<main class="container">
+<section class="intro"><div><p class="eyebrow">LEARN · PRACTISE · RETURN</p><h1>每一堂课，<br>都能随时回来。</h1><p class="intro-text">把知识地图、原理图解和动手实验放在一起。<br class="desktop-break">从当前的问题出发，找到下一步。</p></div><div class="intro-card"><span class="eyebrow">你的学习档案</span><div class="numbers"><div><strong id="topic-count">—</strong><span>个学习主题</span></div><div><strong id="document-count">—</strong><span>份完整 HTML</span></div></div><p>原始课程与交互保留，重复副本合并，不同版本可以回看。</p><small id="updated-at">正在载入课程目录…</small></div></section>
+<section class="resume" id="resume" hidden aria-label="继续阅读"><span class="resume-icon" aria-hidden="true">↳</span><div><span class="eyebrow">上次打开</span><h2 id="resume-title"></h2><p id="resume-note"></p></div><a class="button primary" id="resume-link">继续阅读 <span aria-hidden="true">↗</span></a></section>
+<section class="library" id="courses" aria-labelledby="library-title"><div class="section-line"><div><p class="eyebrow">COURSE LIBRARY</p><h2 id="library-title">找到你想学的内容</h2></div><span id="result-count" class="result-count" aria-live="polite"></span></div>
+<div class="toolbar"><div class="search-box"><label for="course-search" class="sr-only">搜索课程</label><span aria-hidden="true">⌕</span><input id="course-search" type="search" autocomplete="off" placeholder="搜索 Redis、Agent、AQS、上下文…"><button id="clear-search" class="clear" type="button" aria-label="清空搜索" hidden>×</button></div><label class="sort-label">排序<select id="course-sort"><option value="recent">最近更新</option><option value="title">标题顺序</option></select></label></div>
+<nav id="categories" class="filters" aria-label="课程主题分类"></nav>
+<div id="course-grid" class="course-grid"></div>
+<div id="empty-state" class="empty-state" hidden><h3>没有找到匹配的课程</h3><p>试试更短的关键词，或切换到“全部”。</p><button id="reset-filters" class="button" type="button">查看全部课程</button></div>
+<div id="load-error" class="empty-state" hidden><h3>课程目录暂时未能载入</h3><p>请刷新页面后重试。已归档的课程仍可通过原文链接阅读。</p><button class="button" id="retry-load" type="button">重新载入</button></div>
+<noscript><div class="empty-state">课程搜索需要 JavaScript。你仍可在 <a href="catalog.json">课程目录文件</a> 中找到完整 HTML 的路径。</div></noscript>
+</section>
+<section class="reading-note"><h2>让下一次学习更容易开始</h2><p>先找到一个问题，再打开对应课程。需要时回看图解、修改实验条件、把自己的回答带回对话获得反馈。</p><div><span>按主题查找</span><span>在线保留交互</span><span>历史版本可回看</span><span>支持下载离线学习</span></div></section>
+</main>
+<footer class="site-footer"><p>学以致用 · 学习中心 <span>每份课程保留原始内容与来源日期。</span></p><p>“上次打开”仅记录当前浏览器的访问，不表示已掌握；课程内的练习记录以原页面功能为准。</p></footer>
+<script src="assets/app.js" defer></script>
+</body></html>

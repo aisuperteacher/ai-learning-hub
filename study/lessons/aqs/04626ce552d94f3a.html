@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0c292b">
+<title>AQS 是什么｜JDK 8 / 17 / 21 · 学以致用</title>
+<style>
+:root{--ink:#193537;--muted:#61787a;--green:#087869;--light:#e6f5ed;--amber:#a46e18;--bg:#f5f8f5;--line:#d6e3de;--dark:#0b2c2e;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;overflow-x:hidden}button,textarea{font:inherit}a{color:var(--green);text-underline-offset:3px}button{cursor:pointer}button:focus-visible,a:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #f5b545;outline-offset:3px}
+.shell{width:min(1100px,100%);padding:0 26px;margin:0 auto}.mast{background:var(--dark);color:#edf8f5;position:relative;overflow:hidden}.mast:before{content:"";position:absolute;width:550px;height:550px;right:-200px;top:-200px;background:radial-gradient(circle,#3d9b8b45,transparent 65%)}.mast-content{position:relative;padding:63px 0 58px}.kicker{font-size:13px;letter-spacing:.13em;font-weight:800;text-transform:uppercase;color:#a9dfc9}.mast h1{font-size:clamp(31px,5vw,52px);letter-spacing:-.04em;line-height:1.23;margin:17px 0}.mast h1 em{font-style:normal;color:#aee7cd}.mast p{font-size:18px;max-width:790px;color:#d6e8e2;margin:16px 0 0}.hero-pills{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 0}.hero-pills span{padding:3px 12px;border:1px solid #ffffff35;border-radius:20px;font-size:13px;color:#d9e8e5}.page{padding:33px 0 70px}.contents{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 27px}.contents a{text-decoration:none;font-size:13px;color:#365e5c;background:#e4f0e9;padding:7px 11px;border-radius:8px}.contents a:hover{background:#d5eae0}.card{min-width:0;background:#fff;border:1px solid var(--line);border-radius:17px;padding:clamp(19px,3.5vw,32px);margin:21px 0;box-shadow:0 5px 18px #11332b08;scroll-margin-top:20px}.eyebrow{font-size:12px;color:var(--green);font-weight:800;letter-spacing:.1em;margin:0 0 6px}.card h2{font-size:clamp(23px,3vw,29px);line-height:1.35;margin:0 0 17px;letter-spacing:-.025em}.card h3{font-size:18px;margin:19px 0 8px}.card p{margin:10px 0;overflow-wrap:anywhere}.lead{font-size:19px;line-height:1.7}.muted{color:var(--muted);font-size:14px}.highlight{color:var(--green);font-weight:700}.mini{font-size:13px;color:var(--muted)}.emphasis{font-weight:700;color:#155849}.info{background:#eef7f2;border-left:3px solid var(--green);padding:12px 16px;border-radius:7px;margin:16px 0}.warn{background:#fff7ea;border-left:3px solid #c18a2b;padding:12px 16px;border-radius:7px;margin:16px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.tile{padding:17px;border-radius:12px;background:#f1f7f4;border:1px solid #dcebe3}.tile .n{font-family:ui-monospace,Consolas,monospace;font-size:15px;font-weight:800;color:var(--green)}.tile h3{margin:5px 0 6px;font-size:18px}.tile p{font-size:14px;margin:0}.analogy{display:grid;grid-template-columns:1fr 1fr;gap:15px}.analogy>div{border:1px dashed #abc8bb;border-radius:11px;padding:13px 16px}.analogy strong{display:block;color:var(--green);margin-bottom:5px}
+.sim{border:1px solid #cbded3;border-radius:16px;background:#f7fbf8;padding:21px;margin-top:17px}.sim-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}.sim-title{font-weight:800;font-size:18px}.progress{font-size:13px;color:var(--green);font-variant-numeric:tabular-nums}.measure{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:16px 0}.measure .m{background:#fff;border:1px solid #dbe8e2;border-radius:10px;padding:10px 14px;flex:1 1 150px;min-width:0}.measure small{display:block;color:var(--muted);font-size:12px}.measure strong{display:block;font-size:21px}.queue-area{background:#fff;border-radius:12px;border:1px solid #e0ebe4;padding:14px 15px;min-height:135px}.queue-label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:14px}.queue{display:flex;align-items:center;gap:5px;min-height:56px;flex-wrap:wrap}.queue-token{background:#e1f1e9;color:#155b4a;border:1px solid #90c9b1;padding:7px 12px;border-radius:9px;font-size:14px;font-weight:750;min-width:65px;text-align:center}.queue-token.head{background:#edf0f2;border-color:#bfcfd1;color:#596f73}.queue-token.wake{background:#fef0d4;border-color:#ecc57c;color:#9a6818}.arrow{color:#69988b;font-size:18px;font-weight:900}.empty-queue{color:var(--muted);font-size:14px}.sim-description{padding:15px 0 7px;font-size:16px;min-height:76px}.sim-description strong{color:#145d4d}.controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{min-height:43px;padding:8px 17px;border-radius:10px;border:1px solid #aacdbd;background:#fff;color:#145c4e;font-weight:700}.btn.main{background:#086e61;border-color:#086e61;color:#fff}.btn:hover:not(:disabled){filter:brightness(.96)}.btn:disabled{opacity:.45;cursor:not-allowed}.dots{display:flex;gap:6px;margin-left:auto;align-items:center}.dot{width:9px;height:9px;background:#c9ded3;border-radius:50%;border:0;padding:0;min-height:9px}.dot.current{background:#0a7e6a;transform:scale(1.25)}
+.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}.flow div{flex:1 1 160px;border:1px solid #dbe9e2;background:#f6faf7;border-radius:10px;padding:11px 15px;font-size:14px}.flow div b{display:block;font-size:15px}.flow span{align-self:center;color:#5a9583;font-weight:800}.table-wrap{max-width:100%;overflow-x:auto;border:1px solid #d9e5df;border-radius:12px}table{width:100%;border-collapse:collapse;min-width:600px;font-size:14px}th,td{text-align:left;padding:12px 13px;border-bottom:1px solid #e5ece9;vertical-align:top}th{background:#eff6f2;color:#315f52}tr:last-child td{border-bottom:0}.vers{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.vers button{min-width:100px;min-height:44px;border:1px solid #abcfc1;border-radius:10px;background:#fff;color:#315f52;font-weight:800}.vers button[aria-selected=true]{background:#155f54;color:white;border-color:#155f54}.version-panel{border:1px solid #d6e3dc;border-radius:13px;background:#f7fbf8;padding:17px}.version-panel h3{margin:0 0 7px}.version-panel pre{margin:12px 0}.version-note{font-size:15px}code:not(pre code){overflow-wrap:anywhere;word-break:break-word}.codeblock{max-width:100%;overflow-x:auto;background:#102a30;color:#dcf5eb;border-radius:12px;padding:18px;font:13px/1.7 Consolas,"SFMono-Regular",ui-monospace,monospace;tab-size:4;white-space:pre;overflow-y:hidden}.codecap{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 0}.file-chip{font-size:12px;color:#5e7978;font-family:ui-monospace,Consolas,monospace}.copy{border:1px solid #adcabc;background:#f4f9f6;border-radius:8px;padding:6px 12px;color:#176651;font-size:13px;min-height:37px}.steps{padding-left:21px}.steps li{margin:6px 0}.quiz{border-top:1px solid #ddeae4;margin-top:18px;padding-top:15px}.quiz:first-of-type{margin-top:0}.quiz h3{margin-top:0}.quiz textarea{width:100%;min-height:108px;max-width:100%;padding:13px;border:1px solid #b7cfc4;border-radius:10px;resize:vertical;background:#fff}.quiz summary{cursor:pointer;font-weight:800;color:#276455;padding:9px 0}.quiz details p{padding:0 8px;font-size:14px}.source-list{margin:10px 0;padding-left:22px;font-size:14px}.source-list li{margin:7px 0;overflow-wrap:anywhere}.footer{font-size:13px;color:var(--muted);margin:33px 0}
+@media(max-width:760px){.grid3{grid-template-columns:1fr}.analogy{grid-template-columns:1fr}.mast-content{padding:39px 0}.page{padding-top:20px}.shell{padding:0 17px}.card{margin:14px 0}.flow span{display:none}.flow div{flex-basis:100%}.dots{width:100%;margin-top:8px}.codeblock{font-size:12px}}
+@media(max-width:400px){.shell{padding:0 13px}.card{padding:17px}.sim{padding:12px}.queue-token{padding:5px 8px;min-width:53px;font-size:12px}.arrow{font-size:14px}.measure .m{flex-basis:100%;padding:7px 11px}.codeblock{font-size:11px;padding:12px}}
+@media print{.mast{background:#eff6f2;color:#122d30}.mast p,.mast .kicker{color:#315e50}.mast h1 em{color:#087869}.card{break-inside:avoid;box-shadow:none}.controls,.contents,.copy,.quiz textarea{display:none!important}body{background:white}.codeblock{white-space:pre-wrap;color:#173434;background:#f3f7f5}}
+</style>
+</head>
+<body>
+<header class="mast"><div class="shell mast-content">
+  <div class="kicker">学以致用 · JAVA 并发原理 · 从零学习</div>
+  <h1>AQS 是什么？<br><em>JDK 8 → 17 → 21</em></h1>
+  <p>一口气理解：线程为什么抢锁失败、为什么要排队、怎样挂起和唤醒，以及不同 JDK 源码为什么不一样。</p>
+  <div class="hero-pills"><span>核心理解约 30 分钟</span><span>7 步可点击动画</span><span>带 Java 8 可编译源码</span><span>完全离线</span></div>
+</div></header>
+<main class="shell page">
+<nav class="contents" aria-label="章节导航"><a href="#why">01 为什么要它</a><a href="#sim">02 亲手推演</a><a href="#kernel">03 三大机制</a><a href="#modes">04 两种模式</a><a href="#compare">05 版本差异</a><a href="#code">06 Java 实战</a><a href="#advanced">07 常见误区</a><a href="#practice">08 自测</a></nav>
+
+<section class="card" id="why">
+<p class="eyebrow">01 · 从现象理解</p><h2>多个线程想同时改同一个数字，会发生什么？</h2>
+<p class="lead">线程可以理解为程序里的多个“执行者”。假设 A、B、C 三个线程都要修改同一个银行余额。若不限制并发操作，可能互相覆盖计算结果。</p>
+<div class="analogy">
+<div><strong>一个易懂的比喻</strong>只有一个办公室钥匙。A 拿走钥匙，B、C 只能登记排队。A 归还后，通知下一个人尝试领取。</div>
+<div><strong>真实 Java 对象</strong>钥匙资格由 <code>state</code> 与获取规则决定；排队者记录为队列节点；挂起/恢复由 <code>LockSupport</code> 协助完成。</div>
+</div>
+<p><strong>AQS = AbstractQueuedSynchronizer，抽象队列同步器。</strong>它提供的是构建锁/同步器的底座，<strong>并不是一把直接可用的锁</strong>。具体的锁还要告诉 AQS 什么状态算成功，以及什么时候算完全释放。</p>
+<div class="warn">比喻的边界：现实里“叫到号码”可能意味着直接领到钥匙，但在 AQS 中，<strong>唤醒只是获得再次竞争的机会，不保证已经取得锁</strong>。</div>
+</section>
+
+<section class="card" id="sim">
+<p class="eyebrow">02 · 交互模拟</p><h2>亲手看一次 A → B → C 的抢锁过程</h2>
+<p>假设这里使用<strong>非公平、独占锁</strong>，且没有新线程插队；以下是便于教学的时序推演，不是 JVM 实时运行记录。点击“下一步”观察谁持有锁、<code>state</code> 如何变化、队列如何变化。</p>
+<div class="sim">
+<div class="sim-top"><span class="sim-title" id="sim-title"></span><span class="progress" id="sim-count" aria-live="polite"></span></div>
+<div class="measure"><div class="m"><small>谁持有这把锁？</small><strong id="sim-owner"></strong></div><div class="m"><small>本案例的 AQS state</small><strong id="sim-state"></strong></div><div class="m"><small>获得唤醒机会的线程</small><strong id="sim-wake"></strong></div></div>
+<div class="queue-area"><div class="queue-label">AQS 同步等待队列（这里不是线程执行顺序保证）</div><div class="queue" id="sim-queue" aria-live="polite"></div></div>
+<div class="sim-description" id="sim-description" aria-live="polite"></div>
+<div class="controls"><button type="button" class="btn" id="sim-back">上一步</button><button type="button" class="btn main" id="sim-next">下一步</button><button type="button" class="btn" id="sim-reset">重新开始</button><div class="dots" id="sim-dots" aria-label="模拟进度"></div></div>
+</div>
+<div class="info">注意 <code>state=0</code> 代表“锁空闲”，仅适用于本次互斥锁的示例；对 <code>Semaphore</code>（信号量）来说，它通常表示“剩余许可证数为 0”，绝不能把 AQS 的 state 固定理解为锁开关。</div>
+</section>
+
+<section class="card" id="kernel">
+<p class="eyebrow">03 · 理解原理</p><h2>为什么只需要三个核心机制，就能管理大量线程？</h2>
+<div class="grid3">
+  <div class="tile"><span class="n">01 / state</span><h3>管理资格</h3><p><code>int state</code> 是同步状态。子类规定它代表锁的持有次数、许可证数量或剩余倒计时。<code>compareAndSetState</code>（CAS，比较并交换）负责安全争夺状态。</p></div>
+  <div class="tile"><span class="n">02 / Queue</span><h3>管理等待者</h3><p>获取失败的线程，可封装成节点进入类似 CLH 的双向同步队列；记录顺序与等待信息，处理取消、超时、中断等情况。</p></div>
+  <div class="tile"><span class="n">03 / park</span><h3>管理休眠</h3><p><code>LockSupport.park</code> 让线程暂停继续争抢；<code>unpark</code> 给予恢复执行的许可。恢复后仍须重新检查能否取得资源。</p></div>
+</div>
+<h3>核心链路：从业务代码走到 AQS</h3>
+<div class="flow"><div><b>业务代码</b><code>lock.lock()</code><br>申请保护共享资源</div><span>→</span><div><b>具体同步器</b><code>tryAcquire()</code><br>规定成功条件</div><span>→</span><div><b>AQS</b><code>acquire()</code><br>失败后组织排队</div><span>→</span><div><b>LockSupport</b><code>park/unpark</code><br>等待和恢复竞争</div></div>
+<p class="mini">这是一张责任关系图，不代表每次加锁都会经历排队/挂起。没有竞争时，获取通常可以直接成功。</p>
+<h3>CAS 是什么，为什么不能先判断再赋值？</h3>
+<p>普通“先检查 <code>state == 0</code>，再写入 1”分成两步，A、B 可能同时看到 0，最终都以为自己成功。CAS 在一个原子操作里“只有当前值确实等于预期值，才完成修改”，因此两个线程争夺 0→1 时最多一个成功。</p>
+<div class="info">AQS 不是万能的并发安全自动机：具体子类仍要正确实现获取/释放语义、所有权及业务数据保护；AQS 本身不会自动知道“状态 1 是什么业务含义”。</div>
+</section>
+
+<section class="card" id="modes">
+<p class="eyebrow">04 · 容易混淆的两种模式</p><h2>独占和共享，到底区别在哪？</h2>
+<div class="table-wrap"><table><thead><tr><th>模式</th><th>直觉</th><th>典型类</th><th>关键判断</th></tr></thead><tbody>
+<tr><td><b>独占（Exclusive）</b></td><td>同一时刻，通常只有一个线程能持有这一份独占资格</td><td><code>ReentrantLock</code></td><td><code>tryAcquire</code> 返回布尔值，定义能否获得独占访问</td></tr>
+<tr><td><b>共享（Shared）</b></td><td>在资源允许时，多个线程可以同时通过</td><td><code>Semaphore</code>、<code>CountDownLatch</code></td><td><code>tryAcquireShared</code> 用负数/非负数标示失败/成功，并帮助后续传播</td></tr>
+<tr><td><b>同时支持两种</b></td><td>读操作可共享，写操作需独占</td><td><code>ReentrantReadWriteLock</code></td><td>同一框架下分别处理读、写规则</td></tr>
+</tbody></table></div>
+<p>例如“最多三个人同时使用会议室”可以用共享许可来想；“会议室只能有一个人使用”对应独占。<strong>共享并不是无限通行</strong>，它依然由具体状态规则限制。</p>
+</section>
+
+<section class="card" id="compare">
+<p class="eyebrow">05 · JDK 版本比较，基于官方源码</p><h2>JDK 8、17、21 的 AQS 到底变化了什么？</h2>
+<p>三代都在 <code>java.util.concurrent.locks.AbstractQueuedSynchronizer</code> 中。公开的“原子同步状态 + FIFO 等待队列 + 独占/共享 + 子类实现 hook 方法”设计保持一致，显著变化发生在<strong>内部节点结构与排队算法</strong>。</p>
+<div class="vers" role="tablist" aria-label="选择 JDK 版本">
+<button role="tab" id="v8" aria-controls="ver-panel" aria-selected="true" type="button" data-ver="8">JDK 8</button>
+<button role="tab" id="v17" aria-controls="ver-panel" aria-selected="false" type="button" data-ver="17">JDK 17</button>
+<button role="tab" id="v21" aria-controls="ver-panel" aria-selected="false" type="button" data-ver="21">JDK 21</button>
+</div>
+<div id="ver-panel" class="version-panel" role="tabpanel" aria-labelledby="v8" aria-live="polite"><h3 id="ver-title"></h3><p class="version-note" id="ver-description"></p><pre class="codeblock"><code id="ver-snippet"></code></pre><p class="mini" id="ver-caveat"></p></div>
+<div class="warn"><strong>版本对比最容易踩的坑：</strong>网上不少 AQS 源码教程基于 JDK 8，直接在 JDK 17/21 里搜索 <code>Node.SIGNAL</code>、<code>shouldParkAfterFailedAcquire</code>，会发现代码结构不一样。<strong>不能因为找不到旧字段，就认为 AQS 不再使用等待队列。</strong></div>
+<p><strong>JDK 21 的额外背景：</strong>虚拟线程成为正式功能。AQS 相关的 <code>LockSupport.park</code> 与线程调度能配合虚拟线程；对可能出现长时间阻塞的代码，还要理解 JDK 21 对 <code>synchronized</code> 内阻塞的 pinning（载体线程固定）问题。这是 JDK 21 的线程运行时话题，不等于 AQS 整体重新发明。<a href="https://docs.oracle.com/en/java/javase/21/core/virtual-threads.html" target="_blank" rel="noopener">阅读 JDK 21 官方说明</a>。</p>
+</section>
+
+<section class="card" id="code">
+<p class="eyebrow">06 · 动手验证</p><h2>只实现“什么时候能拿锁”，排队交给 AQS</h2>
+<p>下面的 <code>MiniMutex</code> 是为了学习设计的最小非重入、非公平互斥锁；演示了子类重写 <code>tryAcquire</code> / <code>tryRelease</code>，而 <code>acquire</code> / <code>release</code> 以及等待队列的机制由 AQS 提供。<strong>不建议当成生产级锁使用</strong>；实际业务请优先用 <code>ReentrantLock</code>。</p>
+<div class="codecap"><span class="file-chip">AqsDemo.java · Java 8 语法兼容</span><button class="copy" id="copy-code" type="button">复制 Java 代码</button></div>
+<pre class="codeblock"><code id="java-code">import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+
+/**
+ * AQS 入门教学演示：非重入、非公平的互斥锁。
+ * 仅用于理解 AQS，实际业务优先使用 ReentrantLock。
+ * Java 8 / 17 / 21 均可编译运行。
+ */
+public class AqsDemo {
+    static final class MiniMutex {
+        private final Sync sync = new Sync();
+
+        private static final class Sync extends AbstractQueuedSynchronizer {
+            @Override
+            protected boolean tryAcquire(int ignored) {
+                // CAS: 只有一个线程能把 state 从 0 改成 1。
+                if (compareAndSetState(0, 1)) {
+                    setExclusiveOwnerThread(Thread.currentThread());
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            protected boolean tryRelease(int ignored) {
+                if (getState() == 0 ||
+                    getExclusiveOwnerThread() != Thread.currentThread()) {
+                    throw new IllegalMonitorStateException();
+                }
+                setExclusiveOwnerThread(null);
+                setState(0); // volatile 写：发布释放动作
+                return true; // AQS 随后负责通知合适的等待者
+            }
+        }
+
+        void lock() { sync.acquire(1); } // 抢不到时由 AQS 排队并等待
+        void unlock() { sync.release(1); }
+        boolean hasQueuedThreads() { return sync.hasQueuedThreads(); }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        final MiniMutex mutex = new MiniMutex();
+        final CountDownLatch aboutToAcquire = new CountDownLatch(1);
+
+        mutex.lock();
+        System.out.println(&quot;主线程：已经获得锁&quot;);
+
+        Thread worker = new Thread(() -&gt; {
+            System.out.println(&quot;工作线程：准备抢锁&quot;);
+            aboutToAcquire.countDown();
+            mutex.lock();
+            try {
+                System.out.println(&quot;工作线程：终于获得锁&quot;);
+            } finally {
+                mutex.unlock();
+                System.out.println(&quot;工作线程：释放锁&quot;);
+            }
+        }, &quot;worker&quot;);
+
+        worker.start();
+        aboutToAcquire.await();
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+        while (!mutex.hasQueuedThreads() &amp;&amp; System.nanoTime() &lt; deadline) {
+            Thread.sleep(1);
+        }
+        System.out.println(&quot;主线程：观察到等待队列 = &quot; + mutex.hasQueuedThreads());
+        System.out.println(&quot;主线程：准备释放锁&quot;);
+        mutex.unlock();
+        worker.join();
+    }
+}
+</code></pre>
+<h3>在 Windows 或其他支持 Java 的系统中运行</h3>
+<pre class="codeblock"><code>javac -encoding UTF-8 AqsDemo.java
+java AqsDemo</code></pre>
+<p>如果电脑安装多个 JDK，可在分别选择 JDK 8、17、21 后运行同一个程序。它不需要任何第三方依赖。</p>
+<ol class="steps">
+<li>主线程执行 <code>mutex.lock()</code>，<code>state</code> 从 0 被设置为 1。</li>
+<li>工作线程执行 <code>mutex.lock()</code>；由于状态占用，<code>tryAcquire</code> 返回 <code>false</code>，AQS 负责将它加入同步队列等待。</li>
+<li>主线程 <code>mutex.unlock()</code>，<code>tryRelease</code> 将状态改成 0；AQS 有机会通知队列中的等待线程。</li>
+<li>工作线程被恢复并再次尝试成功，进入临界区，最后在 <code>finally</code> 中释放锁。</li>
+</ol>
+<div class="info">代码在 JDK 21 环境中实际编译运行过，并通过 <code>javac --release 8</code> 编译检查 Java 8 接口兼容性；没有在真实 JDK 8、JDK 17 运行环境中逐个执行，因此不将它们标记为已实测。</div>
+</section>
+
+<section class="card" id="advanced">
+<p class="eyebrow">07 · 防止学偏</p><h2>四个经常被错误理解的细节</h2>
+<h3>① FIFO 队列，不意味着必然严格公平</h3>
+<p>AQS 使用 FIFO 形式组织等待节点，但具体获取算法可选择非公平策略。<code>new ReentrantLock()</code> 默认非公平；即使 B 比 D 更早排队，在特定竞态下 D 也可能先获取。是否采用公平策略需要看具体锁的实现。</p>
+<h3>② unpark 不等于“把锁交给别人”</h3>
+<p><code>unpark</code> 只是给目标线程恢复执行的许可。它醒来后要重新检查获取条件；另外 <code>park</code> 也可能因中断或虚假唤醒返回，所以必须配合循环与状态检查。</p>
+<h3>③ AQS 同步队列 ≠ Condition 条件等待队列</h3>
+<div class="flow"><div><b><code>condition.await()</code></b>主动释放当前锁并进入条件等待队列</div><span>→</span><div><b><code>condition.signal()</code></b>将一个等待者转去争夺锁的同步队列</div><span>→</span><div><b>重新获取锁</b>成功后 <code>await()</code> 才能返回继续执行</div></div>
+<p>所以 <code>signal()</code> 并不保证被通知的线程马上执行其后面的业务代码；它依然需要重新获得锁。</p>
+<h3>④ <code>synchronized</code> 不是由 AQS 实现的</h3>
+<p><code>synchronized</code> 主要依赖 JVM 的监视器（monitor）机制；<code>ReentrantLock</code> 则是使用 AQS 的典型锁实现。它们都能实现互斥，但底层机制不同，不能混成同一个东西。</p>
+</section>
+
+<section class="card" id="practice">
+<p class="eyebrow">08 · 检查是否真正理解</p><h2>用一个反例检验，而不是只背定义</h2>
+<div class="quiz"><h3>问题 1：线程 B 已经被 unpark，是否意味着它一定持有锁？为什么？</h3>
+<textarea id="answer-1" placeholder="用自己的话解释，约 2—3 句话即可……"></textarea>
+<details><summary>需要一点提示</summary><p>考虑队列里线程醒来时，是否还可能有新的线程刚好抢到了 state。</p></details><details><summary>查看参考答案（建议先尝试）</summary><p>不是。unpark 只让线程有机会继续执行；B 还必须调用实际的获取逻辑并满足状态条件。尤其在非公平锁中，其他线程可能抢先获得资源，因此 B 可能继续等待。</p></details>
+</div>
+<div class="quiz"><h3>问题 2：看到 <code>state = 2</code>，能否断言“锁被两个线程同时持有”？</h3>
+<textarea id="answer-2" placeholder="提示：ReentrantLock、Semaphore 对 state 的含义一样吗？"></textarea>
+<details><summary>查看参考答案</summary><p>不能。state 的业务含义由具体同步器定义。在 ReentrantLock 中通常是同一线程重入持有的次数；在 Semaphore 中一般是当前可用许可数量，不能只看数字推断“持有锁的线程数”。</p></details></div>
+<div class="codecap"><button type="button" class="btn main" id="export-note">导出本单元续学卡</button><span id="save-status" class="mini" role="status"></span></div>
+<p class="mini">答案只是学习记录，不等于已验证掌握。页面会尝试保存于当前浏览器；可能因不同设备、文件位置或浏览器限制而失效。导出后可带回对话进行核对。</p>
+</section>
+
+<section class="card" id="references"><p class="eyebrow">核验来源 · OpenJDK / Oracle 官方资料</p><h2>源码和文档入口</h2>
+<ul class="source-list">
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/AbstractQueuedSynchronizer.html" target="_blank" rel="noopener">Java 8 AQS API 文档</a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/AbstractQueuedSynchronizer.html" target="_blank" rel="noopener">Java 17 AQS API 文档</a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/AbstractQueuedSynchronizer.html" target="_blank" rel="noopener">Java 21 AQS API 文档</a></li>
+<li><a href="https://github.com/openjdk/jdk8u/blob/jdk8u402-b06/jdk/src/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" target="_blank" rel="noopener">OpenJDK 8 AQS 源码（8u402 标签）</a></li>
+<li><a href="https://github.com/openjdk/jdk/blob/jdk-17%2B35/src/java.base/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" target="_blank" rel="noopener">OpenJDK 17 AQS 源码（jdk-17+35 标签）</a></li>
+<li><a href="https://github.com/openjdk/jdk/blob/jdk-21%2B35/src/java.base/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" target="_blank" rel="noopener">OpenJDK 21 AQS 源码（jdk-21+35 标签）</a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/LockSupport.html" target="_blank" rel="noopener">LockSupport 的 permit、park/unpark 机制</a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/Condition.html" target="_blank" rel="noopener">Condition.await()/signal() 的语义</a></li>
+</ul>
+<p class="mini">版本对比以所列标签与文档为依据，核对时间 2026-11-06。离线运行完全不需打开来源链接；只有点击外链查看官方资料时才需要网络。</p>
+</section>
+<p class="footer">学以致用 · 学习状态：待验证。此页面中的并发过程为教学抽象，不是现场 JVM 线程采样或实时性能测试。</p>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const steps=[
+ {title:'A 先拿到锁',state:'1（占用）',owner:'线程 A',wake:'无',head:'',wait:[],msg:'A 的获取规则将 state 从 0 原子地改成 1。此时没有竞争，等待队列尚未因竞争而初始化。'},
+ {title:'B 来抢锁，但失败',state:'1（占用）',owner:'线程 A',wake:'无',head:'虚拟头节点',wait:['线程 B'],msg:'B 调用 tryAcquire 失败。AQS 将 B 封装为队列节点；在适当检查后 B 可以 park，让出 CPU，而不是永远自旋。'},
+ {title:'C 也来抢锁',state:'1（占用）',owner:'线程 A',wake:'无',head:'虚拟头节点',wait:['线程 B','线程 C'],msg:'C 也失败，在 B 后面排队。AQS 的同步等待队列是逻辑 FIFO 结构，但队列顺序本身不承诺严格获得锁顺序。'},
+ {title:'A 释放锁，B 得到唤醒机会',state:'0（空闲）',owner:'暂时没有',wake:'线程 B',head:'虚拟头节点',wait:['线程 B','线程 C'],msg:'A 把状态恢复为 0，AQS 通过唤醒机制让合适的后继重试。注意：B 此刻被唤醒，并不代表 B 已拿到锁。'},
+ {title:'B 再次争夺并成功',state:'1（占用）',owner:'线程 B',wake:'无',head:'新头节点（原 B 节点）',wait:['线程 C'],msg:'在本次演示假设下，B 重新运行 tryAcquire 并成功，把 state 改成 1。原 B 节点成为新的头节点，不再是等待的 B。'},
+ {title:'B 释放锁，C 得到唤醒机会',state:'0（空闲）',owner:'暂时没有',wake:'线程 C',head:'新头节点（原 B 节点）',wait:['线程 C'],msg:'B 释放资源后，C 获得执行机会；与前一步相同，唤醒只是让 C 再次竞争，成功与否取决于获取条件。'},
+ {title:'C 重新获得锁',state:'1（占用）',owner:'线程 C',wake:'无',head:'新头节点（原 C 节点）',wait:[],msg:'在没有其他竞争者的假设下，C 的 tryAcquire 成功，完成本轮演示。真实运行中，插队、超时、中断、取消都可能改变具体路径。'}
+];
+let current=0;
+function render(){const s=steps[current];$('sim-title').textContent=s.title;$('sim-count').textContent=`${current+1} / ${steps.length}`;$('sim-owner').textContent=s.owner;$('sim-state').textContent=s.state;$('sim-wake').textContent=s.wake;$('sim-description').textContent=s.msg;$('sim-back').disabled=current===0;$('sim-next').disabled=current===steps.length-1;$('sim-next').textContent=current===steps.length-1?'演示结束':'下一步';
+ const q=$('sim-queue');q.replaceChildren();if(!s.head){const e=document.createElement('span');e.className='empty-queue';e.textContent='尚无等待者，队列未初始化';q.append(e);}else{const chip=(v,c)=>{const z=document.createElement('span');z.className='queue-token '+c;z.textContent=v;q.appendChild(z)};const arrow=()=>{const z=document.createElement('span');z.className='arrow';z.textContent='→';q.append(z)};chip(s.head,'head');for(const w of s.wait){arrow();chip(w,s.wake===w?'wake':'');}}const dots=$('sim-dots');dots.replaceChildren();steps.forEach((_,i)=>{let d=document.createElement('button');d.type='button';d.className='dot '+(i===current?'current':'');d.setAttribute('aria-label',`跳到第 ${i+1} 步`);d.title=`第 ${i+1} 步`;d.addEventListener('click',()=>{current=i;render()});dots.append(d)});}
+$('sim-next').addEventListener('click',()=>{if(current<steps.length-1){current++;render()}});$('sim-back').addEventListener('click',()=>{if(current>0){current--;render()}});$('sim-reset').addEventListener('click',()=>{current=0;render()});render();
+const versions={
+ '8':{title:'JDK 8：旧版 Node 状态模型',description:'节点使用 thread + waitStatus，拥有 SIGNAL（需要唤醒后继）、CANCELLED（取消）、CONDITION（条件等待）、PROPAGATE（共享传播）等状态。不同获取路径由多组方法组织。',code:'// 选自源码的关键标识，仅展示结构\nstatic final class Node {\n    volatile int waitStatus;\n    volatile Thread thread;\n}\nstatic final int SIGNAL = -1;\nstatic final int CANCELLED = 1;\nstatic final int CONDITION = -2;\nstatic final int PROPAGATE = -3;\n// acquireQueued / doAcquireShared ...',caveat:'这里为节选式结构说明，不是可独立编译的完整源码。JDK 8 的等待协议会检查前驱节点的 waitStatus。'},
+ '17':{title:'JDK 17：统一获取流程与更明确的节点类型',description:'采用 Node.status / Node.waiter，并区分 ExclusiveNode、SharedNode、ConditionNode。等待相关状态变为 WAITING、CANCELLED、COND 等，主要获取路径集中在一个内部 acquire 方法中。',code:'// 选自源码的关键标识，仅展示结构\nstatic final int WAITING = 1;\nstatic final int CANCELLED = 0x80000000;\nstatic final int COND = 2;\nabstract static class Node {\n    Thread waiter;\n    volatile int status;\n}\nstatic final class ExclusiveNode extends Node {}\nstatic final class SharedNode extends Node {}\nstatic final class ConditionNode extends Node { /* ... */ }\n// acquire(Node, int, boolean, boolean, boolean, long)',caveat:'JDK 17 与 JDK 8 的等待协议内部结构差异较大，不应简单把 SIGNAL=-1 替换成 WAITING=1。'},
+ '21':{title:'JDK 21：核心 AQS 设计延续，进入虚拟线程时代',description:'JDK 21 仍采用 Node.status、WAITING / CANCELLED / COND 与统一 acquire 主体；与 17 的主要差别不在“是否还有 AQS”。版本里还包含内部细节调整，同时 JDK 21 正式支持虚拟线程。',code:'// JDK 21 中仍能看到这些内部结构\nstatic final int WAITING = 1;\nstatic final int CANCELLED = 0x80000000;\nstatic final int COND = 2;\nabstract static class Node {\n    Thread waiter;\n    volatile int status;\n}\n// 获取成功前仍依赖获取规则判断\n// 等待时仍可能使用 LockSupport.park(this)\n// 线程被唤醒后仍需要重新竞争',caveat:'“支持虚拟线程”是 JDK 21 运行时与并发库配合的变化，并非 AQS API 新增了 virtualLock() 之类接口。'}
+};
+function showVersion(key){let v=versions[key];$('ver-title').textContent=v.title;$('ver-description').textContent=v.description;$('ver-snippet').textContent=v.code;$('ver-caveat').textContent=v.caveat;$('ver-panel').setAttribute('aria-labelledby','v'+key);document.querySelectorAll('[data-ver]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.ver===key)))}
+document.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>showVersion(b.dataset.ver)));showVersion('8');
+const code=$('java-code').textContent;
+$('copy-code').addEventListener('click',async()=>{try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(code)}else{const t=document.createElement('textarea');t.value=code;document.body.append(t);t.select();document.execCommand('copy');t.remove()}$('copy-code').textContent='已复制';}catch(_){$('copy-code').textContent='复制失败，可手动选择';}setTimeout(()=>$('copy-code').textContent='复制 Java 代码',1800)});
+const storageKey='learn-by-doing:aqs-jdk8-17-21-v1';
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved?.version===1){$('answer-1').value=saved.a1||'';$('answer-2').value=saved.a2||''}}catch(_){/* 文件 URL 下不保证可用 */}
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify({version:1,a1:$('answer-1').value,a2:$('answer-2').value}));$('save-status').textContent='已尝试在本浏览器保存'}catch(_){$('save-status').textContent='此环境不支持本地保存，请使用导出'}}
+$('answer-1').addEventListener('input',persist);$('answer-2').addEventListener('input',persist);
+$('export-note').addEventListener('click',()=>{const content=['AQS 学习续学卡｜JDK 8 / 17 / 21','本次已展示：state/CAS、同步队列、park/unpark、独占与共享、版本源码差异、最小 Java 示例。','经教师对话验证：待验证（页面填写与自评不构成验证）','问题1：被 unpark 是否代表获得锁？', $('answer-1').value.trim()||'未作答','问题2：state=2 是否代表两个线程占有锁？',$('answer-2').value.trim()||'未作答','下一步：先不看答案，解释为什么“唤醒不是拿锁”，再运行 AqsDemo.java。'].join('\n\n');const blob=new Blob([content],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='aqs-学习续学卡.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)});
+</script>
+</body>
+</html>
