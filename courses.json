@@ -1,0 +1,95 @@
+[
+  {
+    "id": "agent",
+    "title": "AI Agent 入门 · 动手",
+    "category": "AI 应用开发",
+    "desc": "通过引导练习理解 AI Agent 如何决定下一步、调用工具并完成任务。",
+    "mode": "循序渐进 · 学以致用",
+    "path": "lessons/ai_agent_unit_01.html",
+    "tags": [
+      "AI Agent",
+      "Tool Calling",
+      "LLM"
+    ],
+    "icon": "A",
+    "tone": "purple"
+  },
+  {
+    "id": "redis-eli5",
+    "title": "Redis 双写一致性 · 图解",
+    "category": "缓存与一致性",
+    "desc": "从价格变化的例子理解 Redis 和数据库双写，为什么会出现脏缓存。",
+    "mode": "大图解 · ELI5",
+    "path": "lessons/redis_double_write_eli5.html",
+    "tags": [
+      "Redis",
+      "Cache Aside",
+      "MySQL"
+    ],
+    "icon": "R",
+    "tone": "teal"
+  },
+  {
+    "id": "redis-lab",
+    "title": "Redis 缓存一致性 · 动手",
+    "category": "缓存与一致性",
+    "desc": "进一步学习 Cache Aside、延迟双删、版本控制与实战实验。",
+    "mode": "动手练习 · 学以致用",
+    "path": "lessons/redis_cache_consistency_unit_01.html",
+    "tags": [
+      "Redis",
+      "Cache Aside",
+      "Consistency"
+    ],
+    "icon": "D",
+    "tone": "mint"
+  },
+  {
+    "id": "rocketmq",
+    "title": "RocketMQ 消费机制实验室",
+    "category": "分布式系统",
+    "desc": "通过交互实验理解消费组、重试、堆积、死信队列及 Java 场景。",
+    "mode": "交互实验 · Learn + Deep",
+    "path": "lessons/rocketmq_learn_deep_lab.html",
+    "tags": [
+      "RocketMQ",
+      "Java",
+      "DLQ"
+    ],
+    "icon": "M",
+    "tone": "orange"
+  },
+  {
+    "id": "performance",
+    "title": "压测：从请求到瓶颈",
+    "category": "性能与测试",
+    "desc": "用六幅图看懂压测全流程：VU、RPS、P95、错误率与性能瓶颈。",
+    "mode": "大图解 · ELI5",
+    "path": "lessons/eli5-performance-load-testing.html",
+    "tags": [
+      "VU",
+      "RPS",
+      "P95",
+      "JMeter"
+    ],
+    "icon": "P",
+    "tone": "blue"
+  },
+  {
+    "id": "performance-deep",
+    "title": "系统压测知识体系 · 核心原理",
+    "category": "性能与测试",
+    "desc": "学以致用系统课：理解 VU、并发数、吞吐量、P95、开环与闭环、瓶颈定位、验收及互动推演。",
+    "mode": "完整知识体系 · 学以致用",
+    "path": "lessons/system_load_testing_knowledge.html",
+    "tags": [
+      "压测",
+      "SLO",
+      "RPS",
+      "P95",
+      "Little 定律"
+    ],
+    "icon": "T",
+    "tone": "blue"
+  }
+]
