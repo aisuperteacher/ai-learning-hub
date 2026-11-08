@@ -19,21 +19,15 @@ a{color:#83bfff}.docref{color:#8cbef5;text-decoration:underline;text-decoration-
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 
-<style id="ai-learning-hub-course-nav-style">
-.hub-course-nav,.hub-course-nav *{box-sizing:border-box}
-.hub-course-nav{position:sticky;top:0;z-index:99999;display:block!important;overflow:visible!important;white-space:normal!important;margin:0!important;padding:0!important;width:100%;background:#f7f9ff;border-bottom:1px solid #dce4f1;box-shadow:0 2px 9px rgba(25,54,98,.035);font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.5;color:#667895}
-.hub-course-nav__inner{margin:0 auto;max-width:1200px;min-height:58px;padding:10px 24px;display:flex;align-items:center;gap:14px;min-width:0}
-.hub-course-nav .hub-course-nav__return{flex:none;display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:6px 10px;border:1px solid #dbe5f6;border-radius:9px;background:#fff;color:#255bc6!important;text-decoration:none!important;white-space:nowrap;font-size:13px;font-weight:750;line-height:1.5}
-.hub-course-nav .hub-course-nav__return:hover{background:#eaf1ff;border-color:#abc5f6}
-.hub-course-nav .hub-course-nav__return:focus-visible{outline:3px solid #6393e7;outline-offset:3px}
-.hub-course-nav__title{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#64748b;font-weight:650}
-@media(max-width:600px){.hub-course-nav__inner{min-height:54px;padding:8px 12px;gap:8px}.hub-course-nav .hub-course-nav__return{font-size:12px;padding:7px 8px}.hub-course-nav__title{font-size:12px}}
-@media(max-width:330px){.hub-course-nav__title{display:none}}
-@media print{.hub-course-nav{display:none!important}}
-</style>
+<link rel="stylesheet" href="../assets/lesson-navigation.css?v=20261108-flat">
+<script defer src="../assets/lesson-navigation.js?v=20261108-flat"></script>
 </head>
 <body>
-<nav class="hub-course-nav" aria-label="学习中心导航"><div class="hub-course-nav__inner"><a class="hub-course-nav__return" href="../index.html#library">← 返回学习中心首页</a><span class="hub-course-nav__title">RocketMQ 消费机制实验室</span></div></nav>
+<div id="learning-hub-bar" role="navigation" aria-label="课程导航" data-course-id="rocketmq">
+<a class="hub-return" href="../index.html#library">← 返回学习中心首页</a>
+<span class="hub-title">RocketMQ 消费机制实验室</span>
+<button type="button" class="hub-complete" hidden>标记学完</button>
+</div>
 <header class="mast wrap">
  <div class="hero-top"><div class="logo" aria-hidden="true">MQ</div><span class="eyebrow">ELI5 Pro · Learn + Deep · Offline Learning Lab</span></div>
  <h1 class="hero-title">一条消息的<br><em>四种命运。</em></h1>
@@ -224,3 +218,4 @@ for (MessageView view : views) {
 </script>
 </body>
 </html>
+
