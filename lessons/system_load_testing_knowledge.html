@@ -13,8 +13,22 @@
 @media(max-width:380px){.tree{grid-template-columns:1fr}.sim-results{grid-template-columns:1fr}.per100{grid-template-columns:repeat(10,minmax(0,1fr))}.flowchart{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
 </style>
+
+<style id="ai-learning-hub-course-nav-style">
+.hub-course-nav,.hub-course-nav *{box-sizing:border-box}
+.hub-course-nav{position:sticky;top:0;z-index:99999;display:block!important;overflow:visible!important;white-space:normal!important;margin:0!important;padding:0!important;width:100%;background:#f7f9ff;border-bottom:1px solid #dce4f1;box-shadow:0 2px 9px rgba(25,54,98,.035);font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.5;color:#667895}
+.hub-course-nav__inner{margin:0 auto;max-width:1200px;min-height:58px;padding:10px 24px;display:flex;align-items:center;gap:14px;min-width:0}
+.hub-course-nav .hub-course-nav__return{flex:none;display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:6px 10px;border:1px solid #dbe5f6;border-radius:9px;background:#fff;color:#255bc6!important;text-decoration:none!important;white-space:nowrap;font-size:13px;font-weight:750;line-height:1.5}
+.hub-course-nav .hub-course-nav__return:hover{background:#eaf1ff;border-color:#abc5f6}
+.hub-course-nav .hub-course-nav__return:focus-visible{outline:3px solid #6393e7;outline-offset:3px}
+.hub-course-nav__title{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#64748b;font-weight:650}
+@media(max-width:600px){.hub-course-nav__inner{min-height:54px;padding:8px 12px;gap:8px}.hub-course-nav .hub-course-nav__return{font-size:12px;padding:7px 8px}.hub-course-nav__title{font-size:12px}}
+@media(max-width:330px){.hub-course-nav__title{display:none}}
+@media print{.hub-course-nav{display:none!important}}
+</style>
 </head>
 <body>
+<nav class="hub-course-nav" aria-label="学习中心导航"><div class="hub-course-nav__inner"><a class="hub-course-nav__return" href="../index.html#library">← 返回学习中心首页</a><span class="hub-course-nav__title">系统压测知识体系 · 核心原理</span></div></nav>
 <main><div class="shell"><aside class="side"><div class="brand"><span class="logo">学</span><span><strong>学以致用</strong><small>系统压测 · 学习图解</small></span></div><nav aria-label="章节目录"><a href="#map">知识地图</a><a href="#concepts">负载概念</a><a href="#metrics">性能指标</a><a href="#law">并发计算</a><a href="#models">施压模型</a><a href="#bottlenecks">瓶颈定位</a><a href="#flow">压测流程</a><a href="#case">案例分析</a><a href="#practice">检验理解</a></nav><div class="tiny">从现象 → 原理 → 指标 → 判断。先理解为什么，再使用工具。</div></aside><div class="content">
 <header class="hero"><div class="eyebrow">LEARN BY DOING · 从零理解系统压测</div><h1>系统压测知识体系<br>与核心原理</h1><p>我们不从 JMeter 按钮开始，而是先弄明白：流量怎么进来，系统为什么变慢，以及怎样判断它真正扛得住。</p><div class="hero-tags"><span>8 大知识模块</span><span>数字交互演示</span><span>后端接口案例</span><span>单文件离线可用</span></div></header>
 <div class="lead"><svg role="img" aria-label="核心观点图标" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#278675" stroke-width="2"/><path d="m6 12 4 4 8-8" stroke="#278675" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><p><strong>先记住一句话：</strong>压测不是“把并发调到最大”，而是用可控制的流量，证明系统在指定业务场景下的<strong>速度、正确性和稳定性</strong>是否达标，再找出限制它的环节。</p></div>

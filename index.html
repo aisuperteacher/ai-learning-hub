@@ -18,6 +18,16 @@
 @media(max-width:340px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:last-child{grid-column:1/-1}.roadmap{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.course{transition:none}}
 .archive-cta{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #dae5f6;border-radius:18px;background:#edf4ff;padding:22px}.archive-cta strong{font-size:17px}.archive-cta p{margin:8px 0 0;color:#66768e;font-size:13px;line-height:1.7}.archive-action{display:inline-flex;padding:13px 17px;border-radius:11px;background:#265cd1;color:white;font-weight:800;font-size:13px;white-space:normal;line-height:1.5}.archive-action:hover{background:#1549bf}@media(max-width:750px){.archive-cta{padding:18px}.archive-action{width:100%;justify-content:center}}
+
+/* Hub navigation and brand alignment fixes */
+.sidebar .logo {min-width:0;align-items:center;}
+.sidebar .logo-mark {flex:0 0 43px;}
+.sidebar .logo > span:last-child {display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;gap:2px;}
+.sidebar .logo .brand {display:block;font-size:16.5px;line-height:1.35;letter-spacing:-.03em;font-weight:850;white-space:normal;overflow-wrap:anywhere;}
+.sidebar .logo .subtitle {display:block;margin:0;font-size:11px;line-height:1.55;white-space:normal;overflow-wrap:anywhere;}
+.mobile-top strong{min-width:0;line-height:1.4;overflow-wrap:anywhere;}
+@media(max-width:750px){.topbar .top-label{font-size:11px;letter-spacing:.035em;line-height:1.6}.topbar .top-pill{display:none}}
+@media(max-width:1050px) and (min-width:751px){.sidebar .logo .brand{font-size:15px}.sidebar .logo-mark{flex-basis:38px;width:38px;height:38px}.sidebar .logo{gap:9px;padding-left:6px;padding-right:5px}}
 </style>
 </head>
 <body>
@@ -61,7 +71,7 @@ function renderCourses(){const root=$('cards');root.replaceChildren();const q=qu
  for(const c of shown){const article=document.createElement('article');article.className='course';
  const top=txt('div','course-top','');top.append(txt('span','course-icon tone-'+c.tone,c.icon),txt('span','mode',c.mode));article.append(top,txt('h3','',c.title),txt('p','',c.desc));
  const tags=txt('div','tags','');for(const t of c.tags)tags.append(txt('span','tag',t));article.append(tags);
- const bottom=txt('div','course-bottom','');const link=txt('a','open-course',T.view+' ↗');link.href=c.path;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',T.view+': '+c.title);bottom.append(link);
+ const bottom=txt('div','course-bottom','');const link=txt('a','open-course',T.view+' ↗');link.href=c.path;link.target='_self';link.setAttribute('aria-label',T.view+': '+c.title);bottom.append(link);
  const actions=txt('div','course-actions','');const star=txt('button','small-btn'+(state.favorite[c.id]?' starred':''),state.favorite[c.id]?'★':'☆');star.type='button';star.title=state.favorite[c.id]?T.unstar:T.star;star.setAttribute('aria-label',star.title+': '+c.title);star.setAttribute('aria-pressed',String(!!state.favorite[c.id]));star.onclick=()=>{state.favorite[c.id]=!state.favorite[c.id];save();renderCourses()};
  const done=txt('button','small-btn',state.done[c.id]?'✓ '+T.done:T.markDone);done.type='button';done.setAttribute('aria-pressed',String(!!state.done[c.id]));done.onclick=()=>{state.done[c.id]=!state.done[c.id];save();updateStats();renderCourses()};
  actions.append(star,done);bottom.append(actions);article.append(bottom);root.append(article)}
