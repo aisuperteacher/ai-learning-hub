@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">
+<title>课程管理 · AI 技术学习中心</title>
+<link rel="stylesheet" href="./assets/course-management.css">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<script type="module" src="./assets/course-management.js"></script>
+</head>
+<body>
+<div class="shell">
+ <aside class="sidebar">
+  <a class="brand" href="./index.html"><span class="logo">A</span><span>AI 技术学习中心<small>学习 · 实践 · 复盘</small></span></a>
+  <nav aria-label="学习中心导航">
+   <a href="./index.html#library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M12 9h5M12 13h5"/></svg>课程库</a>
+   <a href="./index.html#path">学习路线</a><a href="./index.html#future">后续主题</a><a href="./study/">历史学习档案</a><a href="./manage.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg>课程管理</a>
+  </nav>
+  <div class="side-note">让知识库保持清晰，<br>把精力留给想学的内容。</div>
+ </aside>
+ <main>
+  <div class="topline"><a href="./index.html#library">← 返回学习中心</a><span class="sync" id="sync-status" role="status">正在读取课程…</span></div>
+  <header><div><p class="eyebrow">YOUR LEARNING SPACE</p><h1>课程管理</h1><p class="lead">留下想学的，收起暂时用不到的。</p></div><button class="button" id="reload" type="button">刷新列表</button></header>
+  <div class="summary" aria-label="课程状态统计">
+   <div><span class="number" id="count-active">—</span><span><i class="dot active"></i>首页展示</span></div>
+   <div><span class="number" id="count-hidden">—</span><span><i class="dot hidden-dot"></i>已隐藏</span></div>
+   <div><span class="number" id="count-trash">—</span><span><i class="dot trash-dot"></i>回收站</span></div>
+  </div>
+  <div class="notice"><span aria-hidden="true">↔</span><p>操作会保存到 GitHub，Pages 更新后在其他设备生效。隐藏与移入回收站均可恢复；删除当前发布文件后，Git 提交历史仍保留。</p></div>
+<section class="connection-panel" aria-label="连接 GitHub"><details id="connection-details" open><summary id="connection-summary">连接 GitHub 后管理课程</summary><p>仅管理 <strong>aisuperteacher/ai-learning-hub</strong>。连接信息只留在当前页面内存中，刷新或关闭页面后需要重新连接。</p><form id="connect-form"><label for="github-token">GitHub 访问令牌</label><div class="connection-controls"><input id="github-token" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="github_pat_…" required><button class="button blue" id="connect-button" type="submit">连接 GitHub</button></div></form><button class="button" id="disconnect-button" type="button" hidden>断开连接</button><p class="help">创建 fine-grained token 时只选择此仓库，授予 Contents（内容）读写权限即可。<a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener noreferrer">查看 GitHub 创建说明 ↗</a></p></details><p id="connection-status" class="connection-status" role="status">未连接 · 当前为只读列表</p></section><p id="publish-status" class="publish-status" role="status" hidden></p>
+  <section aria-label="管理课程">
+   <div class="toolbar"><div class="tabs" role="group" aria-label="课程状态筛选"><button type="button" data-tab="all" aria-pressed="true">全部课程 <span id="tab-all-count"></span></button><button type="button" data-tab="hidden" aria-pressed="false">已隐藏 <span id="tab-hidden-count"></span></button><button type="button" data-tab="trash" aria-pressed="false">回收站 <span id="tab-trash-count"></span></button></div><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input type="search" id="manage-search" aria-label="搜索管理课程" placeholder="搜索课程或分类…" autocomplete="off"></label></div>
+   <p class="view-description" id="view-description">管理已收录的课程，隐藏的课程仍可在这里找到。</p>
+   <div class="course-list" id="course-list" aria-live="polite"><div class="empty">正在加载课程…</div></div>
+  </section>
+  <footer>课程管理对当前 GitHub 学习中心生效。收藏、阅读进度和练习记录保存在当前浏览器。独立历史归档与 Git 提交历史不随普通课程删除而清除。</footer>
+ </main>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+<dialog id="trash-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description"><form method="dialog"><div class="dialog-symbol" aria-hidden="true">↳</div><h2 id="dialog-title">移入回收站？</h2><p class="dialog-course" id="dialog-course"></p><p id="dialog-description">这门课程会从列表移除，原链接显示回收站提示；文件会暂存到仓库回收站中。恢复后可以继续原来的学习。</p><div class="dialog-actions"><button class="button" value="cancel" autofocus>取消</button><button class="button danger solid" id="confirm-trash" value="confirm">移入回收站</button></div></form></dialog>
+<dialog id="purge-dialog" aria-labelledby="purge-title" aria-describedby="purge-description"><form method="dialog"><div class="dialog-symbol" aria-hidden="true">×</div><h2 id="purge-title">永久删除这门课程？</h2><p class="dialog-course" id="purge-course"></p><p id="purge-description">本课程当前发布的 HTML、目录入口和回收站备份将被删除，无法从回收站恢复。Git 提交历史和另行归档的独立副本仍保留。</p><label class="purge-label" for="purge-confirmation">输入 <strong>永久删除</strong> 以确认</label><input id="purge-confirmation" class="purge-input" type="text" autocomplete="off" spellcheck="false" placeholder="永久删除"><div class="dialog-actions"><button class="button" value="cancel">取消</button><button class="button danger solid" id="confirm-purge" value="confirm" disabled>永久删除</button></div></form></dialog>
+</body></html>

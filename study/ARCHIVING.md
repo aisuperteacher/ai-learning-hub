@@ -1,6 +1,6 @@
 # 学习中心归档约定
 
-发布目的地：`aisuperteacher/ai-daily-hub` 的 `main` 分支。学习入口为 `https://aisuperteacher.github.io/ai-daily-hub/study/`。
+发布目的地：`aisuperteacher/ai-learning-hub` 的 `main` 分支。学习入口为 `https://aisuperteacher.github.io/ai-daily-hub/study/`。
 
 本目录汇总用户要求保存的公开学习 HTML，包括学以致用、learn-by-doing、ELI5 教学页、机制图解、动手实验及知识地图。每日 AI 五词精讲仍保留 `reports/learning/` 独立来源，并在学习中心提供阅读入口；其他日报、新闻、政策周报和活动监测不归入课程。
 
@@ -35,7 +35,10 @@ python3 scripts/build_learning_index.py
 1. 读取最新分支 head、现有目录和将修改文件的 SHA。在最新树上建立包含本次课程与目录变更的单个提交；更新分支时带 `expected_sha`，不使用强制覆盖。
 2. 如果同时有其他任务提交，重新读取最新目录和 head 后合并，最多重试三次。已成功上传相同哈希的课程不重复创建。
 3. 本次通常只修改 `study/catalog.json` 与 `study/lessons/`；只有归档实现确需改变时才改对应脚本。保留其他栏目与任务的内容。
-4. 等待 `Publish AI Daily Hub` 的对应提交部署成功。回读目录与新课程路径，确认文件可打开后才报告发布完成。
+4. 等待本仓库 Pages 的对应提交部署成功。回读目录与新课程路径，确认文件可打开后才报告发布完成。
 5. 没有新增或更新课程时，不做空提交，不向用户反复推送“无更新”。失败要如实说明，不把计划或已提交代码当作已部署。
 
 目录中的正文、来源文件名与哈希均来自实际课程；不在公开目录保存 Library 私有访问地址或凭据。站点访问记录只保存在读者当前浏览器，不用于声称已经掌握知识。
+
+归档增量更新须保留各主题的 `hub_status` 管理字段；不要重新显示已隐藏或移入回收站的主题。主目录在根 `courses.json`，首页直接读取；不再维护内嵌课程数组。`course-trash/` 保存公开仓库中的回收站备份，不作为新课程来源，也不自动重新导入已删除内容。
+

@@ -13,6 +13,7 @@
     if (!response.ok) throw Error('Catalog HTTP ' + response.status);
     const data = await response.json();
     if (data.schema_version !== 1 || !Array.isArray(data.topics) || !Array.isArray(data.categories)) throw Error('Invalid course catalog');
+    if(document.body.dataset.page==='catalog')data.topics=data.topics.filter(t=>!t.hub_status||t.hub_status==='active');
     return data;
   }
   function readRecent() { try { const a = JSON.parse(localStorage.getItem(recentKey) || '[]'); return Array.isArray(a) ? a : []; } catch { return []; } }
@@ -75,7 +76,7 @@
   async function initReader() {
     const error = () => {byId('reader-title').textContent='课程暂时不可用';byId('reader-error').hidden=false;byId('lesson-frame').hidden=true;byId('edition-control').hidden=true;};
     try {
-      catalog = await loadCatalog(); const params = new URL(location.href).searchParams; const topic = catalog.topics.find(t => t.id === params.get('topic')); if(!topic) return error();
+      catalog = await loadCatalog(); const params = new URL(location.href).searchParams; const topic = catalog.topics.find(t => t.id === params.get('topic')); if(!topic) return error();if(topic.hub_status==='deleted'){error();byId('reader-title').textContent='这门课程在回收站中';return;}
       const select = byId('edition-select');
       [...topic.editions].sort((a,b)=>b.date.localeCompare(a.date)).forEach(e => {const option=create('option','',e.date+' · '+e.label);option.value=e.id;select.append(option);});
       const category = catalog.categories.find(c=>c.id===topic.category);
@@ -93,3 +94,4 @@
   }
   if(document.body.dataset.page==='catalog'){byId('retry-load').addEventListener('click',initLibrary);initLibrary();} else if(document.body.dataset.page==='reader') initReader();
 })();
+
