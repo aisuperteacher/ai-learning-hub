@@ -26,6 +26,13 @@
 .hub-course-nav__title{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#64748b;font-weight:650}
 @media(max-width:600px){.hub-course-nav__inner{min-height:54px;padding:8px 12px;gap:8px}.hub-course-nav .hub-course-nav__return{font-size:12px;padding:7px 8px}.hub-course-nav__title{font-size:12px}}
 @media(max-width:330px){.hub-course-nav__title{display:none}}
+
+/* Keep the original chapter tabs sticky BELOW the return-to-home bar. */
+:root{--hub-bar-height:59px}
+.nav-shell{top:var(--hub-bar-height);z-index:20;background:var(--paper);box-shadow:0 2px 10px rgba(26,50,38,.07)}
+html{scroll-padding-top:calc(var(--hub-bar-height) + 70px)}
+@media(max-width:600px){:root{--hub-bar-height:55px}}
+
 @media print{.hub-course-nav{display:none!important}}
 </style>
 </head>
