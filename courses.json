@@ -211,5 +211,21 @@
     ],
     "icon": "W",
     "tone": "blue"
+  },
+  {
+    "id": "ai-agent-briefing-unit-1",
+    "title": "AI Agent 开发第一圈：从资料到有据简报",
+    "category": "AI 应用开发",
+    "desc": "从技术资料到有据简报，理解模型、上下文、工具调用与 Agent 循环；用离线规则模拟和失败变式验证结果回传与停止条件。",
+    "mode": "全景递进 · 学以致用 · 约30分钟",
+    "path": "lessons/ai-agent-briefing-unit-1.html",
+    "tags": [
+      "AI Agent",
+      "Tool Calling",
+      "上下文",
+      "离线模拟"
+    ],
+    "icon": "A",
+    "tone": "purple"
   }
 ]
