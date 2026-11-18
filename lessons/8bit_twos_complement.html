@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="从记录−5再加3的完整场景理解8位补码，手算取反加1、−128～127与溢出，附逐位实验和可导出练习。">
+<title>8 位补码：为什么是 −128～127</title>
+<style>
+:root{--bg:#f6f7f5;--ink:#192c38;--muted:#596b76;--line:#dbe2e1;--blue:#205c8e;--teal:#14756b;--rose:#a83f56;--paper:#fff;--wash:#eaf2f7;--hub-accent:#205c8e;color-scheme:light}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:17px;line-height:1.85}main{max-width:1100px;padding:0 24px 70px;margin:0 auto;min-width:0}a{color:var(--blue);text-underline-offset:4px;overflow-wrap:anywhere}p{margin:.8em 0}strong{color:#102b3d}h1,h2,h3{line-height:1.35;letter-spacing:-.02em}h1{font-size:clamp(31px,5.5vw,54px);margin:14px 0 20px;max-width:900px}h2{font-size:clamp(24px,3.6vw,32px);margin:0 0 20px}h3{font-size:21px;margin:24px 0 10px}code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-variant-numeric:tabular-nums}code{font-size:.92em;background:#edf1f3;border-radius:4px;padding:2px 5px;white-space:nowrap}pre{overflow:auto;background:#152c3d;color:#f2f5f7;padding:20px;border-radius:10px;font-size:16px;line-height:1.8;max-width:100%;margin:15px 0}pre code{background:none;padding:0;color:inherit}.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--teal);font-weight:750}.hero{padding:48px 0 32px;border-bottom:1px solid var(--line)}.lead{font-size:20px;color:#435966;max-width:870px}.scope{font-size:14px;color:var(--muted)}section{padding:42px 0;border-bottom:1px solid var(--line);min-width:0}section:last-child{border-bottom:0}.section-no{display:block;color:var(--teal);font-size:13px;letter-spacing:.1em;margin-bottom:9px}.callout{padding:18px 22px;background:var(--wash);border-left:4px solid var(--blue);border-radius:0 9px 9px 0;margin:20px 0}.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}.warning{background:#fff2e9;border-left-color:#ad602b}.success{background:#eaf5ef;border-left-color:var(--teal)}.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px;margin:20px 0;min-width:0}.card h3:first-child{margin-top:0}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.grid2>.card{margin:0}.path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:24px 0}.path-item{padding:18px 15px;background:white;border:1px solid var(--line);border-radius:10px;min-width:0}.path-num{color:var(--teal);font-size:12px;font-weight:800}.path-title{font-size:16px;font-weight:750;margin:5px 0}.path-detail{font-size:14px;color:var(--muted)}.path-detail code{font-size:13px}.equation{font-size:22px;font-weight:700;line-height:1.65;overflow-wrap:anywhere;margin:18px 0}.table-scroll{max-width:100%;overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;background:#fff;white-space:nowrap;font-size:15px}th,td{padding:12px 15px;text-align:left;border-bottom:1px solid #e5e9e8}th{background:#edf3f4;font-weight:650}tr:last-child td{border-bottom:0}.muted,.caption{color:var(--muted);font-size:14px}.controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:15px 0}.controls label{display:block;font-size:14px;font-weight:650;flex:0 1 160px;min-width:0}.controls label input{display:block;margin-top:5px;width:100%}input,textarea,button{font:inherit}input,textarea{border:1px solid #9caeb6;border-radius:7px;padding:9px 11px;background:white;color:var(--ink);max-width:100%;min-width:0}input[type=number]{width:150px;line-height:1.4}textarea{width:100%;resize:vertical;line-height:1.8;min-height:140px}button{cursor:pointer;line-height:1.45;padding:10px 15px;border:1px solid #afbec3;border-radius:7px;background:white;color:var(--ink);font-weight:650;font-size:14px;min-height:42px}button:hover{border-color:var(--blue);background:#edf4f8}button.primary{background:var(--blue);color:white;border-color:var(--blue)}button.primary:hover{background:#184b75}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #72a4cf;outline-offset:3px}.presets{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.presets button{padding:7px 12px;min-height:38px}.bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:9px;margin:22px 0 16px}.bit-col{text-align:center;min-width:0}.bit-weight{font-size:15px;font-weight:700;color:var(--muted);margin-bottom:5px}.bit-weight.negative{color:var(--rose)}button.bit{display:block;width:100%;padding:10px 0;font-size:28px;line-height:1.5;border:1px solid #b7c6cd;background:#f0f4f6;border-radius:9px}.bit[aria-pressed=true]{background:#dcebf7;border-color:#477da7;color:#164a74}.bit-col:first-child .bit[aria-pressed=true]{background:#f8e1e8;border-color:#b36175;color:#88354a}.bit-position{font-size:12px;color:var(--muted);margin-top:5px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.metric{background:#f3f6f6;border-radius:8px;padding:13px 16px;min-width:0}.metric-label{display:block;font-size:13px;color:var(--muted)}.metric-value{display:block;font-weight:750;font-size:28px;line-height:1.5;overflow-wrap:anywhere}.metric .mono{font-size:20px;letter-spacing:1px}.metric.signed{background:#e9f3ef}.metric.signed .metric-value{color:#17675d}.error{font-size:15px;color:#a13041;margin:12px 0;font-weight:650;min-height:0}.error:empty{display:none}.steps{list-style:none;padding:0;margin:16px 0;counter-reset:steps}.steps li{display:grid;grid-template-columns:29px 1fr;column-gap:10px;margin:13px 0}.steps li::before{counter-increment:steps;content:counter(steps);background:#edf4f6;color:var(--blue);width:27px;height:27px;line-height:27px;text-align:center;font-size:13px;font-weight:800;border-radius:50%;margin-top:2px}.steps .step-line{font-size:16px;min-width:0}.steps .step-line code{font-size:17px}.range-map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:20px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}.range-half{padding:22px 20px;background:#edf5f2;min-width:0}.range-half+ .range-half{background:#f8edf1;border-left:1px solid var(--line)}.range-half .big{font-size:26px;line-height:1.4;font-weight:750;display:block}.range-half .small{font-size:13px;color:var(--muted);display:block}.range-arrow{font-size:22px;color:var(--muted);line-height:1.2;margin:8px 0}.count-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:center;font-weight:700;margin:20px 0}.count-row span{border-radius:7px;padding:7px 12px;background:#f1f3f2}.count-row .neg{color:#8e3d55;background:#f8e8ee}.count-row .pos{color:#276a53;background:#e7f1ec}.status-ok{color:#156a53}.status-overflow{color:#a13041}details{border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 18px;margin:16px 0}summary{padding:13px 0;cursor:pointer;font-weight:650;font-size:16px}details>div{padding:0 0 16px}ol,ul{padding-left:24px}li{margin:7px 0}.question{font-weight:650;font-size:19px}.footer-note{font-size:14px;color:var(--muted)}.sources{font-size:14px}.sources li{margin:10px 0}.nav-shell nav{display:flex;gap:14px;flex-wrap:wrap;padding:12px 0}.no-js{border:2px solid #a25127;background:#fff5e7;padding:15px;margin:20px 0}.nav-shell a{font-size:14px}
+@media(max-width:760px){main{padding:0 18px 45px}.hero{padding-top:28px}.lead{font-size:18px}.grid2{grid-template-columns:1fr}.path{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:18px}.bits{gap:6px}.metrics{grid-template-columns:1fr 1fr}.metrics .metric:last-child{grid-column:1/-1}.metric .mono{font-size:23px}.equation{font-size:20px}section{padding:32px 0}h3{font-size:19px}}
+@media(max-width:430px){body{font-size:16px}main{padding-left:12px;padding-right:12px}.card{padding:15px}.bits{gap:4px}.bit-weight{font-size:12px}.bit-position{font-size:10px}button.bit{font-size:23px;padding:9px 0;border-radius:6px}.path-item{padding:14px 11px}.callout{padding:15px 17px}.range-half{padding:16px 10px}.range-half .big{font-size:22px}.range-half .small{font-size:12px}.metric{padding:12px}.metric-label{font-size:12px}.metric-value{font-size:27px}.controls{align-items:stretch}.controls label{flex:1 1 100px}.controls button{align-self:end}.equation{font-size:18px}.count-row{gap:5px;font-size:14px}.count-row span{padding:7px 8px}pre{padding:15px;font-size:14px}.scope{font-size:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:12pt}main{max-width:none}.hero{padding-top:0}.card,details{break-inside:avoid}.controls,.presets,.bits,.practice-actions{display:none}details>div{display:block}section{padding:20px 0}.metric-value{font-size:19pt}}
+</style>
+<style id="learning-hub-navigation-css">
+:root{scroll-padding-top:calc(var(--hub-nav-height,64px) + 18px)}
+#learning-hub-bar{box-sizing:border-box;position:sticky;top:0;z-index:1000;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:6px 12px;margin:0 auto;background:var(--hub-surface,#f7f8fc);border:0;border-bottom:1px solid var(--hub-rule,#dce1df);border-radius:0;box-shadow:none;color:#213750;font:13px/1.5 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;width:min(calc(100% - 32px),var(--hub-content-width,1160px));max-width:1280px;min-width:0;min-height:56px}
+#learning-hub-bar *{box-sizing:border-box}
+#learning-hub-bar .hub-breadcrumb{display:flex;align-items:center;gap:12px;min-width:0;max-width:370px;white-space:nowrap}
+#learning-hub-bar .hub-return{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:38px;padding:7px 4px;border:0;border-radius:4px;background:transparent;color:var(--hub-accent,#315b82);font-weight:650;text-decoration:none;white-space:nowrap}
+#learning-hub-bar .hub-return:hover{background:var(--hub-hover,#edf0ec);border-color:transparent}
+#learning-hub-bar .hub-separator{color:#a4afc0;flex:none;font-size:15px}
+#learning-hub-bar .hub-title{flex:0 1 auto;min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--hub-muted,#6b7778);font-size:12px}
+#learning-hub-bar .hub-section-strip{display:flex;align-items:center;gap:3px;min-width:0;width:100%}
+#learning-hub-bar .hub-sections{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:3px;flex:1;min-width:0;width:0;max-width:none;margin:0;padding:2px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;overscroll-behavior-inline:contain;scroll-padding-inline:4px;border:0;background:transparent;border-radius:0;box-shadow:none}
+#learning-hub-bar .hub-sections::-webkit-scrollbar{display:none}
+#learning-hub-bar .hub-sections a,#learning-hub-bar .hub-sections button{display:inline-flex;align-items:center;justify-content:center;flex:none;margin:0;padding:8px 10px;min-height:40px;width:auto;border:1px solid transparent;border-radius:8px;box-shadow:none;background:transparent;color:var(--hub-muted,#637372);font:inherit;font-size:12px;line-height:1.5;font-weight:500;text-decoration:none;white-space:nowrap;cursor:pointer}
+#learning-hub-bar .hub-sections a:hover,#learning-hub-bar .hub-sections button:hover{background:var(--hub-hover,#edf0ec);color:var(--hub-accent,#315b82)}
+#learning-hub-bar .hub-sections [aria-current="location"],#learning-hub-bar .hub-sections [aria-current="step"]{background:transparent;border-color:transparent;border-radius:0;box-shadow:inset 0 -2px var(--hub-accent,#315b82);color:var(--hub-accent,#315b82);font-weight:700}
+#learning-hub-bar .hub-toc-arrow{display:flex;align-items:center;justify-content:center;flex:none;width:26px;height:36px;padding:0;margin:0;min-height:36px;border:0;border-radius:7px;background:transparent;color:#657eaa;font:inherit;font-size:22px;line-height:1;cursor:pointer}
+#learning-hub-bar .hub-toc-arrow:hover{background:#eaf0fc;color:#275dd6}
+#learning-hub-bar .hub-toc-arrow:disabled{opacity:.25;cursor:default}
+#learning-hub-bar .hub-complete{flex:none;min-height:38px;margin:0;padding:7px 10px;border:1px solid var(--hub-rule,#dce1df);border-radius:6px;background:transparent;color:var(--hub-accent,#315b82);cursor:pointer;font:inherit;font-size:12px;font-weight:650;line-height:1.5;white-space:nowrap}
+#learning-hub-bar .hub-complete[aria-pressed="true"]{background:#edf8ee;color:#23733a;border-color:#c4dec8}
+#learning-hub-bar [hidden]{display:none!important}
+#learning-hub-bar a:focus-visible,#learning-hub-bar button:focus-visible{outline:3px solid #739cf3;outline-offset:-2px}
+html.hub-unified-nav{scroll-padding-top:calc(var(--hub-nav-height,64px) + 18px)}
+.hub-original-navigation{display:none!important}
+.hub-single-column{grid-template-columns:minmax(0,1fr)!important;gap:0!important}
+body>.nav-shell{top:var(--hub-nav-height,64px)}
+body>.layout>aside{top:calc(var(--hub-nav-height,64px) + 24px)}
+@media(max-width:1180px){#learning-hub-bar{padding-inline:12px;gap:12px}#learning-hub-bar .hub-title,#learning-hub-bar .hub-separator{display:none}#learning-hub-bar .hub-sections a,#learning-hub-bar .hub-sections button{padding-inline:9px}}
+@media(max-width:680px){#learning-hub-bar{grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;top:0;width:calc(100% - 24px);margin-top:0;padding:7px 10px 5px;border-radius:0;min-height:58px}#learning-hub-bar .hub-breadcrumb{grid-column:1;grid-row:1;max-width:none}#learning-hub-bar .hub-return{font-size:12px;padding:6px 11px;min-height:38px}#learning-hub-bar .hub-complete{grid-column:2;grid-row:1;min-height:38px;font-size:11px;padding:6px 10px}#learning-hub-bar .hub-section-strip{grid-column:1/-1;grid-row:2;border-top:1px solid var(--hub-rule,#dce1df);padding-top:3px}#learning-hub-bar .hub-sections a,#learning-hub-bar .hub-sections button{min-height:37px;padding:7px 9px;font-size:11px}#learning-hub-bar .hub-toc-arrow{height:34px;min-height:34px;width:23px}}
+@media print{#learning-hub-bar{display:none}.hub-original-navigation{display:none!important}}
+
+#learning-hub-bar.hub-dark{--hub-accent:#a6c9ed;--hub-muted:#adc0d1;--hub-rule:#293e50;--hub-hover:#162c40;color:#d7e4ee}
+</style>
+</head>
+<body>
+<div id="learning-hub-bar" role="navigation" aria-label="课程导航" data-course-id="twos-complement-8bit">
+<a class="hub-return" href="https://aisuperteacher.github.io/ai-learning-hub/#library">← 返回学习中心</a>
+<span class="hub-title">8位补码：−128～127</span>
+<button type="button" class="hub-complete" hidden>标记学完</button>
+</div>
+
+<div class="nav-shell"><nav aria-label="学习导航"><a href="#scene">完整场景</a><a href="#bits">读懂八位</a><a href="#encode">手算编码</a><a href="#why">为何有效</a><a href="#range">范围边界</a><a href="#addition">回到计算</a><a href="#practice">练习验证</a></nav></div>
+<main>
+<header class="hero">
+<div class="eyebrow">计算机基础 · 全景递进学习 × 学以致用</div>
+<h1>八个格子，怎样装下负数？<br>看懂补码与 −128～127</h1>
+<p class="lead">从「记录 −5，再加上 3」的完整任务出发，把<strong>二进制位权、取反加 1、范围和溢出</strong>连成一件事。</p>
+<p class="scope">本单元只研究固定 8 位的有符号整数补码。所有运算面板都是保留低 8 位的教学模型；具体编程语言还会规定类型提升和溢出处理。顶栏“学完”只记录阅读，不代表已经掌握。</p>
+</header>
+<noscript><div class="no-js">当前环境没有启用 JavaScript。以下完整讲解与手算示例仍可阅读；逐位实验、自动计算和导出需要下载后用浏览器打开。</div></noscript>
+
+<section id="scene">
+<span class="section-no">01 · 先看完整任务</span><h2>记录 −5，增加 3，结果应该是 −2</h2>
+<p>设想一个只用 8 个二进制位保存整数的计数器。每个小格子叫一位（bit），只能是 <code>0</code> 或 <code>1</code>。我们要让它完成一件事：保存 <strong>−5</strong>，再加 <strong>3</strong>，最后读出 <strong>−2</strong>。</p>
+<div class="path" aria-label="从输入到结果的完整过程">
+<div class="path-item"><span class="path-num">① 输入</span><div class="path-title">数学整数</div><div class="path-detail">当前 −5，变化 +3</div></div>
+<div class="path-item"><span class="path-num">② 编码</span><div class="path-title">写成 8 位</div><div class="path-detail">−5：<code>11111011</code><br>+3：<code>00000011</code></div></div>
+<div class="path-item"><span class="path-num">③ 运算</span><div class="path-title">二进制相加</div><div class="path-detail">只保留低 8 位<br><code>11111110</code></div></div>
+<div class="path-item"><span class="path-num">④ 解读</span><div class="path-title">按补码读回</div><div class="path-detail">−128 + 126<br><strong>得到 −2</strong></div></div>
+</div>
+<p>编码规则负责把整数对应到一串 0 和 1；加法负责处理这些位；解读规则负责把结果读回整数。接下来逐个解释这条主线。</p>
+<div class="callout"><strong>先记住本课的关键：</strong>8 位补码的最左一位权重是 <strong>−128</strong>，其余七位仍是 <strong>64、32、16、8、4、2、1</strong>。因此 <code>10000000</code> 表示 −128，<code>01111111</code> 表示 127。</div>
+</section>
+
+<section id="bits">
+<span class="section-no">02 · 知识点在“编码与解读”环节</span><h2>同一串 0 和 1，可以有不同的解释</h2>
+<p>十进制从右到左是个位、十位、百位。二进制逢 2 进 1，所以普通二进制从右到左的权重是 <code>1、2、4、8、16、32、64、128</code>。某位是 1，就把它的权重加进去；是 0，就不加。</p>
+<p>例如，<code>00000101</code> 的两个 1 对应 4 和 1，所以值为 <strong>4 + 1 = 5</strong>。8 位共有 2 × 2 × … × 2 = <strong>2⁸ = 256</strong> 种位形。</p>
+<div class="table-scroll"><table><thead><tr><th>解释规则</th><th>最左一位的权重</th><th>其余位</th><th><code>11111011</code> 的值</th></tr></thead><tbody><tr><td>无符号：只表示非负数</td><td>+128</td><td>64、32、16、8、4、2、1</td><td>128 + 123 = 251</td></tr><tr><td>有符号补码：也表示负数</td><td>−128</td><td>64、32、16、8、4、2、1</td><td>−128 + 123 = −5</td></tr></tbody></table></div>
+<p>硬件中的位形没有自带“−”号。<strong>我们使用什么解释规则，决定它表示哪个数。</strong>在补码规则下，最左位为 0 表示非负数；为 1 表示负数。它既能判断符号，也参与数值计算。</p>
+<div class="card" id="bit-experiment">
+<h3>逐位实验：点一下，观察它贡献了多少</h3><p class="caption">每个按钮上方是补码权重。默认位形代表 −5；先只点击最左位，观察数值变化。</p>
+<div class="bits" id="bit-grid"></div>
+<div class="metrics" aria-live="polite"><div class="metric signed"><span class="metric-label">按 8 位补码解释</span><output class="metric-value" id="signed-value">−5</output></div><div class="metric"><span class="metric-label">按无符号解释</span><output class="metric-value" id="unsigned-value">251</output></div><div class="metric"><span class="metric-label">同一个位形</span><output class="metric-value mono" id="bit-pattern">11111011</output></div></div>
+<p id="weight-sum" class="equation">−128 + 64 + 32 + 16 + 8 + 2 + 1 = −5</p>
+<div class="presets" aria-label="载入典型数值"><button type="button" data-byte="-128">−128</button><button type="button" data-byte="-127">−127</button><button type="button" data-byte="-5">−5</button><button type="button" data-byte="-1">−1</button><button type="button" data-byte="0">0</button><button type="button" data-byte="127">127</button></div>
+<p class="caption" id="interpretation-note">最高位为 1：无符号值减去 256，就是补码值。</p>
+</div>
+<div class="callout warning"><strong>常见误解：</strong>补码后七位不表示负数的绝对值。<code>10000101</code> 是 −128 + 5 = <strong>−123</strong>，不是 −5。把“符号位 + 绝对值”当成补码，会用错规则。</div>
+</section>
+
+<section id="encode">
+<span class="section-no">03 · 手算：从整数得到位形</span><h2>负数怎么写？固定八位，全部取反，再加 1</h2>
+<p>对于 0～127，直接写出二进制并在左边补 0 到 8 位。对于 −a（a 为 1～128 的幅值，也就是去掉负号后的大小），先把 <strong>a 写成 8 位无符号二进制</strong>，再把全部 8 位的 0/1 对换，最后加 1。</p>
+<h3>完整示范：−5</h3>
+<ol class="steps"><li><div class="step-line">5 = 4 + 1，写成 <code>00000101</code>。先固定 8 位，前导零也算在内。</div></li><li><div class="step-line">全部取反：<code>11111010</code>。0 变 1，1 变 0。</div></li><li><div class="step-line">再加 1：<code>11111011</code>。这就是 −5 的 8 位补码。</div></li><li><div class="step-line">读回检查：−128 + 64 + 32 + 16 + 8 + 2 + 1 = <strong>−5</strong>。</div></li></ol>
+<div class="table-scroll"><table><thead><tr><th>目标负数</th><th>幅值的 8 位无符号写法</th><th>全部取反</th><th>再加 1：补码</th></tr></thead><tbody><tr><td>−1</td><td><code>00000001</code></td><td><code>11111110</code></td><td><code>11111111</code></td></tr><tr><td>−5</td><td><code>00000101</code></td><td><code>11111010</code></td><td><code>11111011</code></td></tr><tr><td>−127</td><td><code>01111111</code></td><td><code>10000000</code></td><td><code>10000001</code></td></tr><tr><td>−128</td><td><code>10000000</code></td><td><code>01111111</code></td><td><code>10000000</code></td></tr></tbody></table></div>
+<div class="callout warning"><strong>−128 是最容易混淆的一行。</strong>第一步的 <code>10000000</code> 是“幅值 128 的无符号写法”；最后的 <code>10000000</code> 按补码规则解释为 −128。<strong>+128 没有 8 位有符号补码表示</strong>，这里并没有先保存一个可表示的 +128。</div>
+<div class="card"><h3>换一个整数，展开手算步骤</h3><form id="encode-form" novalidate><div class="controls"><label for="encode-input">目标整数（−128～127）<input id="encode-input" type="number" min="-128" max="127" step="1" value="-5" inputmode="numeric"></label><button class="primary" type="submit">展开步骤</button></div></form><p id="encode-error" class="error" role="alert"></p><div id="encode-result" aria-live="polite"></div></div>
+<h3>反过来，如何把补码读成十进制？</h3>
+<p>看见 <code>11111011</code>，先看最左位：1，说明它是负数。可以用两种方法互相检查：</p>
+<div class="grid2"><div class="card"><h3>方法 A：按位权相加</h3><p>最高位贡献 −128；其余位合计 123。</p><p class="equation">−128 + 123 = −5</p><p class="caption">适用于所有 8 位补码，包括 −128。</p></div><div class="card"><h3>方法 B：反算幅值</h3><p><code>11111011</code> 取反为 <code>00000100</code>，加 1 得 <code>00000101</code>，幅值是 5；原数为负，所以是 −5。</p><p class="caption">对 <code>10000000</code> 这样处理仍是 <code>10000000</code>，作为无符号幅值读出 128，再加负号。</p></div></div>
+</section>
+
+<section id="why">
+<span class="section-no">04 · 连接手算规则与加法机制</span><h2>为什么“取反加 1”就能表示相反数？</h2>
+<p>先看我们希望什么成立：<strong>5 + (−5) = 0</strong>。8 位计数器只能保留 8 位；如果二进制加法产生第 9 位，它在本模型里会被丢弃。</p>
+<pre><code>   00000101    幅值 5
++  11111011    −5 的位形（无符号读为 251）
+= 100000000    需要 9 位，是无符号的 256
+
+保留低 8 位：00000000 → 0</code></pre>
+<p>因此，−5 的编码可以选 <strong>256 − 5 = 251</strong>。5 与它相加，恰好达到 256，低 8 位回到 0。对任意幅值 a，同样有：</p>
+<p class="equation">a + (256 − a) = 256 → 低 8 位为 0</p>
+<p>这叫<strong>模 256</strong>的运算：相差 256 的整数会留下相同的低 8 位。它像一个有 256 个位置的循环计数器；这个类比只描述固定宽度的位形循环，普通数学整数没有在 127 后变成负数。</p>
+<h3>“取反”为什么对应 255 − a？</h3>
+<p>8 位全 1 的无符号值是 <code>11111111</code> = 255。某一位原来是 1，取反后就是 0；原来是 0，取反后就是 1。原位形与取反后的位形，在每个位上正好加成 1，所以两者总和是 255。</p>
+<div class="callout success"><p class="equation">全部 8 位取反 = 255 − a</p><p class="equation">取反后再加 1 = 256 − a</p><p>“取反加 1”正好算出了我们需要的负数编码。它是固定宽度下的计算方法，不是随意规定的一条口诀。</p></div>
+<p>例如，5 取反后按无符号读是 250；再加 1 得 251。251 与 −5 相差 256，所以它们在保留低 8 位的加法中能对应起来。</p>
+</section>
+
+<section id="range">
+<span class="section-no">05 · 推导最大值与最小值</span><h2>为什么最大是 127，最小却是 −128？</h2>
+<p>将 256 种位形分成两半。最左位为 0 的 128 种表示 <strong>0～127</strong>；最左位为 1 的 128 种表示 <strong>−128～−1</strong>。</p>
+<div class="range-map" aria-label="无符号数值与补码数值的两段对应关系"><div class="range-half"><span class="small">最高位为 0 · 无符号值</span><span class="big">0～127</span><div class="range-arrow" aria-hidden="true">↓</div><span class="small">按补码解释：值不变</span><span class="big">0～127</span><span class="small"><code>00000000</code> 到 <code>01111111</code></span></div><div class="range-half"><span class="small">最高位为 1 · 无符号值</span><span class="big">128～255</span><div class="range-arrow" aria-hidden="true">↓</div><span class="small">按补码解释：减去 256</span><span class="big">−128～−1</span><span class="small"><code>10000000</code> 到 <code>11111111</code></span></div></div>
+<div class="grid2"><div class="card"><h3>求最大值</h3><p>负权重那一位取 0，其他正权重位全取 1：</p><p class="equation mono">01111111</p><p>0 + 64 + 32 + 16 + 8 + 4 + 2 + 1<br>= <strong>127</strong></p></div><div class="card"><h3>求最小值</h3><p>负权重那一位取 1，其他正权重位全取 0：</p><p class="equation mono">10000000</p><p>−128 + 0 + 0 + 0 + 0 + 0 + 0 + 0<br>= <strong>−128</strong></p></div></div>
+<p>也可以先把后七位的和记为 r。它最小是 0，最大是 127。因此：</p>
+<ul><li>最高位是 0：数值是 r，所以范围为 <strong>0～127</strong>。</li><li>最高位是 1：数值是 −128 + r，所以范围为 <strong>−128～−1</strong>。</li></ul>
+<div class="count-row" aria-label="256种位形的数量分配"><span class="neg">128 个负数</span> + <span>1 个零</span> + <span class="pos">127 个正数</span> = <span>256</span></div>
+<div class="callout"><strong>“零占一个位置”是数量解释：</strong>在这套补码分配中，最高位为 0 的一半包含 0，所以只有 127 个正数；另一半有 128 个负数。它不意味着所有有符号编码都必须如此，关键仍是补码的解释规则。</div>
+<div class="table-scroll"><table><thead><tr><th>8 位位形</th><th>无符号读法</th><th>补码读法</th></tr></thead><tbody><tr><td><code>00000000</code></td><td>0</td><td>0</td></tr><tr><td><code>00000001</code></td><td>1</td><td>1</td></tr><tr><td><code>01111111</code></td><td>127</td><td>127</td></tr><tr><td><code>10000000</code></td><td>128</td><td>−128</td></tr><tr><td><code>10000001</code></td><td>129</td><td>−127</td></tr><tr><td><code>11111011</code></td><td>251</td><td>−5</td></tr><tr><td><code>11111111</code></td><td>255</td><td>−1</td></tr></tbody></table></div>
+<p>换成 n 位时，最高位权重是 −2<sup>n−1</sup>，其余 n−1 位的最大和是 2<sup>n−1</sup>−1。所以<strong>n 位补码范围是 −2<sup>n−1</sup> ～ 2<sup>n−1</sup>−1</strong>。把 n = 8 代进去，就是 −128～127。</p>
+<details><summary>为什么 −128 取反加 1，还是它自己？</summary><div><p><code>10000000 → 01111111 → 10000000</code>。普通数学中，−128 的相反数是 +128；但 +128 超出 8 位补码范围。固定为 8 位后，位形只能回到 <code>10000000</code>。</p><p>因此，<strong>−128 有补码，却没有能放入同样 8 位有符号范围的正相反数</strong>。要保存 +128，需要更宽的有符号类型，例如 16 位；这不代表数学上 −(−128) = −128。</p></div></details>
+</section>
+
+<section id="addition">
+<span class="section-no">06 · 回到开头的完整任务</span><h2>把 −5 和 +3 放回计数器</h2>
+<p>现在我们能解释整个过程：−5 编成 <code>11111011</code>，+3 编成 <code>00000011</code>，按普通二进制逐位相加，最后按补码读回。</p>
+<pre><code>   11111011    −5
++  00000011    +3
+=  11111110
+
+补码读回：−128 + 64 + 32 + 16 + 8 + 4 + 2 = −2</code></pre>
+<p>这样，<strong>同一套逐位加法规则</strong>就能处理这个正负数相加的任务。结果 −2 在范围内，所以它与普通数学整数加法一致。</p>
+<div class="card"><h3>8 位加法实验</h3><p class="caption">仅模拟保留低 8 位。这里把“第 9 位进位”和“有符号溢出”分开显示，它们不是同一件事。</p><form id="addition-form" novalidate><div class="controls"><label for="add-a">第一个整数<input id="add-a" type="number" min="-128" max="127" step="1" value="-5" inputmode="numeric"></label><label for="add-b">加上的整数<input id="add-b" type="number" min="-128" max="127" step="1" value="3" inputmode="numeric"></label><button type="submit" class="primary">计算低 8 位</button></div></form><div class="presets"><button type="button" data-add="-5,3">−5 + 3</button><button type="button" data-add="-5,5">−5 + 5</button><button type="button" data-add="127,1">127 + 1</button><button type="button" data-add="-128,-1">−128 + (−1)</button></div><p class="error" id="addition-error" role="alert"></p><div id="addition-result" aria-live="polite"></div></div>
+<h3>边界变化：127 再加 1</h3><p><code>01111111 + 00000001 = 10000000</code>。普通数学结果是 <strong>+128</strong>，超出 8 位补码范围；保留的位形会被解释成 <strong>−128</strong>。这就叫<strong>有符号溢出</strong>。</p>
+<div class="table-scroll"><table><thead><tr><th>运算</th><th>普通数学结果</th><th>保留低 8 位后的读数</th><th>第 9 位进位</th><th>有符号溢出</th></tr></thead><tbody><tr><td>−5 + 3</td><td>−2</td><td>−2</td><td>无</td><td>无</td></tr><tr><td>−5 + 5</td><td>0</td><td>0</td><td>有</td><td>无</td></tr><tr><td>127 + 1</td><td>128</td><td>−128</td><td>无</td><td>有</td></tr><tr><td>−128 + (−1)</td><td>−129</td><td>127</td><td>有</td><td>有</td></tr></tbody></table></div>
+<div class="callout warning"><p><strong>进位不是溢出的判定标准。</strong>最直观的检查是：普通数学结果是否落在 −128～127 内。对两个 8 位补码做加法，也可看“同号相加，得到异号”来判断有符号溢出。</p><p>这里的回绕结论针对固定保留 8 位的模型。具体语言不一定直接以 8 位做表达式运算。例如 Java 的 <code>byte</code> 相加通常先提升为 <code>int</code>；不能据此说 Java 的普通表达式 <code>127 + 1</code> 等于 −128。</p></div>
+</section>
+
+<section id="practice">
+<span class="section-no">07 · 留一个主要动作，检查是否会用</span><h2>现在轮到你：手算 −6</h2>
+<p>先在纸上或下方写出步骤，再展开参考。可以只完成这一个练习，不需要马上增加难度。</p>
+<div class="card"><p class="question" id="practice-question">把 −6 写成 8 位补码，并用位权解释为什么 <code>11111010</code> 表示 −6。</p><label for="practice-answer" class="caption">你的推导（例如：幅值、取反、加 1、读回检查）</label><textarea id="practice-answer" placeholder="先写 6 的 8 位二进制，再写取反与加 1……"></textarea><p id="practice-state" class="caption">状态：待验证。示范和阅读记录不等于独立掌握。</p><details id="practice-reference"><summary>展开参考推导</summary><div><p>6 = 4 + 2，所以幅值的 8 位写法是 <code>00000110</code>。全部取反得到 <code>11111001</code>，再加 1 得到 <code>11111010</code>。</p><p>按位权读回：−128 + 64 + 32 + 16 + 8 + 2 = <strong>−6</strong>。也可以把位形先按无符号读成 250，再算 250 − 256 = −6。</p><p>检查自己的答案是否同时说清：固定 8 位、全部取反、加 1，以及最高位的 −128 权重。</p></div></details><div class="controls practice-actions"><button type="button" class="primary" id="export-practice">导出续学卡</button><button type="button" id="clear-practice">清空这题作答</button></div><p class="caption" id="storage-note">作答仅尝试保存在当前浏览器；离线文件或不同设备间不保证保留。导出的续学卡可带回对话核对。</p><p id="export-status" class="caption" role="status"></p></div>
+<details><summary>可选思考：为什么 11111111 是 −1？</summary><div><p>最高位贡献 −128，剩下七位全 1 贡献 127，所以总和是 −1。它按无符号规则解释才是 255。</p></div></details>
+<details><summary>可选思考：把最小负数“再减 1”会怎样？</summary><div><p>−128 + (−1) 的普通数学结果是 −129，超出范围。对应位形相加为 <code>10000000 + 11111111 = 1 01111111</code>；只保留低 8 位得到 <code>01111111</code>，读成 +127。两个负数相加得到正的读数，说明发生有符号溢出。</p></div></details>
+<h3>本轮续学信息</h3><p><strong>已经展示：</strong>−5 + 3 的全过程、负数编码和读回、−128～127 的推导、进位与溢出的区别。<strong>掌握证据：</strong>尚待你的手算或解释。<strong>下一动作：</strong>完成 −6 这一题；根据具体卡点再补讲，不自动把阅读当成掌握。</p>
+<h3>资料与适用范围</h3><p class="footer-note">教材中的数值推导与互动是固定 8 位整数的教学示例。下列课程和语言规范用于核对表示规则与边界；不要求先读完它们才能练习。</p>
+<ol class="sources"><li><a href="https://www.cs.cornell.edu/courses/cs3410/2024fa/notes/numbers.html" target="_blank" rel="noopener noreferrer">Cornell CS 3410：Switches & Numbers</a> — 负权重、补码范围与位形解释。</li><li><a href="https://www.cs.cornell.edu/~tomf/notes/cps104/twoscomp.html" target="_blank" rel="noopener noreferrer">Cornell：Two’s Complement</a> — 取反加 1 的步骤与例子。</li><li><a href="https://www.doc.ic.ac.uk/~eedwards/compsys/arithmetic/" target="_blank" rel="noopener noreferrer">Imperial College London：Arithmetic Operations on Binary Numbers</a> — 补码加法、进位和有符号溢出。</li><li><a href="https://docs.oracle.com/javase/specs/jls/se24/html/jls-4.html#jls-4.2.1" target="_blank" rel="noopener noreferrer">Java 语言规范 §4.2.1–4.2.2</a> — byte 范围与整数运算的类型规则。</li></ol>
+</section>
+</main>
+<script id="twos-core">
+(()=>{
+const bits8=u=>(u&255).toString(2).padStart(8,'0');
+const encode8=n=>((n%256)+256)%256;
+const decode8=u=>u<128?u:u-256;
+const validByte=(raw,label)=>{if(String(raw).trim()==='')throw new Error('请填写'+label+'。');const n=Number(raw);if(!Number.isFinite(n)||!Number.isInteger(n))throw new Error(label+'必须是整数，不能输入小数。');if(n < -128 || n > 127)throw new Error(label+'必须在 −128～127 内；当前值超出 8 位有符号补码范围。');return n;};
+function add8(a,b){const ua=encode8(a),ub=encode8(b),sum=ua+ub,raw=sum&255,mathematical=a+b;return{a,b,ua,ub,sum,raw,value:decode8(raw),mathematical,carry:sum>255?1:0,overflow:mathematical< -128||mathematical>127};}
+Object.defineProperty(window,'twosComplementLesson',{value:Object.freeze({encode8,decode8,add8,bits8,validByte}),writable:false});
+})();
+</script>
+<script id="twos-interactions">
+(()=>{'use strict';
+const {encode8,decode8,add8,bits8,validByte}=window.twosComplementLesson;
+const byId=id=>document.getElementById(id);
+const fmt=n=>n<0?'−'+Math.abs(n):String(n);
+const weights=[-128,64,32,16,8,4,2,1];
+let currentByte=251;const grid=byId('bit-grid');
+weights.forEach((weight,i)=>{const col=document.createElement('div');col.className='bit-col';const label=document.createElement('div');label.className='bit-weight'+(i===0?' negative':'');label.textContent=fmt(weight);const button=document.createElement('button');button.type='button';button.className='bit';button.dataset.index=String(i);button.setAttribute('aria-label','切换第'+(8-i)+'位，补码权重'+fmt(weight));button.addEventListener('click',()=>{currentByte^=1<<(7-i);renderBits();});const position=document.createElement('div');position.className='bit-position';position.textContent=i===0?'最高位':'第'+(8-i)+'位';col.append(label,button,position);grid.append(col);});
+function renderBits(){const pattern=bits8(currentByte);grid.querySelectorAll('button').forEach((button,i)=>{button.textContent=pattern[i];button.setAttribute('aria-pressed',String(pattern[i]==='1'));});byId('signed-value').textContent=fmt(decode8(currentByte));byId('unsigned-value').textContent=String(currentByte);byId('bit-pattern').textContent=pattern;const parts=weights.filter((_,i)=>pattern[i]==='1').map(fmt);byId('weight-sum').textContent=(parts.length?parts.join(' + '):'0')+' = '+fmt(decode8(currentByte));byId('interpretation-note').textContent=currentByte>=128?'最高位为 1：'+currentByte+' − 256 = '+fmt(currentByte-256)+'。':'最高位为 0：无符号值与补码值相同，都是 '+currentByte+'。';}
+document.querySelectorAll('[data-byte]').forEach(button=>button.addEventListener('click',()=>{currentByte=encode8(Number(button.dataset.byte));renderBits();}));
+function renderEncoding(){const error=byId('encode-error'),out=byId('encode-result');error.textContent='';try{const n=validByte(byId('encode-input').value,'目标数');if(n>=0){out.innerHTML='<ol class="steps"><li><div class="step-line">目标数为非负数 '+n+'，直接写出二进制。</div></li><li><div class="step-line">在左侧补 0 到 8 位：<code>'+bits8(n)+'</code>。</div></li><li><div class="step-line">最高位为 0，读回为 '+n+'，无需取反加 1。</div></li></ol>';}else{const magnitude=Math.abs(n),inverted=255-magnitude,encoded=encode8(n);out.innerHTML='<ol class="steps"><li><div class="step-line">幅值 '+magnitude+' 的 8 位无符号写法：<code>'+bits8(magnitude)+'</code>。</div></li><li><div class="step-line">全部取反：<code>'+bits8(inverted)+'</code>（按无符号读为 '+inverted+'）。</div></li><li><div class="step-line">加 1：<code>'+bits8(encoded)+'</code>，得到 '+fmt(n)+' 的补码。</div></li><li><div class="step-line">读回核对：'+encoded+' − 256 = <strong>'+fmt(n)+'</strong>。</div></li></ol>'+(n===-128?'<p class="callout warning">第一步的 <code>10000000</code> 是无符号幅值 128，最后的同一位形按补码解释为 −128。+128 不在 8 位有符号范围内。</p>':'');}}catch(e){error.textContent=e.message;out.replaceChildren();}}
+byId('encode-form').addEventListener('submit',event=>{event.preventDefault();renderEncoding();});
+function renderAddition(){const error=byId('addition-error'),out=byId('addition-result');error.textContent='';try{const a=validByte(byId('add-a').value,'第一个数'),b=validByte(byId('add-b').value,'第二个数'),r=add8(a,b);const additionLine=(r.carry?'1 ':'  ')+bits8(r.raw);out.innerHTML='<pre><code>   '+bits8(r.ua)+'    '+fmt(a)+'\n+  '+bits8(r.ub)+'    '+fmt(b)+'\n= '+additionLine+'\n\n保留低 8 位：'+bits8(r.raw)+'</code></pre><div class="metrics"><div class="metric"><span class="metric-label">普通数学结果</span><span class="metric-value">'+fmt(r.mathematical)+'</span></div><div class="metric signed"><span class="metric-label">低 8 位按补码读回</span><span class="metric-value" id="add-decoded">'+fmt(r.value)+'</span></div><div class="metric"><span class="metric-label">第 9 位进位</span><span class="metric-value" id="add-carry">'+r.carry+'</span></div></div><p id="add-overflow" class="'+(r.overflow?'status-overflow':'status-ok')+'"><strong>有符号溢出：'+(r.overflow?'有':'无')+'</strong>。'+(r.overflow?'普通数学结果 '+fmt(r.mathematical)+' 超出 −128～127；低 8 位读数不再等于数学结果。':'普通数学结果落在 −128～127 内，低 8 位读数与之相同。')+'</p><p class="caption">'+(r.carry?'这里有第 9 位进位；舍弃该位只描述保留位宽，是否有符号溢出要另外判断。':'这里没有第 9 位进位；仍然必须检查有符号结果是否超出范围。')+'</p>';}catch(e){error.textContent=e.message;out.replaceChildren();}}
+byId('addition-form').addEventListener('submit',event=>{event.preventDefault();renderAddition();});document.querySelectorAll('[data-add]').forEach(button=>button.addEventListener('click',()=>{const [a,b]=button.dataset.add.split(',');byId('add-a').value=a;byId('add-b').value=b;renderAddition();}));
+const storageKey='lesson-twos-complement-8bit-practice-v1';const signature='2026-11-18|固定8位补码|把−6编码为8位并用位权解释11111010|00000110->11111001->11111010|-128+64+32+16+8+2=-6';
+let record={signature,answer:'',referenceOpened:false,referenceFirstOpenedAt:null,updatedAt:null};let storageAvailable=true;
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&saved.signature===signature&&typeof saved.answer==='string'){record={signature,answer:saved.answer,referenceOpened:saved.referenceOpened===true,referenceFirstOpenedAt:typeof saved.referenceFirstOpenedAt==='string'?saved.referenceFirstOpenedAt:null,updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:null};}}catch{storageAvailable=false;}
+byId('practice-answer').value=record.answer;
+function reflectPractice(){byId('practice-state').textContent=record.answer.trim()?'状态：已记录作答，理解与操作仍待核验。'+(record.referenceOpened?' 参考答案曾展开；是否独立完成需结合推导判断。':' 参考答案尚未展开。'):'状态：待验证。示范和阅读记录不等于独立掌握。';if(!storageAvailable)byId('storage-note').textContent='当前浏览器未能保存本地记录。关闭页面前请导出续学卡；导出仍可使用。';}
+function saveRecord(){record.updatedAt=new Date().toISOString();try{localStorage.setItem(storageKey,JSON.stringify(record));}catch{storageAvailable=false;}reflectPractice();}
+byId('practice-answer').addEventListener('input',()=>{record.answer=byId('practice-answer').value;saveRecord();});
+byId('practice-reference').addEventListener('toggle',event=>{if(event.target.open){record.referenceOpened=true;record.referenceFirstOpenedAt=record.referenceFirstOpenedAt||new Date().toISOString();saveRecord();}});
+byId('clear-practice').addEventListener('click',()=>{record.answer='';byId('practice-answer').value='';saveRecord();byId('export-status').textContent='已清空作答；保留参考答案曾展开的记录。';});
+function continuationText(){return['补码学习续学卡','主题：8位补码：−128～127','本轮场景：保存−5，再加3，按8位补码读回−2。','条件：固定8位有符号补码；练习独立于可切换实验。','固定题目：把−6写成8位补码，并用位权解释11111010为什么是−6。','题目与内容版本：'+signature,'作答：'+(record.answer.trim()||'未作答'),'状态：'+(record.answer.trim()?'已记录，待核验；没有自动判定掌握':'待验证'),'参考答案曾展开：'+(record.referenceOpened?'是':'否'),'首次展开时间（UTC）：'+(record.referenceFirstOpenedAt||'未记录'),'作答/记录更新时间（UTC）：'+(record.updatedAt||'未记录'),'已展示内容：位权、无符号/补码、取反加1、256−a、范围、低8位加法、进位与溢出。','下一动作：核对这道固定题的手算与理由，再决定补讲或进入变式。','说明：阅读完成标记不是掌握证据；本卡不把当前模拟器的条件当作这题的作答证据。'].join('\n\n');}
+byId('export-practice').addEventListener('click',()=>{const blob=new Blob([continuationText()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='twos-complement-8bit-continuation.txt';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);byId('export-status').textContent='已发起续学卡下载。可将文字带回对话，让讲解从你的实际作答继续。';});
+window.twosComplementContinuationText=continuationText;
+renderBits();renderEncoding();renderAddition();reflectPractice();
+})();
+</script>
+<script id="learning-hub-navigation-js">
+(()=>{
+'use strict';
+const initialize=()=>{
+const KEY='ai-learning-hub-state-v1';
+const bar=document.getElementById('learning-hub-bar');
+if(!bar)return;
+const pageStyle=getComputedStyle(document.body),rootStyle=getComputedStyle(document.documentElement);
+const pageColor=pageStyle.backgroundColor;
+const surface=pageColor&&pageColor!=='transparent'&&pageColor!=='rgba(0, 0, 0, 0)'?pageColor:(rootStyle.getPropertyValue('--bg').trim()||rootStyle.getPropertyValue('--paper').trim()||'#f7f8fc');
+bar.style.setProperty('--hub-surface',surface);
+bar.classList.toggle('hub-dark',rootStyle.colorScheme.includes('dark'));
+const lessonId=bar.dataset.courseId;
+const title=bar.querySelector('.hub-title').textContent;
+const done=bar.querySelector('.hub-complete');
+function read(){try{const value=JSON.parse(localStorage.getItem(KEY)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return {}}}
+function refresh(){const state=read(),complete=!!(state.done&&state.done[lessonId]);done.textContent=complete?'✓ 已完成 · 取消标记':'标记学完';done.setAttribute('aria-pressed',String(complete));done.setAttribute('aria-label',(complete?'取消完成：':'标记学完：')+title)}
+done.addEventListener('click',()=>{const state=read();state.done=state.done||{};state.favorite=state.favorite||{};state.done[lessonId]=!state.done[lessonId];try{localStorage.setItem(KEY,JSON.stringify(state));refresh()}catch{done.textContent='浏览器暂时无法保存'}});
+window.addEventListener('storage',e=>{if(e.key===KEY||e.key===null)refresh()});window.addEventListener('pageshow',refresh);refresh();done.hidden=false;
+const breadcrumb=document.createElement('div');breadcrumb.className='hub-breadcrumb';
+const back=bar.querySelector('.hub-return'),name=bar.querySelector('.hub-title');
+back.textContent='← 返回学习中心';back.setAttribute('aria-label','返回学习中心首页');name.title=title;
+const slash=document.createElement('span');slash.className='hub-separator';slash.textContent='/';slash.setAttribute('aria-hidden','true');breadcrumb.append(back,slash,name);bar.prepend(breadcrumb);
+let nav=document.querySelector('.nav-shell nav, nav.chapters, nav[aria-label="章节目录"], nav[aria-label="课程章节"], nav[aria-label="学习导航"], nav[aria-label="课程目录"]');
+let originalContainer=null;
+if(nav){
+ const parent=nav.parentElement;
+ const aside=nav.closest('aside');
+ if(aside){originalContainer=aside;aside.parentElement.classList.add('hub-single-column')}
+ else if(parent.classList.contains('nav-shell')||(parent.tagName==='DIV'&&parent.children.length===1))originalContainer=parent;
+}else{
+ const aside=document.querySelector('aside[aria-label="学习导航"]');
+ if(aside){nav=document.createElement('nav');for(const a of [...aside.querySelectorAll('a[href^="#"]')])nav.append(a);originalContainer=aside;aside.parentElement.classList.add('hub-single-column')}
+ else{
+  const headings=[...document.querySelectorAll('section.step h2[id], main section[id] > h2')];
+  if(headings.length>1){nav=document.createElement('nav');for(const [i,h]of headings.entries()){const a=document.createElement('a');a.href='#'+(h.id||h.parentElement.id);a.textContent=String(i+1).padStart(2,'0')+' '+h.textContent.trim();nav.append(a)}}
+ }
+}
+let updateOverflow=()=>{};
+if(nav&&nav.querySelector('a,button')){
+ // Move the original navigation instead of cloning it: paginated lessons
+ // retain delegated click handlers, keyboard behavior and their active step.
+ nav.classList.add('hub-sections');nav.setAttribute('aria-label','课程章节');
+ const strip=document.createElement('div');strip.className='hub-section-strip';
+ const previous=document.createElement('button'),next=document.createElement('button');
+ for(const [b,label,text]of [[previous,'向前查看章节','‹'],[next,'向后查看章节','›']]){b.type='button';b.className='hub-toc-arrow';b.setAttribute('aria-label',label);b.textContent=text;b.hidden=true}
+ strip.append(previous,nav,next);bar.insertBefore(strip,done);
+ if(originalContainer)originalContainer.classList.add('hub-original-navigation');
+ document.documentElement.classList.add('hub-unified-nav');
+ const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const behavior=()=>motion.matches?'instant':'smooth';
+ updateOverflow=()=>{const overflow=nav.scrollWidth>nav.clientWidth+2;previous.hidden=next.hidden=!overflow;previous.disabled=nav.scrollLeft<=2;next.disabled=nav.scrollLeft+nav.clientWidth>=nav.scrollWidth-2};
+ previous.addEventListener('click',()=>nav.scrollBy({left:-Math.max(180,nav.clientWidth*.75),behavior:behavior()}));next.addEventListener('click',()=>nav.scrollBy({left:Math.max(180,nav.clientWidth*.75),behavior:behavior()}));nav.addEventListener('scroll',updateOverflow,{passive:true});
+ let lastNavInteraction=0;
+ for(const type of ['pointerdown','wheel','keydown'])nav.addEventListener(type,()=>lastNavInteraction=Date.now(),{passive:true});
+ function reveal(item){if(!item||Date.now()-lastNavInteraction<900)return;const bounds=nav.getBoundingClientRect(),link=item.getBoundingClientRect();if(link.left<bounds.left+4)nav.scrollBy({left:link.left-bounds.left-6,behavior:behavior()});else if(link.right>bounds.right-4)nav.scrollBy({left:link.right-bounds.right+6,behavior:behavior()})}
+ const links=[...nav.querySelectorAll('a[href^="#"]')].map(a=>{let id;try{id=decodeURIComponent(a.hash.slice(1))}catch{return null}const target=document.getElementById(id);return target?{a,target}:null}).filter(Boolean);
+ if(links.length){
+  let active=null,queued=false;
+  function updateActive(){queued=false;const edge=bar.getBoundingClientRect().height+32,padding=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||0;let current=links[0];for(const item of links){const threshold=Math.max(edge,padding+(parseFloat(getComputedStyle(item.target).scrollMarginTop)||0)+2);if(item.target.getBoundingClientRect().top<=threshold)current=item}
+   if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-4)current=links[links.length-1];
+   if(active===current)return;active=current;for(const item of links){if(item===current)item.a.setAttribute('aria-current','location');else item.a.removeAttribute('aria-current')}reveal(current.a)
+  }
+  function schedule(){if(!queued){queued=true;requestAnimationFrame(updateActive)}}
+  window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule);window.addEventListener('hashchange',schedule);window.addEventListener('pageshow',schedule);schedule();
+ }else{
+  // Page-switching lessons update aria-current themselves.
+  new MutationObserver(()=>{reveal(nav.querySelector('[aria-current="step"]'));updateOverflow()}).observe(nav,{subtree:true,attributes:true,attributeFilter:['aria-current']});
+ }
+ if('ResizeObserver'in window)new ResizeObserver(updateOverflow).observe(nav);
+ requestAnimationFrame(updateOverflow);
+}else{
+ // A course without a directory still gets the normal return/title/actions.
+ const spacer=document.createElement('span');bar.insertBefore(spacer,done);
+}
+const readingArea=document.querySelector('main');
+function fitReadingWidth(){if(!readingArea)return;const style=getComputedStyle(readingArea),rect=readingArea.getBoundingClientRect();const width=rect.width-(parseFloat(style.paddingLeft)||0)-(parseFloat(style.paddingRight)||0);if(width>0)bar.style.setProperty('--hub-content-width',Math.min(1280,width)+'px')}
+function resize(){fitReadingWidth();document.documentElement.style.setProperty('--hub-nav-height',bar.getBoundingClientRect().height+'px');updateOverflow()}
+resize();window.addEventListener('resize',resize);
+if('ResizeObserver'in window)new ResizeObserver(resize).observe(bar);
+if(readingArea&&'ResizeObserver'in window)new ResizeObserver(resize).observe(readingArea);
+};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
+})();
+</script>
+</body>
+</html>
