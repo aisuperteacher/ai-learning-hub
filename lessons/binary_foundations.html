@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="从历史、逻辑电路到位、字节、整数、Unicode与UTF-8，配套进制手算、逐位实验、文本编码和算法基础练习。">
+<title>从 0 和 1 到文字：算法必备的计算机底层基础</title>
+<style>
+:root{--bg:#f6f7f4;--paper:#fff;--ink:#20313c;--muted:#576973;--line:#d8e1df;--blue:#225f89;--teal:#116e68;--rose:#a13e55;--wash:#eaf1f5;--hub-accent:#225f89;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:17px;line-height:1.9}main{max-width:1100px;margin:0 auto;padding:0 24px 70px;min-width:0}a{color:var(--blue);text-underline-offset:4px;overflow-wrap:anywhere}p{margin:.8em 0}strong{color:#143244}h1,h2,h3,h4{line-height:1.4;letter-spacing:-.015em}h1{font-size:clamp(31px,5.2vw,52px);max-width:920px;margin:12px 0 22px}h2{font-size:clamp(24px,3.5vw,32px);margin:0 0 20px}h3{font-size:22px;margin:28px 0 12px}h4{font-size:18px;margin:18px 0 8px}.hero{padding:44px 0 32px;border-bottom:1px solid var(--line)}.eyebrow,.section-no{color:var(--teal);font-size:13px;font-weight:750;letter-spacing:.08em}.section-no{display:block;margin-bottom:9px}.lead{font-size:20px;color:#405c69;max-width:950px}.caption,.muted{color:var(--muted);font-size:14px}section{padding:42px 0;border-bottom:1px solid var(--line);min-width:0}section:last-child{border-bottom:0}code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-variant-numeric:tabular-nums}code{background:#e9eff1;border-radius:4px;padding:2px 5px;font-size:.93em;overflow-wrap:anywhere}pre{padding:20px;background:#163041;color:#f4f7f8;border-radius:9px;overflow:auto;font-size:15px;line-height:1.85;max-width:100%}pre code{padding:0;background:none;white-space:pre;overflow-wrap:normal;color:inherit}.formula{padding:15px 18px;background:white;border-left:3px solid var(--teal);font-size:20px;overflow-wrap:anywhere;margin:17px 0}.callout{padding:18px 22px;background:var(--wash);border-left:4px solid var(--blue);margin:22px 0;border-radius:0 9px 9px 0}.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}.warm{background:#fff1e6;border-left-color:#a5642a}.green{background:#eaf4ec;border-left-color:var(--teal)}.card{background:var(--paper);border:1px solid var(--line);padding:23px;border-radius:11px;margin:22px 0;min-width:0}.card h3:first-child{margin-top:0}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.grid2>.card{margin:0}.table-scroll{overflow-x:auto;max-width:100%;margin:18px 0;border:1px solid var(--line);border-radius:8px}table{width:100%;border-collapse:collapse;background:#fff;font-size:15px}th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid #e1e7e5}th{background:#edf3f3;font-weight:700}tr:last-child td{border-bottom:0}.nowrap{white-space:nowrap}.table-scroll.tall{max-height:480px;overflow:auto}.table-scroll.tall th{position:sticky;top:0}.timeline td:first-child{white-space:nowrap;color:var(--teal);font-weight:700}.timeline td:last-child{min-width:220px}.table-scroll .mono{white-space:nowrap}.pill{display:inline-block;border:1px solid #c5d5d8;padding:3px 10px;border-radius:30px;font-size:13px;margin:2px 6px 2px 0;color:#42616b}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:16px 0}.controls label{font-size:14px;font-weight:650;min-width:0}.controls label input,.controls label select{display:block;margin-top:5px;max-width:100%}input,select,textarea,button{font:inherit}input,select,textarea{border:1px solid #9cafb6;border-radius:7px;padding:9px 11px;background:#fff;color:var(--ink);min-width:0;max-width:100%}input{width:220px}select{min-width:120px}textarea{width:100%;resize:vertical;line-height:1.75;min-height:110px}button{border:1px solid #afc0c6;border-radius:7px;background:#fff;color:var(--ink);font-size:14px;font-weight:650;padding:10px 14px;min-height:42px;line-height:1.5;cursor:pointer}button:hover{background:#edf3f8;border-color:var(--blue)}button.primary{background:var(--blue);border-color:var(--blue);color:#fff}button.primary:hover{background:#1c4e70}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid #70a5cf;outline-offset:3px}.presets{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.presets button{font-weight:500;min-height:37px;padding:7px 10px}.error{color:#a52d3e;font-size:15px;min-height:1.5em}.bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin:22px 0 15px}.bit-col{text-align:center;min-width:0}.weight{font-size:13px;color:var(--muted);margin-bottom:6px}.bit{display:block;width:100%;font-size:27px;padding:10px 0;border-radius:8px;background:#eff3f4}.bit[aria-pressed=true]{color:#144d78;border-color:#5f90b3;background:#dcecf7}.bit-col:first-child .bit[aria-pressed=true]{border-color:#b77c8a;color:#91354a;background:#f7e7eb}.bit-index{font-size:12px;color:var(--muted);margin-top:5px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.metric{padding:16px;border:1px solid var(--line);background:#fff;border-radius:9px;min-width:0}.metric span{display:block;color:var(--muted);font-size:13px}.metric strong{font-size:26px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.diagram{display:block;width:100%;max-width:900px;height:auto;margin:22px auto}.diagram text{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}.byte-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.byte{padding:12px 17px;border:1px solid #b9cdd5;border-radius:8px;background:#eaf2f7;text-align:center;min-width:100px}.byte small{display:block;color:var(--muted);font-size:12px}.byte b{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:24px}.sources{font-size:14px}.sources li{margin:8px 0}.footnote{font-size:13px;color:var(--muted)}details{border:1px solid var(--line);border-radius:9px;background:#fff;margin:16px 0;padding:0 18px}summary{padding:14px 0;cursor:pointer;font-weight:650}details .detail-content{padding:0 0 16px}.compact{margin-top:8px}.countnote{font-size:14px;color:var(--muted)}.safe-wrap{overflow-wrap:anywhere}.mini-divider{border:0;border-top:1px solid var(--line);margin:26px 0}.todo{padding-left:24px}.todo li{margin:8px 0}nav[aria-label="学习导航"]{display:flex;gap:16px;overflow-x:auto;white-space:nowrap;padding:12px 24px;margin:auto;max-width:1100px}sub,sup{line-height:0}@media(max-width:700px){main{padding:0 17px 48px}body{font-size:16px}.hero{padding:32px 0 25px}.lead{font-size:18px}section{padding:32px 0}.grid2{grid-template-columns:1fr}.card{padding:17px}.bits{gap:5px}.bit{font-size:23px;padding:9px 0}.weight{font-size:11px}.bit-index{font-size:10px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:12px}.metric strong{font-size:23px}th,td{padding:10px 11px}.formula{font-size:18px}.callout{padding:16px}.diagram{min-width:540px}.diagram-scroll{overflow-x:auto}.controls label{flex:1 1 150px}.controls input,.controls select{width:100%}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<link rel="stylesheet" href="../assets/lesson-navigation.css">
+</head>
+<body>
+<div id="learning-hub-bar" role="navigation" aria-label="课程导航" data-course-id="binary-bytes-characters-foundations">
+<a class="hub-return" href="../index.html#library">← 返回学习中心</a>
+<span class="hub-title">从 0 和 1 到文字：算法必备的计算机底层基础</span>
+<button type="button" class="hub-complete" hidden>标记学完</button>
+</div>
+
+<nav aria-label="学习导航"><a href="#history">历史</a><a href="#hardware">电与逻辑</a><a href="#bits">位与字节</a><a href="#bases">进制手算</a><a href="#values">数值与类型</a><a href="#text">字符与编码</a><a href="#utf8">UTF-8 实验</a><a href="#memory">内存与端序</a><a href="#algorithms">算法联系</a><a href="#practice">练习与路线</a><a href="#sources">来源</a></nav>
+<main>
+<header class="hero">
+<div class="eyebrow">学以致用 · 计算机基础 01</div>
+<h1>从 0 和 1 到文字：<br>算法必备的计算机底层基础</h1>
+<p class="lead">把 <code>A中🙂</code> 保存到一个 UTF-8 文本文件，里面为什么会是 <code>41 E4 B8 AD F0 9F 99 82</code> 这 8 个字节？把这件事完整解释清楚，二进制、字节、整数、字符编码和内存就开始连起来了。</p>
+<p>本课从历史讲起，再逐步拆开这次保存过程。你不需要先会编程。建议分三轮读：先读到“进制手算”，再读到“内存与端序”，最后做综合练习。这里的“完成阅读”只是一条阅读记录；能否独立解释和手算，需要你的实际作答验证。</p>
+<span class="pill">位值制与手算</span><span class="pill">8 位字节的来历</span><span class="pill">Unicode 与 UTF-8</span><span class="pill">面向算法</span>
+<div class="callout"><strong>贯穿本课的一句话：</strong>比特提供可区分的状态；编码和数据类型规定这些状态表示什么。同一组 0 和 1，必须带上解释规则，才有“数值”或“文字”的含义。</div>
+</header>
+
+<section id="history">
+<span class="section-no">01 · 从历史看每一层要解决的问题</span>
+<h2>计算机的这些规则，是逐层建立起来的</h2>
+<p>把历史分成三个问题，会比背年份更有帮助：<strong>数怎样写？逻辑怎样算？文字怎样共享？</strong> 二进制写法、数字电路和字符编码分别回答这些问题。它们形成于不同时期，后来组合成现代计算机。</p>
+<div class="table-scroll"><table class="timeline"><thead><tr><th>阶段</th><th>发生了什么</th><th>留下的基础</th></tr></thead><tbody>
+<tr><td>1703 年</td><td>莱布尼茨发表系统讨论二进制算术的文章。这里不把此前所有二元思想都归为他的发明。</td><td>只用 0、1 也能依照位值规则表示整数，并进行算术。</td></tr>
+<tr><td>19 世纪中叶</td><td>布尔用代数方法研究逻辑；1854 年出版《思维规律的研究》。</td><td>“并且、或者、取反”等逻辑关系可以用规则运算。</td></tr>
+<tr><td>1937 年</td><td>香农在硕士论文中把布尔代数用于继电器与开关电路的分析和设计。</td><td>抽象逻辑与可制造的电路建立了直接联系。</td></tr>
+<tr><td>早期电子计算机</td><td>并非每台都采用二进制数值表示；ENIAC 的算术使用十进制。</td><td>“电子”并不自动意味着“必须二进制”。选哪种表示还涉及工程设计。</td></tr>
+<tr><td>1956 年起</td><td>IBM 工程师 Werner Buchholz 在 Stretch 项目中使用 byte 一词。历史上的 byte 并非从一开始就只能是 8 位。</td><td>需要一个便于处理字符等数据的小分组单位。</td></tr>
+<tr><td>1960 年代</td><td>ASCII 采用 7 位代码；1964 年推出的 IBM System/360 采用 8 位字节，对这种组织方式的普及有重要影响。</td><td>一组位如何组织，受字符需求、处理与存储成本、兼容性和产业选择共同影响。</td></tr>
+<tr><td>Unicode 与 UTF-8</td><td>为多种文字提供统一编号，并规定如何把编号编码成可传输的字节序列。</td><td>文字不再等同于“一个英文字符对应一个字节”。</td></tr>
+</tbody></table></div>
+<p>这些历史说明：<strong>二进制是表示数的方法，8 位字节是广泛采用的数据组织约定，UTF-8 是把文字编号转换为字节的方法。</strong> 它们不属于同一个层次，也不是由一条自然定律一起决定的。</p>
+<p class="footnote">资料线索：<a href="#source-leibniz">莱布尼茨原刊</a>、<a href="#source-boole">布尔与逻辑</a>、<a href="#source-shannon">香农论文历史</a>、<a href="#source-eniac">ENIAC</a>、<a href="#source-byte">byte 原始设计记录</a>、<a href="#source-ibm">System/360</a>。</p>
+<p class="footnote">历史来源列在末尾；年份用于定位发展阶段，不是学习算法需要背诵的考点。</p>
+</section>
+
+<section id="hardware">
+<span class="section-no">02 · 物理状态 → 逻辑状态</span>
+<h2>为什么电子计算机适合使用 0 和 1？</h2>
+<h3>先有能稳定区分的状态，再赋予符号</h3>
+<p>想象一个开关只有“断开”和“闭合”两个稳定状态。我们可以约定一种状态代表 0，另一种代表 1。这只是建立直觉：真实芯片通常利用晶体管电路的电压区间等物理状态实现逻辑，<strong>不必是“没电就是 0，有电就是 1”</strong>。</p>
+<p>真实电压会有扰动。若电路只需区分较低与较高的两个有效区间，就能在一定噪声范围内恢复清晰的逻辑状态。若想在同样范围内塞进十个很接近的电平，可靠地区分它们通常会更难。二元逻辑同时方便组合成逻辑门、存储单元和运算电路。</p>
+<div class="diagram-scroll"><svg class="diagram" viewBox="0 0 880 160" role="img" aria-labelledby="voltage-title voltage-desc"><title id="voltage-title">物理电压与逻辑值是不同层次</title><desc id="voltage-desc">示意较低电压区间解释为逻辑零，较高区间解释为逻辑一，中间区间不应视为有效稳定逻辑值。具体阈值由电路标准决定。</desc><rect x="25" y="30" width="265" height="66" rx="8" fill="#e0edf5" stroke="#89aec5"/><rect x="307" y="30" width="265" height="66" rx="8" fill="#fff0dc" stroke="#d1b17e"/><rect x="589" y="30" width="265" height="66" rx="8" fill="#dff1e9" stroke="#86b3a3"/><text x="157" y="57" text-anchor="middle" font-size="18" fill="#20455c">较低的有效电压区间</text><text x="157" y="82" text-anchor="middle" font-size="17" fill="#20455c">解释为逻辑 0</text><text x="439" y="57" text-anchor="middle" font-size="18" fill="#775027">中间区间</text><text x="439" y="82" text-anchor="middle" font-size="17" fill="#775027">不作为有效稳定状态</text><text x="721" y="57" text-anchor="middle" font-size="18" fill="#225f4e">较高的有效电压区间</text><text x="721" y="82" text-anchor="middle" font-size="17" fill="#225f4e">解释为逻辑 1</text><text x="440" y="132" text-anchor="middle" font-size="16" fill="#576973">概念图，不是某款芯片的阈值或波形；具体电压范围依器件而定。</text></svg></div>
+<p>这不代表一个物理器件永远只能保存 1 bit。例如有些存储器用更多可区分的状态保存多个比特；它仍可向上层提供二进制数据。<strong>一个 bit 是信息单位，不是“一颗晶体管”的别名。</strong>关于连续物理信号与数字判定规则，见 <a href="#source-digital">数字抽象课程资料</a>。</p>
+<h3>逻辑门怎样把状态变成运算？</h3>
+<p>逻辑门是按照固定规则把输入状态变成输出状态的电路。先看三种规则：AND（与）要求两个输入都为 1；OR（或）要求至少一个为 1；XOR（异或）要求两个输入不同。NOT（非）则把一个输入取反：0 变 1，1 变 0。</p>
+<div class="table-scroll"><table><thead><tr><th>输入 a</th><th>输入 b</th><th>a AND b</th><th>a OR b</th><th>a XOR b</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></tbody></table></div>
+<p>把两个单独的二进制位相加，低位结果恰好是 XOR，向高位的进位恰好是 AND：<code>1 + 1 = 10₂</code>，结果位是 0，进位是 1。这里暂时没有考虑上一位传来的进位；加入它就得到完整的一位加法器。多个位的加法器组合起来，可以计算更大的整数。</p>
+<div class="callout green"><strong>连接起来看：</strong>逻辑门实现位运算；组合逻辑和存储电路组成处理器部件；指令让这些部件按规则协作。程序中的“加法”最终能由这些物理电路完成，但程序员不需要逐颗控制晶体管。</div>
+</section>
+
+<section id="bits">
+<span class="section-no">03 · bit、byte 与可表示的状态</span>
+<h2>1 位有两种状态，8 位有 256 种状态</h2>
+<p><strong>bit（位、比特）</strong>来自 binary digit，指一个二进制位，只有 0 或 1。两个位可以有 <code>00、01、10、11</code> 四种组合。每多加一位，每一种原有组合又能接上 0 或 1，所以组合数翻倍。</p>
+<div class="formula">n 个 bit 的可能组合数 = 2 × 2 × … × 2 = 2<sup>n</sup></div>
+<div class="table-scroll"><table><thead><tr><th>位数</th><th>组合数</th><th>如果解释成无符号整数</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>0～1</td></tr><tr><td>2</td><td>4</td><td>0～3</td></tr><tr><td>4</td><td>16</td><td>0～15</td></tr><tr><td>8</td><td>256</td><td>0～255</td></tr><tr><td>16</td><td>65,536</td><td>0～65,535</td></tr></tbody></table></div>
+<p>“256 种组合”和“最大数是 256”不同。若最小数从 0 开始，256 个整数就是 0～255。组合数只告诉我们有多少种状态；解释成什么内容，要另外约定。</p>
+<h3>byte 为什么是 8 bit？</h3>
+<p>在今天通常讨论的计算机、网络协议和文件格式中，<strong>1 byte（字节，记作 B）= 8 bit（位，常记作 b）</strong>。严格强调“恰好八位”的术语是 <em>octet</em>（八位组）。</p>
+<p>但是，<strong>8 位并不是物理定律，也不是二进制数学强迫出来的</strong>。历史上 byte 的位数并不统一：Buchholz 在 1956 年 6 月的一份设计记录中讨论 1～6 位的 byte；同年 9 月的另一份记录讨论最多 8 位的输入输出 byte，检错纠错位另计。把一组位作为字符或小数据单元，需要在可容纳的符号数量、存储与传输成本、硬件组织和兼容性之间选择。8 位能提供 256 种状态；IBM System/360 等有影响力的系统采用它，后续硬件、软件和协议逐渐围绕这个单位形成广泛惯例。见 <a href="#source-byte">两份原始记录</a>与 <a href="#source-ibm">IBM 历史说明</a>。</p>
+<p>7 位 ASCII 只需要 128 个代码，不能据此推出“字节必定要 8 位”。有些系统会在传输或存储中另配奇偶校验位，但这也是一种具体方案，<strong>不是所有 8 位字节的统一起因</strong>。8 位便于二等分、四等分，也适合两位十六进制书写；这些是便利之处，不是证明 8 位唯一正确的理由。</p>
+<div class="callout warm"><strong>暂时记牢三个边界：</strong>32 位或 64 位处理器不会把一个字节改成 32 位或 64 位；一个字节不保证表示一个字符；少数语言标准或历史体系的 byte 定义存在细节差异，本课除历史说明外统一采用 8 位字节。</div>
+<h3>容量单位先把 b 与 B 分清</h3>
+<div class="table-scroll"><table><thead><tr><th>写法</th><th>含义</th><th>换算</th></tr></thead><tbody><tr><td>1 B</td><td>1 字节</td><td>8 bit</td></tr><tr><td>1 kB</td><td>十进制千字节</td><td>1,000 B</td></tr><tr><td>1 KiB</td><td>二进制千字节</td><td>1,024 B = 2<sup>10</sup> B</td></tr><tr><td>1 MB</td><td>十进制兆字节</td><td>1,000,000 B</td></tr><tr><td>1 MiB</td><td>二进制兆字节</td><td>1,048,576 B = 2<sup>20</sup> B</td></tr></tbody></table></div>
+<p>例如理想地只做单位换算，80 Mbit/s ÷ 8 = 10 MB/s。真实下载速度还受协议开销等条件影响。写算法时，也要先问清内存限制用的单位以及每个元素的实际存储成本。单位依据见 <a href="#source-units">NIST 二进制前缀说明</a>。</p>
+</section>
+
+<section id="bases">
+<span class="section-no">04 · 进制是一套书写数值的规则</span>
+<h2>掌握位值规则，就能自己推导进制转换</h2>
+<h3>同一个数量，可以用不同的“满几进一”表示</h3>
+<p>十进制有 0～9 十个数码，某一位达到十就向左进一。二进制只有 0、1，达到二就进一；八进制用 0～7；十六进制用 0～9 和 A～F，其中 A～F 分别代表十进制 10～15。<strong>变的是写法，数量没有变。</strong></p>
+<div class="table-scroll"><table><thead><tr><th>十进制值</th><th>二进制</th><th>八进制</th><th>十六进制</th></tr></thead><tbody><tr><td>0</td><td class="mono">0</td><td class="mono">0</td><td class="mono">0</td></tr><tr><td>7</td><td class="mono">111</td><td class="mono">7</td><td class="mono">7</td></tr><tr><td>8</td><td class="mono">1000</td><td class="mono">10</td><td class="mono">8</td></tr><tr><td>10</td><td class="mono">1010</td><td class="mono">12</td><td class="mono">A</td></tr><tr><td>15</td><td class="mono">1111</td><td class="mono">17</td><td class="mono">F</td></tr><tr><td>16</td><td class="mono">10000</td><td class="mono">20</td><td class="mono">10</td></tr><tr><td>45</td><td class="mono">101101</td><td class="mono">55</td><td class="mono">2D</td></tr></tbody></table></div>
+<p>为避免混淆，本课用下标表示进制，例如 <code>101101₂</code>；程序里常见 <code>0b101101</code> 表示二进制、<code>0x2D</code> 表示十六进制，具体前缀规则由语言规定。单独写 <code>10</code> 却不说明进制，可能表示十，也可能表示二、八或十六。</p>
+<div class="callout warm"><strong>同一个 A，先问它是什么角色。</strong>十六进制数码 <code>A</code> 表示数值 10；文本字符 <code>'A'</code> 的 ASCII / Unicode 代码值是 65。一个是数值写法里的数码，另一个是字符编码表里的编号，两者不能直接替换。</div>
+<h3>方法一：从其他进制转十进制——按位权展开</h3>
+<p>你熟悉的 <code>345</code>，其实是 <code>3×100 + 4×10 + 5×1</code>。从最右边的整数位开始，r 进制的位权依次是 r<sup>0</sup>、r<sup>1</sup>、r<sup>2</sup>……，其中 r<sup>0</sup> = 1。</p>
+<div class="formula">101101₂ = 1×2<sup>5</sup> + 0×2<sup>4</sup> + 1×2<sup>3</sup> + 1×2<sup>2</sup> + 0×2<sup>1</sup> + 1×2<sup>0</sup><br>= 32 + 8 + 4 + 1 = 45₁₀</div>
+<div class="formula">55₈ = 5×8 + 5 = 45₁₀<br>2D₁₆ = 2×16 + 13 = 45₁₀</div>
+<p>检验每一位是否合法：<code>102₂</code> 不是合法二进制数，因为二进制没有数码 2；<code>89₈</code> 也不是合法八进制数。</p>
+<h3>方法二：十进制非负整数转其他进制——除基取余，倒序读</h3>
+<p>把 45 转成二进制。每次除以 2，记录商和余数，再拿商继续除，直到商为 0。</p>
+<div class="table-scroll"><table><thead><tr><th>运算</th><th>商</th><th>余数</th><th>这一位的位置</th></tr></thead><tbody><tr><td>45 ÷ 2</td><td>22</td><td>1</td><td>2<sup>0</sup>，最右边</td></tr><tr><td>22 ÷ 2</td><td>11</td><td>0</td><td>2<sup>1</sup></td></tr><tr><td>11 ÷ 2</td><td>5</td><td>1</td><td>2<sup>2</sup></td></tr><tr><td>5 ÷ 2</td><td>2</td><td>1</td><td>2<sup>3</sup></td></tr><tr><td>2 ÷ 2</td><td>1</td><td>0</td><td>2<sup>4</sup></td></tr><tr><td>1 ÷ 2</td><td>0</td><td>1</td><td>2<sup>5</sup>，最左边</td></tr></tbody></table></div>
+<p>余数从下往上读，得到 <code>101101₂</code>。为什么要倒序？因为 <code>N = 2×商 + 余数</code>，其他项都含有因子 2，余数只能决定最右边的个位。下一轮对商做同样的事，取出的是原数的下一位。方法不是口诀碰巧有效，而是位值展开的逆过程。</p>
+<div class="grid2"><div class="card"><h4>转八进制</h4><p><code>45 ÷ 8 = 5 余 5</code><br><code>5 ÷ 8 = 0 余 5</code></p><p>倒序读：<strong>55₈</strong>。</p></div><div class="card"><h4>转十六进制</h4><p><code>45 ÷ 16 = 2 余 13</code><br><code>2 ÷ 16 = 0 余 2</code></p><p>13 写成 D，倒序读：<strong>2D₁₆</strong>。</p></div></div>
+<div class="card" id="radix-lab"><h3>互动：把每一步除法展开</h3><p>输入一个最多 30 位的十进制非负整数。这里用精确整数计算，避免大数悄悄丢失精度。先预测结果，再点“展开手算”。</p><form id="radix-form"><div class="controls"><label>十进制整数<input id="radix-input" inputmode="numeric" value="173" maxlength="30" autocomplete="off" aria-describedby="radix-error"></label><label>目标进制<select id="radix-base"><option value="2">二进制（2）</option><option value="8">八进制（8）</option><option value="16">十六进制（16）</option></select></label><button class="primary" type="submit">展开手算</button></div></form><p class="error" id="radix-error" role="status"></p><div id="radix-result" aria-live="polite"></div></div>
+<h3>方法三：二进制与八、十六进制——从整数最右边分组</h3>
+<p>因为 <strong>8 = 2³，16 = 2⁴</strong>，三位二进制恰好对应一位八进制，四位二进制恰好对应一位十六进制。整数部分从右往左分组；最左组不足位时只在左边补 0。补前导 0 不改变数值。</p>
+<div class="table-scroll"><table><thead><tr><th>目标</th><th>对 10101101₂ 分组</th><th>每组换成一位</th><th>结果</th></tr></thead><tbody><tr><td>八进制</td><td class="mono">010 101 101</td><td>2、5、5</td><td class="mono">255₈</td></tr><tr><td>十六进制</td><td class="mono">1010 1101</td><td>A、D</td><td class="mono">AD₁₆</td></tr></tbody></table></div>
+<p>所以 <code>10101101₂ = 255₈ = 173₁₀ = AD₁₆</code>。注意其中的 <code>255₈</code> 是八进制表示，不能看见 255 就当成十进制 255。反过来，把每位十六进制数补足四个二进制位即可：<code>3F₁₆ = 0011 1111₂</code>。</p>
+<p>这也是十六进制常见于内存和文件查看器的原因：<strong>一个 8 位字节正好用两位十六进制写出</strong>。十六进制是便于人阅读二进制数据的写法，计算机并不因此突然改用 16 种电压来保存它。</p>
+<h3>小数怎么转？从小数点右边开始，规则变了</h3>
+<p>小数点右边的二进制位权依次是 2<sup>−1</sup> = 1/2、2<sup>−2</sup> = 1/4、2<sup>−3</sup> = 1/8……。因此 <code>0.101₂ = 1/2 + 0/4 + 1/8 = 0.625₁₀</code>。</p>
+<p>十进制小数部分转二进制，用<strong>乘 2 取整数部分，按先后顺序读</strong>，每次只拿剩下的小数部分继续乘：</p>
+<div class="table-scroll"><table><thead><tr><th>运算</th><th>取出的整数部分</th><th>留下的小数部分</th></tr></thead><tbody><tr><td>0.625 × 2 = 1.25</td><td>1</td><td>0.25</td></tr><tr><td>0.25 × 2 = 0.5</td><td>0</td><td>0.5</td></tr><tr><td>0.5 × 2 = 1.0</td><td>1</td><td>0</td></tr></tbody></table></div>
+<p>顺着读得到 <code>0.101₂</code>，所以 <code>10.625₁₀ = 1010.101₂</code>。为什么这次顺序读？乘 2 会把最靠近小数点的一位移到整数部分，第一轮取到的就是小数第一位。转八、十六进制小数时，把乘数换成 8、16。</p>
+<p>小数做二进制分组时，整数部分从小数点向左分，小数部分从小数点向右分；小数最后不足位时在<strong>右边</strong>补 0。例如 <code>1010.101₂ = A.A₁₆</code>，因为小数部分 <code>.1010₂ = 10/16 = 0.625</code>。</p>
+<details><summary>为什么 0.1₁₀ 在二进制里会无限循环？</summary><div class="detail-content"><p><code>0.1×2=0.2</code> 取 0；<code>0.2×2=0.4</code> 取 0；<code>0.4×2=0.8</code> 取 0；<code>0.8×2=1.6</code> 取 1、留 0.6；<code>0.6×2=1.2</code> 取 1、又留 0.2。余下部分回到 0.2，后面的过程会重复，所以得到 <code>0.0001100110011…₂</code>。</p><p>有限二进制小数约分后，分母只能含因子 2，因为它可以写成某个整数除以 2 的幂。<code>0.1 = 1/10</code> 的分母还有因子 5，所以无法有限表示。将来学习二进制浮点数时，某些十进制小数只能近似保存的原因就由此而来；整数和小数的编码规则不能混为一谈。</p></div></details>
+<h3>二进制加法也只是满二进一</h3>
+<p>四个基本情况：<code>0+0=0</code>、<code>0+1=1</code>、<code>1+0=1</code>、<code>1+1=10₂</code>。如果还有上一列的进位，<code>1+1+1=11₂</code>，本位写 1，再进 1。</p>
+<div class="formula">1011₂ + 0110₂ = 10001₂<br><span class="caption">十进制核对：11 + 6 = 17。若只允许保存 4 位，则容不下完整的 10001₂。</span></div>
+<h3>减、乘、除沿用熟悉的算术，只把基数换成 2</h3>
+<div class="table-scroll"><table><thead><tr><th>运算</th><th>二进制例子</th><th>手算的关键动作</th><th>十进制核对</th></tr></thead><tbody><tr><td>减法</td><td class="mono">100₂ − 1₂ = 11₂</td><td>本位不够减就向高位借；高一位的 1 等于本位的 2，需要时连续借位。</td><td>4 − 1 = 3</td></tr><tr><td>乘法</td><td class="mono">101₂ × 11₂ = 101₂ + 1010₂ = 1111₂</td><td>乘数每一位为 1 就加上对应移位后的被乘数；为 0 就加 0。</td><td>5 × 3 = 15</td></tr><tr><td>整数除法</td><td class="mono">1101₂ ÷ 11₂ = 100₂ 余 1₂</td><td>从高位试商；11₂ 左移两位得到 1100₂，减去后剩 1₂。</td><td>13 = 3 × 4 + 1</td></tr></tbody></table></div>
+<p>同理，十六进制 <code>F₁₆ + 1₁₆ = 10₁₆</code>；逢十六进位，而不是把 F 当成文本字符去做加法。上面讨论数学整数的算术，暂时不限制存储位数。</p>
+</section>
+
+<section id="values">
+<span class="section-no">05 · 同一组位，解释规则改变，含义就改变</span>
+<h2>比特串本身不会告诉你“我是负数”或“我是字母”</h2>
+<p>假设读到一个字节 <code>01000001</code>。按无符号整数解释，它是 65；按 ASCII 或 UTF-8 的单字节字符解释，它对应 <code>A</code>；若某个程序把八个位分别当作八个开关，它也可以表示一组布尔状态。<strong>“数据类型与编码”是解释规则的一部分。</strong></p>
+<div class="table-scroll"><table><thead><tr><th>位模式</th><th>无符号 8 位整数</th><th>8 位补码整数</th><th>单独作为 UTF-8</th></tr></thead><tbody><tr><td class="mono">01000001</td><td>65</td><td>65</td><td>A</td></tr><tr><td class="mono">10000000</td><td>128</td><td>−128</td><td>不是合法的独立字符编码</td></tr><tr><td class="mono">11111111</td><td>255</td><td>−1</td><td>不是合法的 UTF-8 字节</td></tr></tbody></table></div>
+<p>n 位无符号整数把各位权相加，范围为 <strong>0～2<sup>n</sup>−1</strong>。n 位补码给最高位负权重，其余位仍为正权重，范围为 <strong>−2<sup>n−1</sup>～2<sup>n−1</sup>−1</strong>。这就是上一课 8 位补码的 −128～127。对 8 位串，最高位为 1 时，也可以先按无符号得到 U，再算 U−256。</p>
+<p>更多负数手算可回到 <a href="https://aisuperteacher.github.io/ai-learning-hub/lessons/8bit_twos_complement.html">上一课：8 位补码为什么是 −128～127</a>。本课先把它放回“位模式需要解释规则”的全貌中。</p>
+<div class="card"><h3>互动：同一个字节，换一种解释</h3><p>点击任意位切换 0 / 1。下方同时显示无符号、补码和十六进制。位权行先按无符号显示；补码解释中，最左位的权重应从 +128 改成 −128。</p><div id="bit-grid" class="bits" aria-label="八位字节实验"></div><div class="presets"><button type="button" data-byte="0">0</button><button type="button" data-byte="65">A 的字节 65</button><button type="button" data-byte="127">127</button><button type="button" data-byte="128">128</button><button type="button" data-byte="255">255</button></div><div class="metrics"><div class="metric"><span>无符号解释</span><strong id="byte-unsigned">65</strong></div><div class="metric"><span>补码解释</span><strong id="byte-signed">65</strong></div><div class="metric"><span>十六进制写法</span><strong id="byte-hex">0x41</strong></div></div><p class="mono safe-wrap" id="byte-sum"></p><p id="byte-ascii"></p><p id="byte-utf8" class="countnote"></p></div>
+<div class="callout warm"><strong>位数有限会影响运算。</strong>数学整数可以一直增大，但固定宽度的存储不行。若 8 位无符号计算只保留低 8 位，255+1 留下 0；若 8 位补码计算只保留低 8 位，127+1 的位模式会被解释为 −128。具体编程语言如何报告、提升类型或处理溢出，要查该语言规则，不能把“低位模型”直接套到所有语言表达式。</div>
+</section>
+
+<section id="text">
+<span class="section-no">06 · 字符先编号，再编码</span>
+<h2>计算机怎样把 A、中文和表情保存起来？</h2>
+<h3>先区分“数值 65”和“文本 65”</h3>
+<p>数值 65 可以参与数学加法；文本 <code>65</code> 是两个字符，先出现 <code>6</code>，再出现 <code>5</code>。在按 UTF-8 编码时，两者不是同一份数据：</p>
+<div class="table-scroll"><table><thead><tr><th>对象和指定规则</th><th>十六进制字节</th><th>二进制位</th><th>解释</th></tr></thead><tbody><tr><td>数值 65，存成 8 位无符号整数</td><td class="mono">41</td><td class="mono">01000001</td><td>一个数值</td></tr><tr><td>文本 A，使用 UTF-8</td><td class="mono">41</td><td class="mono">01000001</td><td>一个字母</td></tr><tr><td>文本 65，使用 UTF-8</td><td class="mono">36 35</td><td class="mono">00110110 00110101</td><td>两个数字字符</td></tr><tr><td>数值 5，存成 8 位无符号整数</td><td class="mono">05</td><td class="mono">00000101</td><td>一个数值</td></tr><tr><td>文本 5，使用 UTF-8</td><td class="mono">35</td><td class="mono">00110101</td><td>一个数字字符，对应代码值 53</td></tr></tbody></table></div>
+<p>后面做算法题，从输入文本读取 <code>123</code> 并得到数值 123，通常需要“解析”：从数字字符识别出 1、2、3，再计算 <code>(1×10+2)×10+3</code>。这正是位值展开。具体程序里的整数可能占多个字节，上表为了比较只指定了 8 位无符号整数。</p>
+<div class="callout warm"><strong>把比特写出来，不等于存储了原来的比特。</strong>原始位模式 <code>01000001</code> 是 8 bit、1 B；如果你在文本文件里真的输入八个可见字符 <code>01000001</code> 并用 UTF-8 保存，那么每个 0、1 都要编码成一个字节，总共是 <strong>8 B</strong>，字节序列为 <code>30 31 30 30 30 30 30 31</code>。这里尚不包括换行或 BOM。</div>
+<h3>ASCII：先为有限的一组符号编上号</h3>
+<p>ASCII 是一套 7 位代码，共 128 个代码位置，包含英文字母、数字、标点和控制字符。例如 <code>A</code> 对应十进制 65，<code>a</code> 对应 97，数字字符 <code>0</code> 对应 48。它不包含所有语言的文字，不能独立覆盖中文等庞大的字符集合。</p>
+<p>在一个 8 位字节里保存 ASCII 代码时，最高位可以是 0：<code>A → 65 → 01000001</code>。注意数字字符编号的连续排列是编码规则；“A 必须等于 65”不是字母本身的物理性质。可在 <a href="#source-ascii">RFC 20</a> 的代码表中核对。</p>
+<h3>Unicode：统一“编号”；UTF-8：规定“怎样写成字节”</h3>
+<p><strong>Unicode</strong> 标准包含统一代码空间、字符属性、文本处理和编码形式等规则。为了理解，先把“编号”与“怎样存成字节”拆成两步看。它给字符等文本元素分配代码位置，称为<strong>码点（code point）</strong>。码点常写成 <code>U+</code> 后接十六进制数。例如 A 是 <code>U+0041</code>，中是 <code>U+4E2D</code>，🙂 是 <code>U+1F642</code>。<code>U+</code> 是记号，不是文件里要保存的两个字符。</p>
+<p><strong>UTF-8</strong> 则是一种 Unicode 编码形式，使用 8 位码元，并把一个 Unicode 标量值编码成 1～4 个字节。码元是某种编码形式的基本单位；UTF-8 的码元为 8 位，UTF-16 的码元为 16 位。不是所有 Unicode 码点都是可编码的标量值：<code>U+D800～U+DFFF</code> 是代理项范围，不直接编码成合法 UTF-8。</p>
+<p class="footnote">码点、码元、编码形式和字形的定义见 <a href="#source-unicode">Unicode 标准第 2、3 章</a>；UTF-8 的字节结构与有效范围见 <a href="#source-utf8">RFC 3629</a>。</p>
+<div class="table-scroll"><table><thead><tr><th>要区分的层</th><th>以“中”为例</th><th>这一层回答什么</th></tr></thead><tbody><tr><td>文本中的字符</td><td>中</td><td>我们要表达什么文本元素？</td></tr><tr><td>Unicode 码点</td><td class="mono">U+4E2D</td><td>它在统一代码空间里的编号是什么？</td></tr><tr><td>UTF-8 编码</td><td class="mono">E4 B8 AD</td><td>编号怎样转换为有顺序的字节？</td></tr><tr><td>字节里的比特</td><td class="mono">11100100 10111000 10101101</td><td>每个字节的位模式是什么？</td></tr><tr><td>字形显示</td><td>字体和排版系统绘出的“中”</td><td>最终怎样画到屏幕上？</td></tr></tbody></table></div>
+<p>所以，Unicode 编号 <code>4E2D</code> 与 UTF-8 字节 <code>E4 B8 AD</code> 不是同一种东西。“中文都占两个字节”也没有普遍成立的条件：占多少字节取决于编码与具体码点；许多常用汉字在 UTF-8 中占 3 字节，但也有扩展汉字占 4 字节。</p>
+<div class="callout"><strong>解码就是按相同规则往回读。</strong>发送方使用 UTF-8 编码，接收方若按照另一套不匹配的规则解码，可能得到错误文字或解码错误。正确的字节序列仍然需要正确的编码信息；字节本身并不总能唯一告诉接收方它用的是什么编码。</div>
+</section>
+
+<section id="utf8">
+<span class="section-no">07 · 把编号手算成文件里的字节</span>
+<h2>完整手算：中 → U+4E2D → E4 B8 AD</h2>
+<p>先明确本次输入：Unicode 标量值 <code>U+4E2D</code>。把每位十六进制数展开成 4 位二进制：</p>
+<div class="formula">4 E 2 D₁₆ → 0100 1110 0010 1101₂</div>
+<p>UTF-8 按编号范围使用下面的模板。<code>x</code> 是填入编号有效位的位置；模板中的固定前缀帮助解码器辨认序列结构。完整的合法性检查还要排除过长编码、代理项和超范围值。</p>
+<div class="table-scroll"><table><thead><tr><th>Unicode 标量值范围</th><th>字节数</th><th>位模板</th></tr></thead><tbody><tr><td class="mono">U+0000～U+007F</td><td>1</td><td class="mono">0xxxxxxx</td></tr><tr><td class="mono">U+0080～U+07FF</td><td>2</td><td class="mono">110xxxxx 10xxxxxx</td></tr><tr><td class="mono">U+0800～U+FFFF，排除代理项</td><td>3</td><td class="mono">1110xxxx 10xxxxxx 10xxxxxx</td></tr><tr><td class="mono">U+10000～U+10FFFF</td><td>4</td><td class="mono">11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</td></tr></tbody></table></div>
+<p><code>4E2D</code> 落在第三行，使用 3 字节模板，共能放 <code>4 + 6 + 6 = 16</code> 个编号位。把前面的 16 位按 4、6、6 拆开：</p>
+<div class="table-scroll"><table><thead><tr><th>字节</th><th>固定前缀</th><th>从编号取出的位</th><th>拼成 8 位</th><th>十六进制</th></tr></thead><tbody><tr><td>第 1 个</td><td class="mono">1110</td><td class="mono">0100</td><td class="mono">11100100</td><td class="mono">E4</td></tr><tr><td>第 2 个</td><td class="mono">10</td><td class="mono">111000</td><td class="mono">10111000</td><td class="mono">B8</td></tr><tr><td>第 3 个</td><td class="mono">10</td><td class="mono">101101</td><td class="mono">10101101</td><td class="mono">AD</td></tr></tbody></table></div>
+<p>这就得到 <code>E4 B8 AD</code>。反过来解码：检查字节结构合法，去掉固定前缀，拼回 <code>0100 111000 101101</code>，即 <code>4E2D</code>，再按 Unicode 编号找到“中”。</p>
+<h3>回到最初的文本 A中🙂</h3>
+<div class="table-scroll"><table><thead><tr><th>文本元素</th><th>Unicode 码点</th><th>UTF-8 字节</th><th>UTF-8 字节数</th><th>UTF-16 码元数</th></tr></thead><tbody><tr><td>A</td><td class="mono">U+0041</td><td class="mono">41</td><td>1</td><td>1</td></tr><tr><td>中</td><td class="mono">U+4E2D</td><td class="mono">E4 B8 AD</td><td>3</td><td>1</td></tr><tr><td>🙂</td><td class="mono">U+1F642</td><td class="mono">F0 9F 99 82</td><td>4</td><td>2</td></tr><tr><td colspan="2">总计：3 个 Unicode 码点</td><td class="mono">41 E4 B8 AD F0 9F 99 82</td><td><strong>8</strong></td><td><strong>4</strong></td></tr></tbody></table></div>
+<p>在“只包含这段文本、UTF-8 编码、不带字节序标记 BOM、不带换行或其他内容”的条件下，文件内容是 8 字节。磁盘实际分配空间、文件系统元数据和语言中的字符串对象开销是另外的问题。</p>
+<div class="card"><h3>互动：检查你输入的文字</h3><p>修改文本后点“查看编码”。表格按 Unicode 码点分行，不是按视觉上的一个完整字符分行。最多输入 256 个 UTF-16 码元，方便逐行观察。</p><form id="text-form"><label for="text-input">要编码的文本</label><textarea id="text-input" maxlength="256" rows="2" aria-describedby="text-error">A中🙂</textarea><div class="controls"><button class="primary" type="submit">查看编码</button></div></form><div class="presets"><button type="button" data-text="A中🙂">A中🙂</button><button type="button" data-text="65">文本 65</button><button type="button" data-text="B5">文本 B5</button><button type="button" data-text="é">é（预组合）</button><button type="button" data-text="é">e + 组合重音</button><button type="button" data-text="👨‍👩‍👧‍👦">家庭 emoji</button></div><p class="error" id="text-error" role="status"></p><div id="text-result" aria-live="polite"></div><p class="caption">此实验实际调用浏览器的 UTF-8 编码能力。它不生成字体或模拟物理内存。若出现无配对的 UTF-16 代理项，页面会报错，避免把自动替换后的文本当作原始输入。</p></div>
+<h3>“字符串长度”到底在数什么？</h3>
+<p>你眼中的一个字符可能由多个码点组合。例如 <code>é</code> 可以是单个码点 <code>U+00E9</code>，也可以由 <code>e</code>（U+0065）和组合重音（U+0301）组成。家庭 emoji 也可能由多个 emoji 和连接符构成，具体显示还依赖字体和渲染支持。</p>
+<p><strong>字素簇（grapheme cluster）</strong>是文本分段时近似“用户眼中的一个字符”的单位；它不同于码点、码元和字节。算法若要“每次删掉用户看到的一个字符”，仅按字节或 UTF-16 码元删除，可能拆坏字符。</p>
+<div class="table-scroll"><table><thead><tr><th>对象 / 常见操作</th><th>通常数什么</th><th>对 A中🙂 的结果</th></tr></thead><tbody><tr><td>UTF-8 编码后的字节序列长度</td><td>字节</td><td>8</td></tr><tr><td>Python 的字符串 len（普通有效 Unicode 文本）</td><td>Unicode 码点</td><td>3</td></tr><tr><td>Java 字符串 length / JavaScript 字符串 length</td><td>UTF-16 码元</td><td>4</td></tr><tr><td>适当的 Unicode 字素分段</td><td>字素簇</td><td>这个例子为 3</td></tr></tbody></table></div>
+<p>Java 的 <code>char</code> 是 16 位 UTF-16 码元；它不能单独覆盖所有 Unicode 字符。Python、Java、JavaScript 的对象在运行时实际如何布置，还有额外实现细节；上表说的是这些操作的语义，不是“所有字符串在内存里一律按此固定字节数保存”。</p>
+<p class="footnote">具体语言语义见 <a href="#source-python">Python 文本类型文档</a>、<a href="#source-java">Java String 文档</a>与 <a href="#source-js">ECMAScript 字符串类型定义</a>。</p>
+</section>
+
+<section id="memory">
+<span class="section-no">08 · 字节怎样排进内存</span>
+<h2>地址告诉你“在哪里”，类型告诉你“怎样读”</h2>
+<p>可以先把常见的<strong>按字节寻址</strong>的内存想成一排带编号的小格，每格一个字节，编号就是地址。一个 32 位整数通常需要连续 4 个字节；读取它时，需要知道从哪个地址开始、读几个字节、用什么数值表示以及字节顺序。</p>
+<p>这个小格模型帮助理解数据布局；真实机器还涉及虚拟地址、缓存、对齐等机制，它们不是本课的前置要求。<strong>一个地址值、地址指向的数据、数据的字节数</strong>是三件不同的事。</p>
+<h3>多字节整数有“哪一块先放”的问题</h3>
+<p>16 位整数 <code>0x1234</code> 分成两个字节：高位字节是 <code>12</code>，低位字节是 <code>34</code>。若从低地址往高地址看：</p>
+<div class="table-scroll"><table><thead><tr><th>存放规则</th><th>地址 1000</th><th>地址 1001</th><th>意思</th></tr></thead><tbody><tr><td>大端序（big-endian）</td><td class="mono">12</td><td class="mono">34</td><td>高位字节在低地址</td></tr><tr><td>小端序（little-endian）</td><td class="mono">34</td><td class="mono">12</td><td>低位字节在低地址</td></tr></tbody></table></div>
+<p>两种安排都可以保存同一个值，前提是读写双方按相同规则解释。这里交换的是<strong>字节位置</strong>；不会把字节 <code>12</code> 的内部比特也倒过来。UTF-8 使用 8 位码元，编码已经规定字节序列的先后，不存在 UTF-16、UTF-32 那种码元内部多字节大小端选择。</p>
+<div class="card"><h3>互动：按地址顺序观察两个字节</h3><form id="endian-form"><div class="controls"><label>16 位无符号整数（十进制）<input id="endian-input" value="4660" inputmode="numeric" aria-describedby="endian-error"></label><label>存放规则<select id="endian-order"><option value="big">大端序</option><option value="little">小端序</option></select></label><button class="primary" type="submit">观察存放</button></div></form><p id="endian-error" class="error" role="status"></p><div id="endian-result" aria-live="polite"></div></div>
+<h3>byte、word、机器“多少位”别混用</h3>
+<p><strong>字（word）</strong>是体系结构中约定的一组位，大小要看具体架构或文档；byte 在本课固定为 8 位。“64 位处理器”通常与其寄存器、整数运算和地址体系等能力相关，不意味着它只能操作 64 位数据，也不意味着每个字符占 64 位。</p>
+<p>算法中的数组下标最终要落实到内存位置。若某数组的每个元素固定占 4 字节，连续紧密存放且从地址 <code>base</code> 开始，那么第 i 个元素（从 0 编号）的起始地址是 <code>base + 4×i</code>。这是数组为什么能按下标直接定位的基础之一；高级语言中对象数组可能保存引用，具体布局还要看语言和实现。</p>
+</section>
+
+<section id="algorithms">
+<span class="section-no">09 · 学算法时，这些知识在哪些地方起作用</span>
+<h2>让底层规则成为你判断算法的工具</h2>
+<div class="table-scroll"><table><thead><tr><th>算法中的任务</th><th>本课提供的基础</th><th>要检查的条件</th></tr></thead><tbody><tr><td>累计、计数、乘法</td><td>固定宽度整数范围</td><td>中间结果是否溢出；语言是否使用更宽类型或任意精度整数</td></tr><tr><td>位掩码、状态压缩、子集枚举</td><td>每个 bit 可表示一个二选一状态</td><td>n 个标志有 2<sup>n</sup> 种组合，状态数量会指数增长</td></tr><tr><td>奇偶性、标志检查</td><td>二进制个位的权重是 1，其他位是 2 的倍数</td><td>对非负整数，最低位为 1 表示奇数；具体操作符行为取决于语言类型</td></tr><tr><td>二分查找、分治</td><td>每次减半与 2 的幂</td><td>规模约减半 k 次后变为原来的 1/2<sup>k</sup>，由此出现 log₂ n</td></tr><tr><td>字符串索引、反转、截断</td><td>字节、码点、码元、字素簇区别</td><td>题目中的“一个字符”究竟是什么；是否只允许 ASCII</td></tr><tr><td>空间复杂度与数组容量</td><td>字节单位和数据布局</td><td>固定宽度元素、引用和对象附加开销是否已经计算</td></tr><tr><td>读二进制文件、网络协议</td><td>编码、字段宽度、端序</td><td>读写规则是否一致；文本不能随意用整数规则解释</td></tr></tbody></table></div>
+<h3>一个位运算小例子：把四个选项放进四位</h3>
+<p>约定最右边起的四位分别表示“选 A、选 B、选 C、选 D”，1 表示选择，0 表示未选。那么 <code>0101₂</code> 表示选择 A 和 C。这里不需要负数，只用非负整数保存集合。</p>
+<div class="table-scroll"><table><thead><tr><th>操作</th><th>按位推演</th><th>结果含义</th></tr></thead><tbody><tr><td>检查是否选 C</td><td class="mono">0101 AND 0100 = 0100</td><td>对应位不为 0，已选择</td></tr><tr><td>加入 B</td><td class="mono">0101 OR 0010 = 0111</td><td>选择 A、B、C</td></tr><tr><td>切换 A 的状态</td><td class="mono">0101 XOR 0001 = 0100</td><td>A 从已选择变成未选择</td></tr></tbody></table></div>
+<p>“按位”就是对应位置分别应用逻辑规则。将来常写 <code>1 &lt;&lt; k</code> 生成第 k 位为 1 的掩码，但先固定非负数和足够位宽；移位超出位宽、负数右移及整数类型规则，会随语言而不同。不能一律把移位当成没有边界的乘除法。</p>
+<p>分析算法复杂度时，还要说明输入规模 n 在数什么：数组元素、字节、码点，还是整数的位数。固定宽度整数的一次基本运算常被作为常数成本模型；任意精度的大整数会占多个机器字，它的加法、乘法成本会随位数增长，不能无条件都当作 O(1)。</p>
+<h3>为什么二分会出现 log₂ n？</h3>
+<p>如果有 1,024 个候选，每次把范围约减半，就依次剩下 512、256、128、64、32、16、8、4、2、1。因为 <code>1,024 = 2¹⁰</code>，约 10 次减半就能缩到 1 个候选。这里的对数 <code>log₂ 1,024 = 10</code> 就是问“2 的几次方等于 1,024”。实际二分的边界与比较次数还由实现和输入决定。</p>
+<div class="callout green"><strong>面向算法的读题习惯：</strong>先确认数据范围，再确认表示单位，再选择操作。问“整数有多大？字符指什么？有多少种状态？内存按什么单位算？”能提前发现很多错误。</div>
+</section>
+
+<section id="practice">
+<span class="section-no">10 · 从看懂变成会解释、会计算</span>
+<h2>先独立完成这一道综合题</h2>
+<div class="card"><h3 id="practice-title">把文本 B5 保存为 UTF-8</h3><p id="practice-prompt">已知 B 的 Unicode 码点是 U+0042，数字字符 5 的码点是 U+0035。请写出文本 B5 的十六进制字节和每个字节的 8 位二进制；说明它占多少 UTF-8 字节、多少 Unicode 码点；再解释文本 5 与存成 8 位无符号整数的数值 5 有什么区别。</p><p class="caption">这一题条件固定，和上方实验框当前显示的内容无关。你可以先独立写，再查看提示；若用了提示也照实记录。</p><label for="practice-answer">你的推导与解释</label><textarea id="practice-answer" rows="6" placeholder="先写每个码点的数值和 UTF-8 字节，再说明文本与整数的区别。"></textarea><div class="controls"><label>当前自评<select id="practice-self"><option value="未自评">未自评</option><option value="还需要帮助">还需要帮助</option><option value="看过示范后能做">看过示范后能做</option><option value="自认为能独立完成">自认为能独立完成</option><option value="自认为能解释变化条件">自认为能解释变化条件</option></select></label><button type="button" id="practice-save" class="primary">保存这次作答</button><button type="button" id="practice-export">导出续学卡</button><button type="button" id="practice-clear">清空本题记录</button></div><p id="practice-state" class="caption" role="status">能力状态：待验证。你的作答尚未由对话反馈验证。</p><details id="practice-hint"><summary>提示：先确认是否属于单字节范围</summary><div class="detail-content"><p>U+0042 和 U+0035 都小于 U+0080，UTF-8 使用一个字节，字节值等于码点数值。把每个十六进制数码展开成 4 位；数值 5 则直接按 8 位无符号整数保存。</p></div></details><details id="practice-reference"><summary>完成后再看参考答案</summary><div class="detail-content"><p><code>B5 → 42 35 → 01000010 00110101</code>，共 <strong>2 个 UTF-8 字节、2 个 Unicode 码点</strong>。文本中的 <code>5</code> 是 U+0035，即十进制 53，字节为 <code>00110101</code>；数值 5 存成 8 位无符号整数为 <code>00000101</code>。两者操作含义不同，若想把文本“5”用于算术，需要识别并解析数字字符。</p><p>判断依据包括转换正确、单位清楚、能解释为什么不同；只是勾选完成或与答案一样，不能自动证明独立掌握。</p></div></details><p class="caption">保存只使用当前浏览器的本地存储，不保证跨设备、不同打开方式或清理缓存后仍存在。续学卡分别记录作答、自评、提示与答案展开情况；带回对话后，再根据实际回答判断能力。</p><p id="practice-export-status" class="caption" role="status"></p></div>
+<h3>用三个小变式检验你是否会迁移</h3>
+<details><summary>变式 1：把 58₁₀ 转成二进制、八进制、十六进制</summary><div class="detail-content"><p><code>58₁₀ = 111010₂ = 72₈ = 3A₁₆</code>。可以先除基取余，再用 <code>32+16+8+2=58</code>、<code>7×8+2=58</code>、<code>3×16+10=58</code> 反向核对。</p></div></details>
+<details><summary>变式 2：10000001 这个字节一定表示 129 吗？</summary><div class="detail-content"><p>需要解释规则。无符号 8 位整数是 129；8 位补码是 <code>−128+1=−127</code>。作为单独 UTF-8 字节，它是续字节形式，不能独立表示一个有效字符。它也可能属于某个更长字段的一部分。</p></div></details>
+<details><summary>变式 3：为什么不能根据“3 个字符”就断定是 3 个字节？</summary><div class="detail-content"><p>必须先明确“字符”的计数单位与编码。<code>A中🙂</code> 有 3 个 Unicode 码点，在 UTF-8 中是 8 字节，在 UTF-16 中是 4 个码元。用户眼中的字符又可能由多个码点组合；一般不能把视觉计数、码点数和字节数互换。</p></div></details>
+<h3>后续基础路线：按依赖往前走</h3>
+<div class="table-scroll"><table><thead><tr><th>顺序</th><th>接下来学什么</th><th>适合的验收动作</th></tr></thead><tbody><tr><td>本课</td><td>位值制、bit/byte、整数与文本编码</td><td>独立完成 B5 综合题，解释 A中🙂 为什么占 8 字节</td></tr><tr><td>下一单元</td><td>整数范围、补码、溢出、位运算</td><td>判断给定范围需要多少位，手算掩码与边界情况</td></tr><tr><td>随后</td><td>内存、地址、数组、引用 / 指针、栈与堆</td><td>画出一段数组和变量操作对应的数据关系</td></tr><tr><td>随后</td><td>时间与空间复杂度、对数、递归</td><td>根据操作次数推导增长趋势，区分复杂度与实际常数</td></tr><tr><td>再往后</td><td>数组、链表、栈、队列、哈希、树、图</td><td>说明数据如何组织、操作成本为何不同</td></tr><tr><td>配合需要</td><td>浮点数、缓存、文件与网络数据</td><td>解释精度、局部性和编码在具体算法中的影响</td></tr></tbody></table></div>
+<p>不必把全部电子工程学完才开始算法。扎实的做法是：先建立能解释当前题目的底层模型，再在算法中遇到新边界时补上下一层细节。本次已展示完整推导和实验；你是否掌握，仍待作答验证。</p>
+</section>
+
+<section id="sources">
+<span class="section-no">资料与复核</span>
+<h2>继续追溯原始定义</h2>
+<p class="caption">本页的手算过程为教学推导，互动结果由页面脚本计算。以下历史资料、标准和官方文档已用于核对；资料核对日期：2026 年 11 月 18 日。读到本课某个具体疑问时再回查，不必先逐篇读完。</p>
+<ol class="sources" id="source-list">
+<li id="source-leibniz"><a href="https://gheinz.de/news/leibniz/Leibniz_1703_Dualsystem.pdf">莱布尼茨：二进制算术原刊扫描</a>，支持 1703 年论文对二进制算术的系统论述。</li>
+<li id="source-boole"><a href="https://www.computerhistory.org/revolution/digital-logic/12/269">Computer History Museum：数字逻辑与布尔代数</a>，提供布尔工作和逻辑电路发展的历史背景。</li>
+<li id="source-shannon"><a href="https://booleshannon.mit.edu/">MIT：Boole–Shannon</a>，说明香农 1937 年的开关电路与逻辑代数工作。</li>
+<li id="source-eniac"><a href="https://penntoday.upenn.edu/news/penns-eniac-worlds-first-electronic-computer-turns-80">University of Pennsylvania：ENIAC 历史回顾</a>，涉及 ENIAC 的十进制运算。</li>
+<li id="source-byte"><a href="https://archive.computerhistory.org/resources/text/IBM/Stretch/pdfs/06-07/102632284.pdf">Werner Buchholz：The Link System，1956-06-11</a>，byte 早期设计记录；另见 <a href="https://archive.computerhistory.org/resources/text/IBM/Stretch/pdfs/06-08/102632292.pdf">Memory Word Length and Indexing，1956-09-19</a>，输入输出 byte 长度与检错纠错位的说明。</li>
+<li id="source-ibm"><a href="https://www.ibm.com/history/system-360">IBM：System/360</a>，涉及 1964 年推出和 8 位字节的产业影响。</li>
+<li id="source-digital"><a href="https://computationstructures.org/notes/digitalabstraction/notes.html">Computation Structures：The Digital Abstraction</a>，解释连续物理量、数字判定区间和噪声裕量。</li>
+<li id="source-ascii"><a href="https://www.rfc-editor.org/info/rfc20/">RFC 20：ASCII format for network interchange</a>，7 位 ASCII 代码与 8 位字节中的表示。</li>
+<li id="source-utf8"><a href="https://www.rfc-editor.org/info/rfc3629/">RFC 3629：UTF-8</a>，1～4 字节编码、位模板、标量范围与无效序列。</li>
+<li id="source-unicode"><a href="https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-2/">Unicode 17：General Structure</a>与<a href="https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-3/">Conformance</a>，码点、码元、编码形式和文本单位的正式定义。</li>
+<li id="source-units"><a href="https://physics.nist.gov/cuu/Units/binary.html">NIST：Prefixes for binary multiples</a>，bit、byte、KiB、MiB 与十进制前缀。</li>
+<li id="source-python"><a href="https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str">Python：Text Sequence Type — str</a>，字符串的 Unicode 码点序列语义。</li>
+<li id="source-java"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html">Java 25：String</a>，UTF-16、char 码元与字符串索引。</li>
+<li id="source-js"><a href="https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-ecmascript-language-types-string-type">ECMAScript：The String Type</a>，16 位码元序列与长度语义。</li>
+</ol>
+</section>
+</main>
+
+<script id="binary-core">
+(function(){
+  'use strict';
+  const digits='0123456789ABCDEF';
+  function requireInteger(n,min,max,label){if(!Number.isInteger(n)||n<min||n>max)throw new RangeError(label+'必须是 '+min+'～'+max+' 的整数');return n;}
+  function bits8(n){return requireInteger(n,0,255,'字节值').toString(2).padStart(8,'0');}
+  function hexByte(n){return requireInteger(n,0,255,'字节值').toString(16).toUpperCase().padStart(2,'0');}
+  function interpret8(n){requireInteger(n,0,255,'字节值');return {unsigned:n,signed:n<128?n:n-256,bits:bits8(n),hex:hexByte(n),ascii:n>=32&&n<=126?String.fromCharCode(n):null};}
+  function toRadixSteps(input,base){
+    const raw=String(input).trim();if(!/^[0-9]{1,30}$/.test(raw))throw new RangeError('请输入最多 30 位的十进制非负整数，不要输入小数、负号或进制前缀。');
+    if(![2,8,16].includes(base))throw new RangeError('目标进制只能是 2、8 或 16。');
+    let n=BigInt(raw),value=n;const b=BigInt(base),rows=[],out=[];
+    if(n===0n){rows.push({value:'0',quotient:'0',remainder:0,digit:'0'});out.push('0');}
+    while(n>0n){const q=n/b,r=Number(n%b);rows.push({value:String(n),quotient:String(q),remainder:r,digit:digits[r]});out.push(digits[r]);n=q;}
+    const result=out.slice().reverse().join('');const expansion=Array.from(result,(ch,i)=>{const power=result.length-1-i;const weight=b**BigInt(power);return {digit:ch,digitValue:digits.indexOf(ch),power,weight:String(weight),term:String(BigInt(digits.indexOf(ch))*weight)};});
+    return {input:String(value),base,rows,result,expansion};
+  }
+  function wellFormedText(text){for(let i=0;i<text.length;i++){const c=text.charCodeAt(i);if(c>=0xD800&&c<=0xDBFF){const next=text.charCodeAt(i+1);if(!(next>=0xDC00&&next<=0xDFFF))return false;i++;}else if(c>=0xDC00&&c<=0xDFFF)return false;}return true;}
+  function textInfo(text){
+    if(typeof text!=='string')throw new TypeError('输入必须是文本。');if(text.length>256)throw new RangeError('请把输入缩短到 256 个 UTF-16 码元以内。');if(!wellFormedText(text))throw new RangeError('输入含有未配对的 UTF-16 代理项，不能作为合法的 Unicode 标量值序列编码；请修正输入。');
+    const encoder=new TextEncoder(),rows=Array.from(text,ch=>{const codePoint=ch.codePointAt(0),bytes=Array.from(encoder.encode(ch));return {text:ch,codePoint,code:'U+'+codePoint.toString(16).toUpperCase().padStart(4,'0'),bytes,hex:bytes.map(hexByte).join(' '),binary:bytes.map(bits8).join(' '),utf16Units:ch.length};});
+    const bytes=Array.from(encoder.encode(text));let graphemes=null;if(typeof Intl!=='undefined'&&typeof Intl.Segmenter==='function'){graphemes=Array.from(new Intl.Segmenter('zh',{granularity:'grapheme'}).segment(text)).length;}
+    return {text,rows,bytes,hex:bytes.map(hexByte).join(' '),binary:bytes.map(bits8).join(' '),codePoints:rows.length,utf16Units:text.length,utf8Bytes:bytes.length,graphemes};
+  }
+  function memory16(n,order){requireInteger(n,0,65535,'16 位无符号整数');if(order!=='big'&&order!=='little')throw new RangeError('字节序只能为 big 或 little。');const high=Math.floor(n/256),low=n%256;return {value:n,hex:n.toString(16).toUpperCase().padStart(4,'0'),order,bytes:order==='big'?[high,low]:[low,high]};}
+  window.binaryFoundations={bits8,hexByte,interpret8,toRadixSteps,wellFormedText,textInfo,memory16};
+})();
+</script>
+<script id="binary-interactions">
+(function(){
+  'use strict';
+  const core=window.binaryFoundations,byId=id=>document.getElementById(id);
+  function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  let currentByte=65;const weights=[128,64,32,16,8,4,2,1];
+  byId('bit-grid').innerHTML=weights.map((w,i)=>'<div class="bit-col"><div class="weight">'+w+'</div><button class="bit" type="button" data-bit="'+i+'" aria-label="切换第 '+(7-i)+' 位，位权 '+w+'" aria-pressed="false">0</button><div class="bit-index">第 '+(7-i)+' 位</div></div>').join('');
+  function drawByte(){const v=core.interpret8(currentByte);document.querySelectorAll('[data-bit]').forEach(button=>{const i=Number(button.dataset.bit),one=v.bits[i]==='1';button.textContent=one?'1':'0';button.setAttribute('aria-pressed',String(one));});byId('byte-unsigned').textContent=String(v.unsigned);byId('byte-signed').textContent=String(v.signed);byId('byte-hex').textContent='0x'+v.hex;const chosen=weights.filter((w,i)=>v.bits[i]==='1');byId('byte-sum').textContent=v.bits+'₂ = '+(chosen.length?chosen.join(' + '):'0')+' = '+v.unsigned+'（无符号）';byId('byte-ascii').textContent=v.ascii===null?(v.unsigned<32||v.unsigned===127?'ASCII 中这是控制代码，不能简单当成一个可见字形。':'超出 ASCII 的 0～127 范围；没有一个通用的“单字节字符”对应。'):'按 ASCII / UTF-8 单字节文本解释：'+(v.ascii===' '?'空格':v.ascii);let note;if(v.unsigned<128)note='该字节可作为合法的单字节 UTF-8 编码。';else if(v.unsigned<192)note='该位模式属于 UTF-8 续字节形式（10xxxxxx），单独出现不是合法的字符编码。';else if(v.unsigned===192||v.unsigned===193||v.unsigned>=245)note='这个字节值不允许出现在合法的 UTF-8 编码中。';else note='该字节可能是一个多字节 UTF-8 序列的起始字节，必须结合合法的后续字节判断。';byId('byte-utf8').textContent=note;}
+  document.querySelectorAll('[data-bit]').forEach(button=>button.addEventListener('click',()=>{currentByte^=weights[Number(button.dataset.bit)];drawByte();}));document.querySelectorAll('[data-byte]').forEach(button=>button.addEventListener('click',()=>{currentByte=Number(button.dataset.byte);drawByte();}));drawByte();
+  function drawRadix(){try{const r=core.toRadixSteps(byId('radix-input').value,Number(byId('radix-base').value));byId('radix-error').textContent='';const rows=r.rows.map((row,i)=>'<tr><td>'+escapeHtml(row.value)+' ÷ '+r.base+'</td><td>'+escapeHtml(row.quotient)+'</td><td>'+row.remainder+(row.remainder>=10?'（'+row.digit+'）':'')+'</td><td>'+r.base+'<sup>'+i+'</sup></td></tr>').join('');byId('radix-result').innerHTML='<div class="formula safe-wrap">'+escapeHtml(r.input)+'₁₀ = <span class="mono">'+r.result+'</span><sub>'+r.base+'</sub></div><div class="table-scroll tall"><table><thead><tr><th>除法</th><th>商</th><th>余数</th><th>取出的位权</th></tr></thead><tbody>'+rows+'</tbody></table></div><p>从上到下得到余数：<span class="mono safe-wrap">'+r.rows.map(row=>row.digit).join('、')+'</span>。'+(r.input==='0'?'数值 0 直接写成 0。':'倒序读，就得到目标进制的表示。')+'</p><details><summary>展开核对：把结果再转回十进制</summary><div class="detail-content"><p class="safe-wrap">'+r.expansion.map(e=>e.digitValue+'×'+r.base+'<sup>'+e.power+'</sup>').join(' + ')+' = '+r.input+'</p><p>对应各项的十进制值：<span class="safe-wrap">'+r.expansion.map(e=>e.term).join(' + ')+' = '+r.input+'</span></p></div></details>';}catch(error){byId('radix-error').textContent=error.message;byId('radix-result').innerHTML='';}}
+  byId('radix-form').addEventListener('submit',event=>{event.preventDefault();drawRadix();});drawRadix();
+  function visibleText(ch){if(ch===' ')return '␠（空格）';if(ch==='\n')return '换行 LF';if(ch==='\r')return '回车 CR';if(ch==='\t')return '制表符 TAB';if(ch==='\u200D')return '零宽连接符 ZWJ';if(ch.codePointAt(0)<32||ch.codePointAt(0)===127)return '控制字符';return ch;}
+  function drawText(){try{const r=core.textInfo(byId('text-input').value);byId('text-error').textContent='';const rows=r.rows.map((row,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(visibleText(row.text))+'</td><td class="mono">'+row.code+'</td><td class="mono">'+row.hex+'</td><td class="mono">'+row.binary+'</td><td>'+row.utf16Units+'</td></tr>').join('');byId('text-result').innerHTML='<div class="metrics"><div class="metric"><span>Unicode 码点</span><strong>'+r.codePoints+'</strong></div><div class="metric"><span>UTF-8 字节</span><strong>'+r.utf8Bytes+'</strong></div><div class="metric"><span>UTF-16 码元</span><strong>'+r.utf16Units+'</strong></div></div><p class="countnote">'+(r.graphemes===null?'当前浏览器没有 Intl.Segmenter，未统计字素簇。':'浏览器按 Unicode 字素规则分段得到 '+r.graphemes+' 个字素簇；这是文本分段结果，不是对屏幕字形数的逐个检测。')+'</p><p>按顺序拼接的 UTF-8 字节：</p><pre><code>'+escapeHtml(r.hex||'（空文本，没有字节）')+'</code></pre>'+(r.rows.length?'<div class="table-scroll"><table><thead><tr><th>码点序号</th><th>对应文本 / 名称</th><th>码点</th><th>UTF-8 十六进制</th><th>UTF-8 二进制</th><th>UTF-16 码元数</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p>空文本的码点数、码元数和字节数都为 0。</p>');}catch(error){byId('text-error').textContent=error.message;byId('text-result').innerHTML='';}}
+  byId('text-form').addEventListener('submit',event=>{event.preventDefault();drawText();});document.querySelectorAll('[data-text]').forEach(button=>button.addEventListener('click',()=>{byId('text-input').value=button.dataset.text;drawText();}));drawText();
+  function drawEndian(){try{const raw=byId('endian-input').value.trim();if(!/^[0-9]{1,5}$/.test(raw))throw new RangeError('请输入 0～65535 的十进制整数。');const r=core.memory16(Number(raw),byId('endian-order').value);byId('endian-error').textContent='';byId('endian-result').innerHTML='<p>数值 '+r.value+' = <code>0x'+r.hex+'</code>。下方按地址从低到高排列：</p><div class="byte-row">'+r.bytes.map((byte,i)=>'<div class="byte"><small>地址 '+(1000+i)+'</small><b>'+core.hexByte(byte)+'</b><small class="mono">'+core.bits8(byte)+'</small></div>').join('')+'</div><p class="caption">'+(r.order==='big'?'高位字节先放在低地址。':'低位字节先放在低地址。')+' 单个字节里的位序没有被反转。</p>';}catch(error){byId('endian-error').textContent=error.message;byId('endian-result').innerHTML='';}}
+  byId('endian-form').addEventListener('submit',event=>{event.preventDefault();drawEndian();});drawEndian();
+  const signature='binary-bytes-characters-foundations|v1|B5-U0042-U0035|UTF8-42-35|unsigned5-05|2026-11-18';
+  const storageKey='learning-answer:'+signature;
+  let record={signature,answer:'',self:'未自评',hintOpened:false,referenceOpened:false,savedAt:null,capability:'待验证'};
+  let storageOK=true;
+  function status(message){byId('practice-state').textContent=(message?message+' ':'')+'能力状态：待验证。自评与展开记录都不等于经反馈验证的掌握。';}
+  try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&saved.signature===signature&&typeof saved.answer==='string'){record={...record,...saved,capability:'待验证'};byId('practice-answer').value=record.answer;const allowed=['未自评','还需要帮助','看过示范后能做','自认为能独立完成','自认为能解释变化条件'];byId('practice-self').value=allowed.includes(record.self)?record.self:'未自评';status('已恢复与本题内容匹配的作答。');}}catch(error){storageOK=false;status('本地存储暂不可用，仍可作答并导出续学卡。');}
+  function capture(){record={...record,signature,answer:byId('practice-answer').value,self:byId('practice-self').value,capability:'待验证',savedAt:new Date().toISOString()};return record;}
+  function persist(){capture();try{localStorage.setItem(storageKey,JSON.stringify(record));storageOK=true;status('已保存当前作答。');}catch(error){storageOK=false;status('浏览器未保存成功；当前作答仍在页面中，可导出。');}}
+  byId('practice-save').addEventListener('click',persist);
+  byId('practice-hint').addEventListener('toggle',()=>{if(byId('practice-hint').open){record.hintOpened=true;persist();}});
+  byId('practice-reference').addEventListener('toggle',()=>{if(byId('practice-reference').open){record.referenceOpened=true;persist();}});
+  function continuationText(){const snapshot=capture();return ['续学卡｜从 0 和 1 到文字','课程 ID：binary-bytes-characters-foundations','固定题目：'+byId('practice-prompt').textContent,'题目版本：'+signature,'学习者作答：',snapshot.answer||'（尚未作答）','学习者自评：'+snapshot.self,'提示是否曾展开：'+(snapshot.hintOpened?'是':'否'),'参考答案是否曾展开：'+(snapshot.referenceOpened?'是':'否'),'能力状态：待验证；未根据浏览或自评自动认定掌握。','说明：这份作答仅对应固定的 B5 综合题，与页面上方可变实验的当前输入无关。','保存时间（UTC）：'+snapshot.savedAt,'下一动作：带着这份作答回到对话，核对编码、单位与文本/整数的区别。'].join('\n');}
+  window.binaryFoundationsContinuationText=continuationText;
+  byId('practice-export').addEventListener('click',()=>{persist();const content=continuationText(),blob=new Blob([content],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='binary_foundations_continuation.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);byId('practice-export-status').textContent='已请求浏览器下载当前作答的续学卡；若没有开始下载，请检查浏览器的下载提示。';});
+  byId('practice-clear').addEventListener('click',()=>{try{localStorage.removeItem(storageKey);}catch(error){}record={signature,answer:'',self:'未自评',hintOpened:false,referenceOpened:false,savedAt:null,capability:'待验证'};byId('practice-answer').value='';byId('practice-self').value='未自评';byId('practice-hint').open=false;byId('practice-reference').open=false;byId('practice-export-status').textContent='';status('已清空本题的本地记录。');});
+})();
+</script>
+<script defer src="../assets/lesson-navigation.js"></script>
+</body>
+</html>

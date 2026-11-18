@@ -243,5 +243,23 @@
     ],
     "icon": "2",
     "tone": "blue"
+  },
+  {
+    "id": "binary-bytes-characters-foundations",
+    "title": "从 0 和 1 到文字：算法必备的计算机底层基础",
+    "category": "计算机基础",
+    "desc": "从计算历史、二态电路和 8 位字节出发，手算二/八/十/十六进制，拆解 ASCII、Unicode、UTF-8 与内存字节序，联系算法中的数值边界和字符串。",
+    "mode": "系统基础 · 学以致用 · 互动实验",
+    "path": "lessons/binary_foundations.html",
+    "tags": [
+      "二进制",
+      "字节",
+      "Unicode",
+      "UTF-8",
+      "进制转换",
+      "算法基础"
+    ],
+    "icon": "01",
+    "tone": "blue"
   }
 ]
