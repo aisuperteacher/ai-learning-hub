@@ -227,5 +227,21 @@
     ],
     "icon": "A",
     "tone": "purple"
+  },
+  {
+    "id": "twos-complement-8bit",
+    "title": "8 位补码：为什么是 −128～127",
+    "category": "计算机基础",
+    "desc": "从 −5＋3 的完整场景出发，手算 8 位补码、理解 −128～127 的范围、取反加 1 与有符号溢出，配套逐位实验和练习。",
+    "mode": "全景递进 · 学以致用 · 互动实验",
+    "path": "lessons/8bit_twos_complement.html",
+    "tags": [
+      "补码",
+      "二进制",
+      "Java",
+      "溢出"
+    ],
+    "icon": "2",
+    "tone": "blue"
   }
 ]
