@@ -17,13 +17,13 @@
 <button type="button" class="hub-complete" hidden>标记学完</button>
 </div>
 
-<nav aria-label="学习导航"><a href="#history">历史</a><a href="#hardware">电与逻辑</a><a href="#bits">位与字节</a><a href="#bases">进制手算</a><a href="#values">数值与类型</a><a href="#text">字符与编码</a><a href="#utf8">UTF-8 实验</a><a href="#memory">内存与端序</a><a href="#algorithms">算法联系</a><a href="#practice">练习与路线</a><a href="#sources">来源</a></nav>
+<nav aria-label="学习导航"><a href="#history">历史</a><a href="#hardware">电与逻辑</a><a href="#bits">位与字节</a><a href="#encoding-evolution">字符演进</a><a href="#bases">进制手算</a><a href="#values">数值与类型</a><a href="#text">字符与编码</a><a href="#utf8">UTF-8 实验</a><a href="#memory">内存与端序</a><a href="#width-evolution">32／64 位</a><a href="#algorithms">算法联系</a><a href="#practice">练习与路线</a><a href="#sources">来源</a></nav>
 <main>
 <header class="hero">
 <div class="eyebrow">学以致用 · 计算机基础 01</div>
 <h1>从 0 和 1 到文字：<br>算法必备的计算机底层基础</h1>
 <p class="lead">把 <code>A中🙂</code> 保存到一个 UTF-8 文本文件，里面为什么会是 <code>41 E4 B8 AD F0 9F 99 82</code> 这 8 个字节？把这件事完整解释清楚，二进制、字节、整数、字符编码和内存就开始连起来了。</p>
-<p>本课从历史讲起，再逐步拆开这次保存过程。你不需要先会编程。建议分三轮读：先读到“进制手算”，再读到“内存与端序”，最后做综合练习。这里的“完成阅读”只是一条阅读记录；能否独立解释和手算，需要你的实际作答验证。</p>
+<p>本课从历史讲起，再逐步拆开这次保存过程。新增两章按实际需求讲透“字符编码为什么扩展”和“32／64 位为什么发展”，可从顶栏直接定位。你不需要先会编程。建议分三轮读：先读到“进制手算”，再读到“内存与端序”，最后做综合练习。这里的“完成阅读”只是一条阅读记录；能否独立解释和手算，需要你的实际作答验证。</p>
 <span class="pill">位值制与手算</span><span class="pill">8 位字节的来历</span><span class="pill">Unicode 与 UTF-8</span><span class="pill">面向算法</span>
 <div class="callout"><strong>贯穿本课的一句话：</strong>比特提供可区分的状态；编码和数据类型规定这些状态表示什么。同一组 0 和 1，必须带上解释规则，才有“数值”或“文字”的含义。</div>
 </header>
@@ -76,6 +76,97 @@
 <h3>容量单位先把 b 与 B 分清</h3>
 <div class="table-scroll"><table><thead><tr><th>写法</th><th>含义</th><th>换算</th></tr></thead><tbody><tr><td>1 B</td><td>1 字节</td><td>8 bit</td></tr><tr><td>1 kB</td><td>十进制千字节</td><td>1,000 B</td></tr><tr><td>1 KiB</td><td>二进制千字节</td><td>1,024 B = 2<sup>10</sup> B</td></tr><tr><td>1 MB</td><td>十进制兆字节</td><td>1,000,000 B</td></tr><tr><td>1 MiB</td><td>二进制兆字节</td><td>1,048,576 B = 2<sup>20</sup> B</td></tr></tbody></table></div>
 <p>例如理想地只做单位换算，80 Mbit/s ÷ 8 = 10 MB/s。真实下载速度还受协议开销等条件影响。写算法时，也要先问清内存限制用的单位以及每个元素的实际存储成本。单位依据见 <a href="#source-units">NIST 二进制前缀说明</a>。</p>
+</section>
+
+<section id="encoding-evolution">
+<span class="section-no">深化一 · 从一张英文订单，到全球文字与 emoji</span>
+<h2>为什么基本英文可用 7 位，字节却常用 8 位？</h2>
+<div class="callout"><p><strong>先直接回答：</strong>基本英文文本并不需要恰好 256 种编码。标准 ASCII 使用 7 位、128 个代码位置；8 位能容纳它并留下更多编码空间。“一个字符需要多少位”和“机器把多少位组织成一个字节”是两个设计问题。汉字和 emoji 增加以后，通常让一个字符使用多个原有的 8 位字节，字节本身保持 8 位。</p></div>
+<p>这一章先用需求变化把选择过程讲清楚。下面的订单是假设的教学场景，计数用于解释容量约束；真实历史由不同团队、标准和产品并行推进，并非所有系统都沿同一条路线发展。为了紧凑比较，字节有时先用 <code>41</code>、<code>E9</code> 这样的十六进制标签表示；每个字节仍含 8 位，下一章会手算这些写法与二进制的关系。之后的“字符与编码”和“UTF-8 实验”会把具体转换算出来。</p>
+
+<h3>第一轮：只能发英文订单，究竟要给多少种符号编号？</h3>
+<p>假设你要把 <code>Pay 123!</code> 发送给另一台机器。接收方必须分清大写 <code>P</code>、小写 <code>a</code>、数字 <code>1</code>、空格和感叹号。它还需要知道什么时候换行。机器之间应约定：每一种要区分的符号，对应一个明确的代码。</p>
+<div class="table-scroll"><table><thead><tr><th>这项需求增加了什么</th><th>所需代码位置累计</th><th>对位数的影响</th></tr></thead><tbody>
+<tr><td>大写字母 A～Z</td><td>26</td><td>5 位有 32 种组合，单看这组字母够用</td></tr>
+<tr><td>再区分小写 a～z</td><td>52</td><td>5 位不够；6 位有 64 种组合</td></tr>
+<tr><td>再加数字字符 0～9</td><td>62</td><td>6 位只剩两个位置</td></tr>
+<tr><td>再加空格、句号、换行</td><td>65</td><td>已经超过 64；若坚持固定长度，需要至少 7 位</td></tr>
+<tr><td>加入更多标点和控制代码</td><td>由具体标准选择</td><td>ASCII 用 7 位，定义 128 个代码位置</td></tr>
+</tbody></table></div>
+<p>这解释了为什么“英文只有 26 个字母，所以 5 位就够了”会漏掉实际需求。ASCII 在 1960 年代经过修订，形成今天熟悉的大小写字母、数字、标点与控制代码表；它的 128 个位置包括 95 个可打印字符（把空格计入）和 33 个控制代码。<code>!</code> 并没有另外建立一种“符号专用位数”。这里的大小写需求计数也不意味着最初的 1963 版本就已包含后来全部内容。参见 <a href="#source-ascii">ASCII 代码表</a>与<a href="#source-ascii-history">NBS 对早期标准演变的说明</a>。</p>
+
+<h3>第二轮：字符编号只需 7 位，为什么机器常把 8 位作为一组？</h3>
+<p>一张代码表决定“需要区分哪些符号”；机器的数据组织还要考虑存取、输入输出、运算和兼容性。设计者可以把一个 7 位代码放入一个 8 位容器，最高位填 0。例如 <code>A</code> 的代码值 65，用 7 位写作 <code>1000001</code>，放在一个 8 位字节中就是 <code>01000001</code>。多出来的位置不会让字母 A 变成另一种文字。</p>
+<div class="table-scroll"><table><thead><tr><th>问题</th><th>这一例的答案</th><th>不要混成什么</th></tr></thead><tbody>
+<tr><td>ASCII 代码需要几位？</td><td>7 位，共 128 个代码位置</td><td>不是英文天然有 256 种字符</td></tr>
+<tr><td>现代常见 byte 有几位？</td><td>8 位，共 256 种位模式</td><td>256 是容量，不是每个文本标准实际使用的字符数</td></tr>
+<tr><td>A 在 UTF-8 中占几字节？</td><td>1 字节，值为 0x41</td><td>这不能推广为所有字符都占 1 字节</td></tr>
+</tbody></table></div>
+<p><strong>这里可以直接看当时设计者写下的理由。</strong>IBM 7030（Stretch）设计资料记载：常见的较早字符集合约有 48 个成员，包括 26 个大写字母、10 个数字、11 个特殊符号和空格；后来需要小写字母、更多标点及数学／逻辑符号，团队初定的集合达到 120 个字符，并考虑留出继续扩展的空间。</p>
+<p>你可能马上想到：<strong>120 小于 128，7 位已经够了，为什么仍选 8 位？</strong>因为这台机器不仅要存文字，还要方便地处理十进制数字，并降低不同格式的硬件组织成本。</p>
+<div class="table-scroll"><table><thead><tr><th>设计者面对的约束</th><th>8 位怎样满足它</th><th>取舍是什么</th></tr></thead><tbody>
+<tr><td>120 个字符，并预计继续扩充</td><td>8 位有 256 个位置，提供更多余量</td><td>7 位能装下当时的集合，但扩展余量较小；英文并非天然需要 256 种</td></tr>
+<tr><td>需要逐个处理十进制数码 0～9</td><td>一个十进制数码可用 4 位编码，两枚数码正好占 8 位</td><td>一组 8 位既能装一个字符代码，又能装两个 4 位数码</td></tr>
+<tr><td>硬件要同时组织数字与字符</td><td>4 与 8 的分组整齐，8 位中恰好含两个 4 位单位</td><td>4 位数字与 6 位字符也能共存，但共同分组要考虑 12 位等组织，处理和寻址更复杂</td></tr>
+<tr><td>存储器昂贵，需要避免过度浪费</td><td>当时的字符集合可以用一个 8 位单位容纳</td><td>若直接给每个字符都用 16 位，编码空间更大，但相同数量的字符会多用存储</td></tr>
+<tr><td>输入输出与按字符定位要易实现</td><td>用统一的小处理单位，便于计数、定位和连接外部设备</td><td>字符容量、内存组织、输入输出和兼容性必须一起考虑</td></tr>
+</tbody></table></div>
+<div class="formula">一组 8 位可组织为：<br><code>一个 8 位字符代码</code><br>或 <code>一个 4 位十进制数码 + 一个 4 位十进制数码</code></div>
+<p>这里的“4 位十进制数码”指逐个给 0～9 编码，例如把 59 的 5 和 9 分别保存。这种组织方式叫二进制编码的十进制（BCD）；它与把数值 59 整体转换为普通二进制是不同的规则。本例用于解释当时既要处理文字、又要处理十进制数据的硬件需求。</p>
+<p>以上是<strong>这条实际设计路线的多项工程理由</strong>，不是“宇宙规定八位最优”。1956 年的备忘录也记录了从不同长度 byte 到 8 位输入输出单位的选择，而且检错纠错位另算。1964 年推出的 System/360 及其兼容生态进一步推动 8 位字节普及。参见<a href="#source-byte-design">设计团队的原始说明</a>、<a href="#source-byte">1956 年备忘录</a>和<a href="#source-ibm">System/360 历史</a>。</p>
+<p>因此，对你最初问题的准确回答是：<strong>“方便装一个较丰富的字符代码”确实是八位选择的重要背景；但基本英文 ASCII 用七位就够，八位是字符扩展、十进制数据组织、硬件与寻址、存储成本等共同形成的折中。</strong></p>
+
+<h3>第三轮：要发法语、俄语等，先利用一个字节里更大的空间</h3>
+<p>当软件开始处理更多语言时，有些系统保留常用的 ASCII 范围，把 128～255 的位置分配给额外字母或符号。但不同地区、厂商采用了不同代码页，也就是不同的“编号对照表”。例如同一个十六进制字节 <code>E9</code>，按 Windows-1252 解读是 <code>é</code>，按 Windows-1251 解读却是 <code>й</code>。</p>
+<p>此时的问题不只是“位数不够”，还有<strong>同一编号被不同表赋予不同含义</strong>。发送方和接收方如果没约定同一张表，即使字节在网络里一个都没丢，也会显示成错误文字。所谓“扩展 ASCII”不能当成一张全世界统一的 256 字符表。参见<a href="#source-codepages">代码页说明与原始映射</a>。</p>
+
+<h3>第四轮：订单要写中文，一个字节的 256 种组合远远不够</h3>
+<p>现在要发送 <code>订单已付款</code>。仅 256 个单字节代码无法同时给几千、几万个汉字分别编号。增加可表示数量有不同办法，其中一种是让一个字符占多个字节。两个任意字节总共有 <code>256 × 256 = 65,536</code> 种组合，因此能提供比单字节大得多的编码空间。</p>
+<p><strong>变化的是“一个字符用几个字节”，不是“一个字节改成多少位”。</strong>两个字节仍是两个各含 8 位的单位。具体编码还要预留范围、区分单字节和多字节序列，所以不能直接把全部 65,536 种组合都当作已分配汉字。</p>
+<div class="table-scroll"><table><thead><tr><th>编码体系</th><th>所解决的实际需求</th><th>与字节的关系</th></tr></thead><tbody>
+<tr><td>GB2312</td><td>为简体中文常用汉字与相关符号制定编码</td><td>汉字、相关符号使用多字节区域；实际兼容 ASCII 的使用方式中，英文可用单字节</td></tr>
+<tr><td>GBK</td><td>在既有中文编码基础上覆盖更多字符</td><td>常见使用方式混合单字节和双字节编码</td></tr>
+<tr><td>Big5</td><td>繁体中文环境中的另一支编码体系</td><td>使用自己的映射规则，不是 GBK 后面自然接上的同一张表</td></tr>
+<tr><td>GB18030</td><td>进一步扩展中文与更广字符范围的覆盖</td><td>使用 1、2 或 4 字节序列，按该标准的规则解读</td></tr>
+</tbody></table></div>
+<p>这些体系及其版本不能仅凭“都用了两个字节”互相替换。<strong>字节数量相同，不代表编号规则相同。</strong>对历史演进的概括和 1／2／4 字节结构，可参见<a href="#source-gb">早期 GB18030 技术说明</a>；实际处理文件时应明确编码与版本，不能把旧版映射的细节泛化到所有后来版本。</p>
+
+<h3>第五轮：同一份文档要混合多国文字，需要一个统一编号体系</h3>
+<p>一家跨国公司的文档可能同时包含中文姓名、法语地名、俄语地址和数学符号。若每段都换一张本地代码表，文本交换和处理会复杂得多。Unicode 的重要作用是建立统一的代码空间与字符规则：例如 <code>A</code> 对应 <code>U+0041</code>，<code>中</code> 对应 <code>U+4E2D</code>。</p>
+<p>这里的 <strong>码点</strong>是编号；<strong>编码形式</strong>决定怎样把可编码编号表示成固定大小的基本单位。这个基本单位叫<strong>码元</strong>。Unicode 也定义这些编码形式，因此可以把“统一编号”和“存储办法”分开理解，但不能说 Unicode 完全不管编码。</p>
+<div class="table-scroll"><table><thead><tr><th>编码形式</th><th>码元多大？</th><th>一个 Unicode 标量值怎样表示？</th><th>现实取舍</th></tr></thead><tbody>
+<tr><td>UTF-8</td><td>8 位，即 1 字节</td><td>1～4 个码元，即 1～4 字节</td><td>保留 ASCII 的字节值；英文紧凑，适合既有按字节处理的系统</td></tr>
+<tr><td>UTF-16</td><td>16 位，即 2 字节</td><td>1 或 2 个码元，即序列化后 2 或 4 字节</td><td>常用范围单码元，更高编号用代理对，兼顾早期 16 位软件体系</td></tr>
+<tr><td>UTF-32</td><td>32 位，即 4 字节</td><td>1 个码元，即序列化后 4 字节</td><td>每个标量值宽度固定，但英文和许多常用文字会使用更多空间</td></tr>
+</tbody></table></div>
+<p>表中的字节数按一个标量值的编码计算，不计额外添加的文件头、BOM、换行或对象开销。Unicode 标量值指排除代理项范围后的可编码码点；一个用户看到的完整字符仍可能由多个标量值组成。</p>
+<p>早期 Unicode 以 16 位设计为基础。随着覆盖目标扩大，1996 年的扩展把代码空间增至 <code>U+10FFFF</code>；UTF-16 用两个特殊的 16 位码元组成“代理对”，表示更高编号，原有常用范围仍能使用一个码元。<strong>UTF-16 和 UTF-32 中的 16、32 指码元宽度；32 位或 64 位 CPU 是另一个问题。</strong>参见<a href="#source-unicode-faq">Unicode 官方 UTF 问答</a>。</p>
+
+<h3>UTF-8 为什么能知道这次读 1 个、2 个还是更多字节？</h3>
+<p>UTF-8 把每个字节的部分高位用作结构标志。第一个字节表明序列长度，后续字节用 <code>10</code> 开头；剩余的位用来装编号。它把“怎样切分字节流”也写进了编码规则。</p>
+<div class="table-scroll"><table><thead><tr><th>所占字节</th><th>结构模板</th><th>可放编号的位数</th></tr></thead><tbody>
+<tr><td>1</td><td class="mono">0xxxxxxx</td><td>7 位；保留 ASCII 范围</td></tr>
+<tr><td>2</td><td class="mono">110xxxxx 10xxxxxx</td><td>5 + 6 = 11 位</td></tr>
+<tr><td>3</td><td class="mono">1110xxxx 10xxxxxx 10xxxxxx</td><td>4 + 6 + 6 = 16 位</td></tr>
+<tr><td>4</td><td class="mono">11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</td><td>3 + 6 + 6 + 6 = 21 位，再受 Unicode 最大值限制</td></tr>
+</tbody></table></div>
+<p>因此，“2 个字节有 16 位”并不意味着“UTF-8 的双字节序列能任意分配 65,536 个字符”。其中有固定前缀，还要限制到正确的码点范围，排除过长编码、代理项和超范围值。后面的<a href="#utf8">“中”的 UTF-8 手算</a>会实际填入这些位置。</p>
+
+<h3>第六轮：emoji 怎样进入同一套规则？</h3>
+<p>早期日本运营商的 emoji 使用各自的私有编码，跨运营商发送可能无法正确显示。后来相关图形逐步进入 Unicode；Unicode 5.2 已含明确的 emoji 字符，2010 年的 Unicode 6.0 大批纳入。部分如今可作 emoji 的符号在更早的 Unicode 版本中就已存在，所以不能把 2010 年说成“所有 emoji 第一次出现”。参见<a href="#source-emoji">Unicode Emoji 标准的历史说明</a>。</p>
+<p>进入统一体系后，编码器根据<strong>实际码点及码点序列</strong>工作，不先问“这是英文、汉字、符号还是 emoji”。下面都是 UTF-8：</p>
+<div class="table-scroll"><table><thead><tr><th>文本</th><th>Unicode 码点／序列</th><th>UTF-8 十六进制字节</th><th>字节数</th></tr></thead><tbody>
+<tr><td>!</td><td class="mono">U+0021</td><td class="mono">21</td><td>1</td></tr>
+<tr><td>€</td><td class="mono">U+20AC</td><td class="mono">E2 82 AC</td><td>3</td></tr>
+<tr><td>中</td><td class="mono">U+4E2D</td><td class="mono">E4 B8 AD</td><td>3</td></tr>
+<tr><td>𠮷</td><td class="mono">U+20BB7</td><td class="mono">F0 A0 AE B7</td><td>4</td></tr>
+<tr><td>🙂</td><td class="mono">U+1F642</td><td class="mono">F0 9F 99 82</td><td>4</td></tr>
+<tr><td>❤️</td><td class="mono">U+2764 U+FE0F</td><td class="mono">E2 9D A4 EF B8 8F</td><td>3 + 3 = 6</td></tr>
+<tr><td>👩‍💻</td><td class="mono">U+1F469 U+200D U+1F4BB</td><td class="mono">F0 9F 91 A9 E2 80 8D F0 9F 92 BB</td><td>4 + 3 + 4 = 11</td></tr>
+</tbody></table></div>
+<p><code>❤️</code> 中的 <code>U+FE0F</code> 请求 emoji 呈现；<code>👩‍💻</code> 中的 <code>U+200D</code> 是零宽连接符，用于组成 emoji 序列。字体和渲染支持决定最终怎样画出来。有些肤色、职业或家庭组合可以通过码点序列表达，无需给每种视觉组合都分配一个全新的单独码点。</p>
+<div class="callout green"><p><strong>把需求链重新连起来：</strong>基本英文与控制代码可放进 7 位表；8 位字节成为常见存储单位；更多语言先使用不同区域编码和多字节组合；统一多语处理推动 Unicode；UTF-8 等编码形式负责把统一编号装入字节；emoji 继续使用这套编号、序列和呈现规则。字符需求变大，通常扩展编号或增加所占字节，8 位字节不用随之变宽。</p></div>
+<details><summary>自检：既然“中”占 3 字节，它是不是一个 24 位字节？</summary><div class="detail-content"><p>不是。这里有三个各含 8 位的字节，合计 24 位；UTF-8 把这个码点编码为三字节序列。换成另一种编码，“中”所占的数据单位可能不同，但这不会把现代常见 byte 的定义改成 24 位。能否独立解释这一点，仍需结合你的实际回答判断。</p></div></details>
 </section>
 
 <section id="bases">
@@ -185,6 +276,90 @@
 <p>算法中的数组下标最终要落实到内存位置。若某数组的每个元素固定占 4 字节，连续紧密存放且从地址 <code>base</code> 开始，那么第 i 个元素（从 0 编号）的起始地址是 <code>base + 4×i</code>。这是数组为什么能按下标直接定位的基础之一；高级语言中对象数组可能保存引用，具体布局还要看语言和实现。</p>
 </section>
 
+<section id="width-evolution">
+<span class="section-no">深化二 · 库存算得更大，资料也装得更多</span>
+<h2>32 位、64 位怎样从真实需求中发展出来？</h2>
+<p>继续想象那家公司。最初只是算几笔订单，后来要汇总大批库存，再后来要打开商品图片、保存成千上万客户、运行大型数据库。这里同时出现了两个不同需求：<strong>算更大的数</strong>，以及<strong>找到更多数据的位置</strong>。两者都要使用位，但使用的对象不同。</p>
+
+<h3>先认识四个真实对象，再讨论“多少位”</h3>
+<div class="table-scroll"><table><thead><tr><th>对象</th><th>初步理解</th><th>位数在这里表示什么</th></tr></thead><tbody>
+<tr><td>通用寄存器</td><td>CPU 内部直接参与运算的临时存储位置</td><td>一个寄存器值能容纳多少位数据</td></tr>
+<tr><td>算术逻辑单元（ALU）</td><td>执行整数加法、逻辑等操作的电路</td><td>某条数据通路或操作能处理多宽的数据</td></tr>
+<tr><td>地址</td><td>用来定位某个存储位置的编号</td><td>这个地址表示能区分多少个位置</td></tr>
+<tr><td>外部数据总线</td><td>处理器与外部部件之间传送数据的通道</td><td>一次传送中并行承载多少位</td></tr>
+</tbody></table></div>
+<p>这些宽度可以不同。真实处理器还会同时拥有不同宽度的寄存器、指令和数据通路。“8／16／32／64 位 CPU”通常概括其主要整数架构或通用寄存器能力，需要结合具体架构理解；不能把这几个数字自动套到所有部件上。</p>
+
+<h3>需求一：8 位运算单元怎样计算 300 + 500？</h3>
+<p>若只用一个 8 位无符号位置，最大值是 255，放不下 300。办法可以是用两个字节保存一个更大的数，再分步计算。人类也会把很长的加法拆成一列一列计算，低列产生的进位交给高列。</p>
+<p>下面是<strong>一个按字节拆分的教学模型</strong>，不是某款处理器的实际指令记录。把数写成高、低两个字节：</p>
+<div class="table-scroll"><table><thead><tr><th>数值</th><th>高字节</th><th>低字节</th><th>用十进制核对</th></tr></thead><tbody>
+<tr><td>300</td><td class="mono">01</td><td class="mono">2C</td><td>1 × 256 + 44</td></tr>
+<tr><td>500</td><td class="mono">01</td><td class="mono">F4</td><td>1 × 256 + 244</td></tr>
+</tbody></table></div>
+<ol>
+<li><strong>先加低字节：</strong><code>2C + F4 = 120</code>（本行均为十六进制）。只把低 8 位 <code>20</code> 留在低字节，另记进位 <code>1</code>。用十进制看，就是 <code>44 + 244 = 288 = 1 × 256 + 32</code>。</li>
+<li><strong>再加高字节：</strong><code>01 + 01 + 进位1 = 03</code>。</li>
+<li><strong>拼回结果：</strong><code>03 20</code>，即 <code>3 × 256 + 32 = 800</code>。</li>
+</ol>
+<p>因此，窄位宽的机器可以通过多步操作计算更大的整数。更宽的通用寄存器和运算支持，可以让许多常见的大数计算需要更少的指令和中间搬运；它不是“计算机所能计算的整数的绝对上限”。同理，64 位机器也能用软件实现任意精度整数。</p>
+
+<h3>需求二：资料越来越多，地址编号会先用完</h3>
+<p>假设每个内存格恰好是一字节，你想给每格一个不同的编号。如果地址只能写 8 位，就只有 256 个不同编号。再多的格子，即使实际装进机器，也需要新的定位办法才能区分。</p>
+<div class="callout warm"><p>下表专门计算<strong>可用地址位数</strong>，假设按字节寻址、平面编号、所有位都可用于地址。它是容量推导，不能把“CPU 是几位”直接代入并当作真实机器的内存上限。</p></div>
+<div class="table-scroll"><table><thead><tr><th>可用地址位数</th><th>不同地址数量</th><th>这个简化模型能编号的字节空间</th></tr></thead><tbody>
+<tr><td>8 位</td><td>2⁸ = 256</td><td>256 B</td></tr>
+<tr><td>16 位</td><td>2¹⁶ = 65,536</td><td>64 KiB</td></tr>
+<tr><td>32 位</td><td>2³² = 4,294,967,296</td><td>4 GiB</td></tr>
+<tr><td>64 位</td><td>2⁶⁴</td><td>16 EiB，纯数学模型的结果</td></tr>
+</tbody></table></div>
+<p>编号用完以后，可以通过分段、窗口切换或地址转换等机制访问更多位置，也可以扩展地址体系。不同设计的复杂度、软件负担和兼容成本不同。<strong>扩大运算位宽与扩大地址能力经常一起发生，但两者没有必须永远相等的定律。</strong></p>
+
+<h3>一个实际反例：8088 同时有 16、20 和 8</h3>
+<p>Intel 8088 的主要通用寄存器与整数架构是 16 位，物理地址有 20 位，因此可以对 1 MiB 的字节空间寻址；它的外部数据总线却是 8 位。这说明内部整数能力与外部传输宽度可以分别设计，16 位数据可以分成两次 8 位传输。</p>
+<div class="table-scroll"><table><thead><tr><th>看的是哪个部件／能力</th><th>8088 的例子</th><th>影响什么</th></tr></thead><tbody>
+<tr><td>主要通用寄存器与整数架构</td><td>16 位</td><td>寄存器中的数值及相应整数操作</td></tr>
+<tr><td>物理地址</td><td>20 位</td><td>2²⁰ B = 1 MiB 可寻址空间</td></tr>
+<tr><td>外部数据通路</td><td>8 位</td><td>一次外部数据传送的宽度；一个 16 位数据需要分次传送</td></tr>
+<tr><td>字节</td><td>8 位</td><td>数据分组和存储单位</td></tr>
+</tbody></table></div>
+<p>这比记一句“16 位机器只能用 64 KiB 内存”更准确。64 KiB 是 16 位平面字节地址的数学容量；8088 实际使用了更宽的物理地址和分段机制。参见<a href="#source-intel-width">Intel 的相关处理器资料</a>。</p>
+
+<h3>把历史变化放回使用场景</h3>
+<p>下表选取微处理器与个人计算机的一条常见发展线。大型机、工作站、嵌入式设备长期并行发展；在早期 4 位微处理器出现之前，就已经有采用更宽字长的大型计算机。因此这不是全世界所有机器统一走过的一条阶梯。</p>
+<div class="table-scroll"><table><thead><tr><th>场景与代表阶段</th><th>实际压力</th><th>更宽架构为什么有价值</th><th>同时要付出的代价</th></tr></thead><tbody>
+<tr><td>4 位微处理器与计算器</td><td>低成本完成十进制数字计算与控制</td><td>4 位足以编码一个十进制数字 0～9，适合逐位处理的设计</td><td>复杂数据往往要分多步；设计目标首先是专用功能和成本</td></tr>
+<tr><td>8 位微处理器与早期微机</td><td>控制设备、处理字节数据、运行较小程序</td><td>一次处理一个常见字节，便于文字和小整数操作</td><td>更大整数仍需组合多个字节；寻址能力还要单独设计</td></tr>
+<tr><td>16 位个人计算机</td><td>更复杂的软件、较大数值和更多数据</td><td>更宽的整数操作减少分步计算；地址体系也可以扩展</td><td>需要协调外部总线、存储器价格及旧有软件／硬件</td></tr>
+<tr><td>32 位体系</td><td>更大的程序、图形界面、多任务和内存需求</td><td>更大的整数范围，较大的平面地址空间，适合更复杂的系统软件</td><td>需要操作系统和应用采用相应模式，兼容旧软件仍然重要</td></tr>
+<tr><td>64 位体系</td><td>大型数据库、科学计算、服务器，以及后来的大内存桌面应用</td><td>更宽整数操作与更大的进程地址空间，缓解许多 32 位限制</td><td>指针等数据可能变大；迁移、兼容、内存流量和缓存成本需要权衡</td></tr>
+</tbody></table></div>
+<p>更先进的芯片制造降低了实现宽寄存器、宽运算电路和更复杂地址机制的成本；软件的规模与数据需求又让这些能力有了实际用途。桌面 x86 的 64 位扩展还强调继续运行既有的软件，避免用户为了升级内存和处理器就抛弃整个软件生态。<strong>“需求增长＋实现成本变得可接受＋兼容方案”共同推动升级。</strong></p>
+<p>几个实际时间点可以帮助定位：Intel 在 1985 年推出的 80386 把通用寄存器扩展为 32 位，并提供 32 位寻址及 4 GiB 的相应地址能力，同时保留与既有软件衔接的模式。64 位也不是先从普通家用电脑开始：DEC 在 1992 年推出 Alpha 64 位工作站和服务器；AMD 在 2003 年推出 Opteron 与 Athlon 64，把更宽计算与更大内存能力同既有 32 位 x86 软件的兼容结合起来。不同用户达到内存和数据规模瓶颈的时间不同，采用新架构的节奏也不同。参见<a href="#source-intel-width">Intel 架构历史</a>与<a href="#source-64-history">DEC、AMD 的原始记录</a>。</p>
+
+<h3>为什么 32 位的“4 GiB”要讲清是哪一种空间？</h3>
+<p>操作系统可以给程序看到一套<strong>虚拟地址</strong>，再把它转换成实际内存位置的<strong>物理地址</strong>。两套编号不必一样宽。普通 32 位平面虚拟地址空间一共只有 4 GiB 的编号范围，其中还可能分给操作系统、设备映射或其他保留用途，因此程序可直接使用的范围可能更小。</p>
+<p>某些 32 位系统通过 PAE（物理地址扩展）支持超过 4 GiB 的物理内存，但这不会自动把一个普通 32 位程序的平面虚拟地址空间变成无限大。这也是为什么“机器装了多少内存”和“一个程序能直接寻址多少数据”必须分别判断。参见<a href="#source-address-limits">操作系统的地址空间说明</a>。</p>
+
+<h3>为什么 64 位并不代表实际装得下 2⁶⁴ 字节？</h3>
+<p>一个 64 位架构可以只实现其中一部分地址位，操作系统和具体硬件也会设置可用内存上限。因此 16 EiB 是把 64 个位全部作为字节地址的数学容量，不是每台 64 位电脑的实际承诺。购买内存或分析程序限制时，还要看处理器、主板、操作系统和运行模式。</p>
+<p>64 位也不保证程序快一倍。若任务主要受磁盘、网络或缓存限制，扩宽整数寄存器不会把这些瓶颈自动消除；某些结构中的指针变大，反而会增加内存和缓存占用。性能收益要回到具体算法、数据规模和实现来判断。</p>
+
+<h3>为什么不马上把所有机器都改成 128 位？</h3>
+<p>先问实际需要什么：更宽的整数、更大的地址空间，还是同时处理很多小数据？它们可以用不同办法解决。许多常见任务的整数与地址需求并不要求全面扩成 128 位，扩大所有相关结构却要付出面积、功耗、内存占用和兼容成本。</p>
+<p>64 位处理器可以同时提供 128／256／512 位向量寄存器，让一条操作并行处理多个较小数据。这通常称为 SIMD（单指令多数据）。拥有这种向量能力，不会让整台机器的通用整数架构、指针和字节大小一起变成 128／256／512 位。</p>
+
+<h3>把几个容易混用的“位数”放在同一张表里</h3>
+<div class="table-scroll"><table><thead><tr><th>看到的说法</th><th>真正描述什么</th><th>不能由此直接推出什么</th></tr></thead><tbody>
+<tr><td>8 位字节</td><td>一个常见存储单位含 8 个 bit</td><td>一个字符只用一个字节</td></tr>
+<tr><td>UTF-8／UTF-16／UTF-32</td><td>编码形式的码元宽度</td><td>使用它需要相同位数的 CPU</td></tr>
+<tr><td>32 位／64 位 CPU</td><td>通用整数架构等主要能力</td><td>所有指令、总线和实际地址都同宽</td></tr>
+<tr><td>32 位地址</td><td>该地址表示有 2³² 种位模式</td><td>整机最多只有 4 GiB 物理内存</td></tr>
+<tr><td>256 位向量寄存器</td><td>特定向量操作处理的数据宽度</td><td>每个字符、指针或字节都变成 256 位</td></tr>
+</tbody></table></div>
+<details><summary>自检：把订单从英文改成中文，再把电脑从 32 位换成 64 位，哪些量会变？</summary><div class="detail-content"><p>现代常见字节仍为 8 位。文字从英文改为中文时，按 UTF-8 编码后的字节数通常会变化；原因在于具体码点及编码规则。换用 64 位架构和相应运行模式，通用整数和地址能力可能扩展，指针或部分数据布局也可能改变；但同一段文本选择同一版本规则的 UTF-8 编码，不会只因 CPU 升级而改变其字节序列。要判断实际内存容量、性能与对象大小，还需看具体实现。</p></div></details>
+</section>
+
 <section id="algorithms">
 <span class="section-no">09 · 学算法时，这些知识在哪些地方起作用</span>
 <h2>让底层规则成为你判断算法的工具</h2>
@@ -231,6 +406,15 @@
 <li id="source-python"><a href="https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str">Python：Text Sequence Type — str</a>，字符串的 Unicode 码点序列语义。</li>
 <li id="source-java"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html">Java 25：String</a>，UTF-16、char 码元与字符串索引。</li>
 <li id="source-js"><a href="https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-ecmascript-language-types-string-type">ECMAScript：The String Type</a>，16 位码元序列与长度语义。</li>
+<li id="source-codepages"><a href="https://learn.microsoft.com/en-us/windows/win32/intl/code-pages">Microsoft：Code Pages</a>，区域代码页与互通问题；Unicode 保存的 <a href="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP1252.TXT">Windows-1252</a>与<a href="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP1251.TXT">Windows-1251</a> 原始映射可核对 E9 的不同含义。</li>
+<li id="source-gb"><a href="https://www.unicode.org/L2/L2001/01314-FAQ-GB18030.htm">Unicode 归档：GB18030 技术问答，2001</a>，用于说明早期中文编码扩展背景和 1／2／4 字节结构，具体映射应按实际使用的标准版本核对。</li>
+<li id="source-unicode-faq"><a href="https://www.unicode.org/faq/utf_bom.html">Unicode：UTF 与 BOM 问答</a>，早期 16 位设计、扩展代码空间和 UTF 编码形式之间的关系。</li>
+<li id="source-emoji"><a href="https://www.unicode.org/reports/tr51/">Unicode Technical Standard #51：Unicode Emoji</a>，emoji 的历史、呈现选择和序列结构。</li>
+<li id="source-ascii-history"><a href="https://www.govinfo.gov/content/pkg/GOVPUB-C13-1cb62529ba0e8ca6590b7a0d22cdfbb4/pdf/GOVPUB-C13-1cb62529ba0e8ca6590b7a0d22cdfbb4.pdf">National Bureau of Standards：Technical Note 478，1969</a>，早期字符代码需求、6／7／8 位取舍与 ASCII 修订背景。</li>
+<li id="source-byte-design"><a href="https://archive.computerhistory.org/resources/text/IBM/Stretch/pdfs/Buchholz_102636426.pdf">Planning a Computer System: Project Stretch，1962</a>，第 6 章中有关字符容量、4 位十进制数码、8 位字节、存储与组织的设计理由；另见 <a href="https://archive.computerhistory.org/resources/text/IBM/Stretch/pdfs/06-08/102632304.pdf">Buchholz：Fingers or Fists?，1957</a>。</li>
+<li id="source-intel-width"><a href="https://cdrdv2-public.intel.com/782149/253665-sdm-vol-1.pdf">Intel 64 and IA-32 Architectures Software Developer’s Manual，Volume 1</a>，第 2 章的架构历史与 8088、80386 等处理器说明，区分数据、外部通路和地址能力。</li>
+<li id="source-64-history"><a href="https://archive.computerhistory.org/resources/text/DEC/dec.digital_%28DEC%29_timeline_1957-1997.102630354/timelinetext.htm">DEC：1957–1997 历史时间线</a>，1992 年 Alpha 64 位工作站与服务器；<a href="https://ir.amd.com/financial-information/sec-filings/content/0001193125-04-037179/d10k.htm">AMD：2003 年度 Form 10-K</a>，Opteron、Athlon 64、内存与数据处理需求及 32 位软件兼容背景。</li>
+<li id="source-address-limits"><a href="https://learn.microsoft.com/en-us/windows/win32/memory/physical-address-extension">Microsoft：Physical Address Extension</a>，32 位 Windows 中扩展物理地址与进程虚拟地址空间的区别。</li>
 </ol>
 </section>
 </main>
